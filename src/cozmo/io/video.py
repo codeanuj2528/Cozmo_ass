@@ -101,8 +101,9 @@ class VideoCapture(CaptureSource):
         return np.zeros((self.height, self.width, 3), dtype=np.uint8)
 
     def close(self) -> None:
-        if self.cap:
+        if getattr(self, "cap", None):
             self.cap.release()
+            self.cap = None
 
     def __del__(self) -> None:
         self.close()

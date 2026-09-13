@@ -12,9 +12,15 @@ from datetime import datetime
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 SCHEMA_VERSION = "1.0.0"
+
+
+class StrictModel(BaseModel):
+    """Base for every contract object: unknown keys are an error, not a shrug."""
+
+    model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
 
 class Tier(str, Enum):
@@ -32,21 +38,40 @@ class IntervalMethod(str, Enum):
     PRIOR = "prior_only"
 
 
-class Measure(BaseModel):
+class Measure(StrictModel):
     """A physical quantity with a calibrated interval.
 
     `lo`/`hi` bound the quantity at `coverage` nominal probability. `method` records how
     the interval was produced so a reader can tell a calibrated interval from a guess.
+    No code path should emit a bare float for a physical quantity.
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     value: float
     lo: float
     hi: float
     unit: str
-    coverage: float = 0.90
+    coverage: float = Field(default=0.90, gt=0.0, le=1.0)
     method: IntervalMethod = IntervalMethod.CONFORMAL
+
+    @field_validator("hi")
+    @classmethod
+    def lo_le_hi(cls, hi: float, info) -> float:
+        """Ensure lo <= hi. A reversed interval is a bug, not a measurement."""
+        lo = info.data.get("lo")
+        if lo is not None and lo > hi:
+            raise ValueError(f"lo ({lo}) must not exceed hi ({hi})")
+        return hi
+
+    @model_validator(mode="after")
+    def value_within_interval(self) -> "Measure":
+        """Ensure lo <= value <= hi. A value outside its own interval is nonsense."""
+        if not (self.lo <= self.value <= self.hi):
+            raise ValueError(
+                f"value ({self.value}) must lie within [{self.lo}, {self.hi}]"
+            )
+        return self
 
     @property
     def half_width(self) -> float:
@@ -98,7 +123,7 @@ class Wall(BaseModel):
         description="Floor to ceiling. None when the ceiling was never observed.",
     )
     plane: Plane
-    point_support: int = Field(description="Number of observed 3D points that fit this wall plane.")
+    point_support: int = Field(ge=0, description="Number of observed 3D points that fit this wall plane.")
 
 
 class Surface(BaseModel):
@@ -130,6 +155,14 @@ class Room(BaseModel):
     floor_area: Measure
     perimeter: Measure
     observation_quality: float = Field(ge=0.0, le=1.0)
+
+    @field_validator("polygon")
+    @classmethod
+    def polygon_has_vertices(cls, v: list) -> list:
+        """A room polygon must have at least 3 vertices to enclose area."""
+        if len(v) < 3:
+            raise ValueError(f"polygon must have >= 3 vertices, got {len(v)}")
+        return v
 
 
 class Adjacency(BaseModel):

@@ -117,7 +117,7 @@ def test_photo_folder_label_beats_lidar_room_map():
     photo_bath = Room(
         room_id="room_01",
         label="bathroom",
-        polygon=[],
+        polygon=[(0, 0), (1, 0), (0, 1)],
         walls=[],
         surfaces=[],
         openings=[],
@@ -168,7 +168,7 @@ def test_room_map_is_per_capture():
     anon = Room(
         room_id="room_01",
         label="room",
-        polygon=[],
+        polygon=[(0, 0), (1, 0), (0, 1)],
         walls=[],
         surfaces=[],
         openings=[],
