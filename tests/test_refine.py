@@ -107,3 +107,34 @@ def test_a_walled_box_nobody_saw_into_is_removed_but_an_unseen_open_patch_is_not
             assert room.area - refined.area > 1.0
         else:
             assert abs(refined.area - room.area) < 0.02 and notes == []
+
+
+def test_the_refinement_runs_on_lidar_and_not_on_monocular_depth(tmp_path, monkeypatch):
+    """A monocular depth map cannot show that floor is absent, so photo and video rooms stay as segmented.
+
+    On the 1x hall photos the rules took the hall from 35.12 to 2.11 m2.
+    """
+    import cozmo.pipeline.lidar as lidar
+    from cozmo.config import PipelineConfig
+    from cozmo.io import load_capture
+    from cozmo.schema import Tier
+    from tests.fixtures.raytrace_room import write_capture
+
+    calls = []
+    real = lidar.refine_rooms
+
+    def recording(*args, **kwargs):
+        calls.append(1)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(lidar, "refine_rooms", recording)
+    config = PipelineConfig(detect_damage=False, build_scope=False, max_keyframes=16)
+    root = write_capture(tmp_path / "room", drop_ceiling=False)
+
+    lidar.build_lidar_plan(load_capture(root), config)
+    assert len(calls) == 1
+
+    source = load_capture(root)
+    source.meta.tier = Tier.PHOTO
+    lidar.build_lidar_plan(source, config)
+    assert len(calls) == 1

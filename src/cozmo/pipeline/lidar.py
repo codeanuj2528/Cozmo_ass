@@ -415,7 +415,13 @@ def build_lidar_plan(
     )
     masks = room_masks(complex_)
     refinements: dict[int, list[str]] = {}
-    if config.refine_rooms:
+    # The corrections read the scan's returns as evidence that floor is absent: returns below the
+    # floor, no wall on either side, nothing seen. LiDAR measures those. A monocular depth map does
+    # not: its returns below the floor are scale and depth error and its walls are partial, so on
+    # the photo and video tiers, which reach this function too, the same rules removed floor that
+    # is there. The 1x hall photos went from 35.12 to 2.11 m2 and the 0.5x set gained a room
+    # overlap. They run on the LiDAR tier only.
+    if config.refine_rooms and source.meta.tier is Tier.LIDAR:
         unrefined_area = {key: polygon.area for key, polygon in polygons.items()}
         polygons, refinements = refine_rooms(
             polygons,
