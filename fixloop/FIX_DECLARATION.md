@@ -89,27 +89,30 @@ photo tier.
 
 ## 4. Regeneration
 
-The annotated tag `fixloop-before` sits on a **rewritten** history and is **not** an
-ancestor of current `HEAD`. Do not `git checkout fixloop-before` or
-`git diff fixloop-before..HEAD` — that diff is 61 files, not the fix.
+The annotated tag `fixloop-before` points at the declaration commit `aa7be32`, an ancestor
+of `HEAD`. `git diff fixloop-before..HEAD` is everything committed since then, not the fix; the
+fix alone is `git diff aa7be32..db4cfa9`.
 
-The declaration commit on this graph is `d15c21b`. The fix is `80c44f3`.
+Commit ids in this section were corrected on 14 Sep 2026. The ids first written here, `d15c21b`
+and `80c44f3`, belonged to a history that was later rewritten and are not reachable from any
+branch or tag, so they do not exist in a fresh clone. `aa7be32` and `db4cfa9` carry the identical
+patches.
 
 Photos live **outside** this repo: `../DROP_CAPTURES_HERE/03_multiroom_photos/`.
 Without that folder the before/after JSON already committed is the evidence.
 
 ```bash
-# readable fix (not the orphaned tag)
-git diff d15c21b..80c44f3
+# the fix alone
+git diff aa7be32..db4cfa9
 
 # before — needs the photo folders next to the repo
-git checkout d15c21b
+git checkout aa7be32
 .venv/bin/python -m cozmo.cli run \
   --input ../DROP_CAPTURES_HERE/03_multiroom_photos \
   --out fixloop/before
 
 # after
-git checkout 80c44f3   # or main
+git checkout db4cfa9   # or main
 .venv/bin/python -m cozmo.cli run \
   --input ../DROP_CAPTURES_HERE/03_multiroom_photos \
   --out fixloop/after

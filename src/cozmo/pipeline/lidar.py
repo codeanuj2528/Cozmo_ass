@@ -33,7 +33,6 @@ from cozmo.geometry.assemble import (
     adjacency_from_trajectory,
     RoomGeometry,
     build_room,
-    close_declared_gaps,
     unmet_adjacency_warnings,
     match_adjacency,
     room_levels,
@@ -469,7 +468,9 @@ def build_lidar_plan(
     )
     if not adjacency:
         adjacency = match_adjacency(rooms, lookups)
-    warnings.extend(close_declared_gaps(rooms, adjacency))
+    # Rooms stay where the scan measured them. They share one world frame, so a gap between two
+    # connected rooms is floor the segmentation left out, not a misplaced room, and moving rooms
+    # to close it moved them by up to 1.7 m on the assignment's scans.
     warnings.extend(unmet_adjacency_warnings(rooms, adjacency))
 
     quality = _quality_report(

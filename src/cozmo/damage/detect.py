@@ -41,9 +41,26 @@ log = logging.getLogger(__name__)
 MIN_STAIN_AREA_FRACTION = 0.0025
 MIN_CRACK_LENGTH_PX = 60
 MIN_CRACK_ELONGATION = 6.0
+# A crack in plaster or concrete follows the weakest path through the material and wanders. The
+# edge of a picture frame, a shelf or a panel photographs as a straight line to within a pixel or
+# two. On the assignment's floor-only scan the only crack left after every other test was the
+# lower edge of a picture frame, whose centreline stayed within 1.4 px of a straight line over
+# 471 px. Below this length a centreline is too short to tell a straight crack from an edge.
+STRAIGHTNESS_TEST_MIN_LENGTH_PX = 150
+MAX_EDGE_DEVIATION_SHARE = 0.01
 MAX_DETECTIONS_PER_FRAME = 8
-SURFACE_ASSIGN_TOLERANCE_M = 0.12
+# Damage is on a surface, so its depth points lie on the wall plane. A vanity front, the top edge
+# of a fridge or a picture frame sits centimetres in front of the wall: the only two findings on
+# the assignment's scans were 6-15 cm and 9-10 cm off it. Wall depth from the LiDAR is good to
+# about a centimetre at room distances.
+SURFACE_ASSIGN_TOLERANCE_M = 0.04
+MIN_ON_SURFACE_FRACTION = 0.70
 MERGE_DISTANCE_M = 0.35
+# Within that radius, two sightings are one finding only where they also land on the same patch of
+# the same wall. Pose and depth put a revisited point within a few centimetres. The radius alone
+# joined the rim of a toilet lid and the edge of its seat, 15 cm apart on the wall, into one crack
+# seen from two frames on the first home walk.
+SAME_PATCH_TOLERANCE_M = 0.05
 
 # A finding must be seen from more than one viewpoint. This is the defence against the
 # three surfaces the brief calls out -- mirrors, glass and wet-look floors -- and against
@@ -142,7 +159,8 @@ def detect_cracks(rgb: np.ndarray) -> list[ImageDetection]:
     A black-hat transform keeps structures darker than their surroundings and narrower
     than the kernel, which is what a crack is and what a shadow, a skirting board and a
     door frame are not. The elongation test then discards blobs: a crack is long and thin,
-    and the ratio of its principal axes is the cheapest way to say so.
+    and the ratio of its principal axes is the cheapest way to say so. The edge of a picture
+    frame or a shelf is long and thin too, but ruler-straight, and a crack is not.
     """
     grey = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
     grey = cv2.bilateralFilter(grey, 7, 40, 40)
@@ -173,9 +191,10 @@ def detect_cracks(rgb: np.ndarray) -> list[ImageDetection]:
         length = 4.0 * major
         if elongation < MIN_CRACK_ELONGATION or length < MIN_CRACK_LENGTH_PX:
             continue
-        score = float(np.clip(0.20 + 0.05 * min(elongation, 12.0), 0.1, 0.80))
-        angle = float(np.degrees(np.arctan2(coords[:, 1] @ coords[:, 1], 1.0)))
         principal = np.linalg.eigh(np.cov(coords.T) + 1e-9 * np.eye(2))[1][:, 1]
+        if _is_straight_edge(coords, principal):
+            continue
+        score = float(np.clip(0.20 + 0.05 * min(elongation, 12.0), 0.1, 0.80))
         angle = float(np.degrees(np.arctan2(principal[1], principal[0])) % 180.0)
         out.append(
             (
@@ -193,6 +212,21 @@ def detect_cracks(rgb: np.ndarray) -> list[ImageDetection]:
 
     kept = _reject_tiling_pattern(out)
     return sorted(kept, key=lambda d: -d.score)[:MAX_DETECTIONS_PER_FRAME]
+
+
+def _is_straight_edge(coords: np.ndarray, principal: np.ndarray) -> bool:
+    """Whether a long thin component's centreline is a straight line, as an edge's is and a crack's is not."""
+    along = coords @ principal
+    across = coords @ np.array([-principal[1], principal[0]])
+    span = float(np.ptp(along))
+    if span < STRAIGHTNESS_TEST_MIN_LENGTH_PX:
+        return False
+    bins = np.floor((along - along.min()) / 8.0).astype(int)
+    keys = np.unique(bins)
+    position = np.array([np.median(along[bins == b]) for b in keys])
+    centre = np.array([np.median(across[bins == b]) for b in keys])
+    line = np.polyval(np.polyfit(position, centre, 1), position)
+    return float(np.abs(centre - line).max()) < MAX_EDGE_DEVIATION_SHARE * span
 
 
 def _reject_tiling_pattern(
@@ -300,7 +334,7 @@ def project_detection(
         if int(on_wall.sum()) > best_inliers:
             best_inliers, best_index = int(on_wall.sum()), index
 
-    if best_index is None or best_inliers < max(10, 0.30 * len(world)):
+    if best_index is None or best_inliers < max(10, MIN_ON_SURFACE_FRACTION * len(world)):
         return None
 
     wall = walls[best_index]
@@ -317,6 +351,13 @@ def project_detection(
     return surface_id, best_index, np.stack([u, v], axis=1), on_surface
 
 
+def _footprint_gap_m(a: np.ndarray, b: np.ndarray) -> float:
+    """Distance between the surface bounding boxes of two sets of (u, v) points; zero where they overlap."""
+    du = max(0.0, max(a[:, 0].min(), b[:, 0].min()) - min(a[:, 0].max(), b[:, 0].max()))
+    dv = max(0.0, max(a[:, 1].min(), b[:, 1].min()) - min(a[:, 1].max(), b[:, 1].max()))
+    return float(np.hypot(du, dv))
+
+
 def build_damage_regions(
     projections: Sequence[tuple[str, str, np.ndarray, np.ndarray, ImageDetection]],
     book: IntervalBook,
@@ -325,10 +366,10 @@ def build_damage_regions(
 ) -> list[DamageRegion]:
     """Turn surface-projected detections into contract regions, merging repeat sightings.
 
-    The same stain seen from four frames is one finding. Merging is by class and by
-    proximity in world coordinates, and the merged extent is taken from the union of the
-    observations rather than from the largest, because a partial view of a stain
-    understates it and the union is the closest thing available to the whole.
+    The same stain seen from four frames is one finding. Merging is by class, by proximity in
+    world coordinates and by overlap on the same surface, and the merged extent is taken from
+    the union of the observations rather than from the largest, because a partial view of a
+    stain understates it and the union is the closest thing available to the whole.
     """
     merged: list[dict] = []
     for room_id, surface_id, uv, world, detection in projections:
@@ -336,7 +377,9 @@ def build_damage_regions(
         for group in merged:
             if group["room_id"] != room_id or group["class"] is not detection.damage_class:
                 continue
-            if np.linalg.norm(group["centroid"] - world.mean(axis=0)) < MERGE_DISTANCE_M:
+            near = np.linalg.norm(group["centroid"] - world.mean(axis=0)) < MERGE_DISTANCE_M
+            same_patch = group["surface_id"] == surface_id and _footprint_gap_m(group["uv"], uv) <= SAME_PATCH_TOLERANCE_M
+            if near and same_patch:
                 group["uv"] = np.vstack([group["uv"], uv])
                 group["world"] = np.vstack([group["world"], world])
                 group["centroid"] = group["world"].mean(axis=0)

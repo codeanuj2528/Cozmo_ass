@@ -89,4 +89,8 @@ def point_to_plane_icp(
             return IcpResult(transform, fitness, rmse, matched, True)
         previous = rmse
 
-    return IcpResult(transform, fitness, rmse, matched, True)
+    # Running out of iterations is not convergence. A match still moving after the last step is
+    # usually sliding along a wall: on the assignment's floor-only scan one such match fit 99.9%
+    # of its points but asked for 63 cm of drift, where a settled match three keyframes later
+    # asked for 1.4 cm.
+    return IcpResult(transform, fitness, rmse, matched, False)

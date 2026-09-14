@@ -21,7 +21,9 @@ Weights stay opt-in: LiDAR is pure geometry. Photo/video also need `.[ml]` befor
 
 **Try it now (no capture required):**
 
-Run on synthetic ray-traced room (100% Gates PASS, 3.60 × 2.80 × 2.50 m):
+Run on the synthetic ray-traced room, 3.60 × 2.80 m with a 2.50 m ceiling. It reconstructs to
+10.08 m² with every wall within 1 mm and the ceiling at 2.499 m. Its door and window are not
+detected.
 
 ```bash
 # Reconstruct synthetic room

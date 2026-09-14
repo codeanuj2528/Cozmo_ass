@@ -13,7 +13,7 @@ Two rounds. In each, the declaration was committed before the fix.
 | After | 17.37 m² | identical to before |
 | Gate | FAIL | FAIL |
 | Root cause right? | real, but not the dominant cause | no |
-| Declaration, fix | `d15c21b`, `80c44f3` | `88af4e3`, `20cb44a` |
+| Declaration, fix | `aa7be32`, `db4cfa9` | `0a8c579`, `11cebf3` |
 | Files | `FIX_DECLARATION.md`, `POSTMORTEM.md`, `before/`, `after/` | `round2/`: declaration, post-mortem, runs, manifests, gate tables |
 
 Against today's tape, round 1's photo-tier result reads 142.03 to 17.37 m² against 28.75 m²,
@@ -21,4 +21,4 @@ Against today's tape, round 1's photo-tier result reads 142.03 to 17.37 m² agai
 
 Neither round moved a gate to PASS. Diagnosing round 2's non-result found that the room map
 scoring every per-room number had been assigned by area and was wrong on both captures; the fix is
-`e4a4ece`.
+`ecf5d76`.

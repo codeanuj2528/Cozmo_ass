@@ -1,6 +1,6 @@
 # One-room run results
 
-13 Sep 2026, regenerated at `8aaf149`. The inputs, the reason for each and the three commands are in
+13 Sep 2026, regenerated at `2937d35`. The inputs, the reason for each and the three commands are in
 `SELECTION.md`.
 
 | Tier | Input | Rooms | Area, 90% interval | Openings | Ceiling | Runtime | Verdict |
@@ -12,7 +12,7 @@
 LiDAR and video are the same physical room. Photo is a different room, the home bathroom: there are
 no stills of `c00a170fe1`.
 
-The LiDAR outline was 17.36 m² until `50d192b`, which merges a short step the cell complex leaves in
+The LiDAR outline was 17.36 m² until `5091f2a`, which merges a short step the cell complex leaves in
 the middle of a straight wall back into the wall.
 
 Video warnings, not hidden: iPhone main-camera intrinsics assumed; consensus scale 1.945 from 27 of

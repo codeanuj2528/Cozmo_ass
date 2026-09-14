@@ -8,8 +8,8 @@ against tape (−12%). Both are real, both are shown below with their own before
 
 | Round | Target | Declared gate | Command |
 |---|---|---|---|
-| 1 (photo EXIF) | Photo footprint +422% | `d15c21b` → `80c44f3` | See §1 below |
-| 2 (ceiling evidence) | LiDAR footprint −12% | `88af4e3` → `20cb44a` | See §2 below |
+| 1 (photo EXIF) | Photo footprint +422% | `aa7be32` → `db4cfa9` | See §1 below |
+| 2 (ceiling evidence) | LiDAR footprint −12% | `0a8c579` → `11cebf3` | See §2 below |
 
 All before/after plans are committed in `fixloop/before/`, `fixloop/after/`,
 `fixloop/round2/before/`, `fixloop/round2/after/`.
@@ -19,7 +19,7 @@ All before/after plans are committed in `fixloop/before/`, `fixloop/after/`,
 ## Round 1 — the photo-tier EXIF fix
 
 **Declared gate:** Photo-tier footprint, 142.03 m² against a 27.20 m² LiDAR reference
-(+422%). Declaration committed at `d15c21b`, fix at `80c44f3`.
+(+422%). Declaration committed at `aa7be32`, fix at `db4cfa9`.
 
 ### Root cause
 
@@ -36,29 +36,53 @@ ratio        → 1.86× too long
 
 ### Code diff
 
-**Four changes shipped:**
+**Four changes shipped**, all in `db4cfa9` (`git show db4cfa9`). The excerpts below are cut
+from that commit's diff; `...` marks omitted lines.
 
 #### 1. EXIF sub-IFD read (`src/cozmo/recon/monocular.py`)
 
 ```diff
- def intrinsics_from_exif(img_path: Path) -> tuple[float, str]:
--    exif = Image.open(img_path).getexif()
--    f35 = exif.get(0xa405)  # FocalLengthIn35mmFilm
-+    pil_img = Image.open(img_path)
-+    exif = pil_img.getexif()
-+    # iPhone puts FocalLengthIn35mmFilm in the sub-IFD, not IFD0.
-+    sub_ifd = exif.get_ifd(0x8769)
-+    f35 = sub_ifd.get(0xa405) or exif.get(0xa405)
-     if f35 and f35 > 0:
--        return sensor_width_mm * img_w / (f35 * crop_factor), "exif_ifd0"
-+        return sensor_width_mm * img_w / (f35 * crop_factor), "exif_sub_ifd_35mm_equivalent"
++EXIF_SUB_IFD = 0x8769
+ ...
++def _focal_from_exif(path: Optional[Path]) -> tuple[float | None, str]:
+ ...
++        with Image.open(path) as image:
++            base = image.getexif()
++            if not base:
++                return None, "no_exif"
++            for ifd, label in ((base.get_ifd(EXIF_SUB_IFD), "exif_sub_ifd"), (base, "exif_ifd0")):
++                if not ifd:
++                    continue
++                tags = {TAGS.get(k, k): v for k, v in ifd.items()}
++                value = tags.get("FocalLengthIn35mmFilm")
++                if value:
++                    return float(value), f"{label}_35mm_equivalent"
+ ...
+ def intrinsics_from_exif(path: Optional[Path], width: int, height: int) -> tuple[np.ndarray, str]:
+ ...
+-            with Image.open(path) as image:
+-                exif = image.getexif()
+-                if exif:
+-                    tags = {TAGS.get(k, k): v for k, v in exif.items()}
+-                    value = tags.get("FocalLengthIn35mmFilm")
+-                    if value:
+-                        equivalent_mm = float(value)
+ ...
+-    source = "exif_35mm_equivalent"
++    equivalent_mm, source = _focal_from_exif(path)
 ```
 
 #### 2. Scale-correction band widened (`src/cozmo/recon/monocular.py`)
 
 ```diff
--SCALE_BAND = (0.75, 1.35)
-+SCALE_BAND = (0.25, 4.0)
+-SCALE_CORRECTION_MIN = 0.75
+-SCALE_CORRECTION_MAX = 1.35
++SCALE_CORRECTION_MIN = 0.25
++SCALE_CORRECTION_MAX = 4.0
++PLAUSIBLE_CAMERA_HEIGHT_M = (0.6, 2.4)
+ ...
+-    if backbone_is_metric and not (SCALE_CORRECTION_MIN <= factor <= SCALE_CORRECTION_MAX):
++    if not (SCALE_CORRECTION_MIN <= factor <= SCALE_CORRECTION_MAX):
 ```
 
 The old band was set while intrinsics were wrong and was rejecting every correct
@@ -67,11 +91,16 @@ correction: the prior was asking for 0.57 and being refused.
 #### 3. Room-level scale consensus (`src/cozmo/pipeline/photo.py`)
 
 ```diff
-+# Scale is a camera property, not per-frame. Median of the frames that see floor.
-+if floor_scales:
-+    consensus_scale = float(np.median(floor_scales))
-+    for frame in room_frames:
-+        frame.apply_scale(consensus_scale)
++    confident = [
++        e["geometry"].scale.factor
++        for e in pending
++        if e["geometry"].floor_found and e["geometry"].scale.source == "camera_height_correction"
++    ]
++    room_scale = float(np.median(confident)) if confident else None
+ ...
++        if room_scale is not None and geometry.scale.source != "camera_height_correction":
++            # Re-scale an image that could not recover its own scale onto the room's.
++            depth = depth * (room_scale / max(geometry.scale.factor, 1e-6))
 ```
 
 The camera-height prior fires on only 3 photographs in 20. Scale belongs to the camera
@@ -80,12 +109,16 @@ rather than to one photograph.
 #### 4. Plausibility guard (`src/cozmo/pipeline/photo.py`)
 
 ```diff
-+PLAUSIBLE_AREA_M2 = (1.0, 60.0)
-+PLAUSIBLE_CEILING_M = (1.8, 4.2)
-+
-+if not (PLAUSIBLE_AREA_M2[0] <= room_area <= PLAUSIBLE_AREA_M2[1]):
-+    log.warning("Room %s: area %.1f m² outside plausible range, dropping", room_id, room_area)
-+    continue
++PLAUSIBLE_CEILING_M = (1.80, 4.20)
++PLAUSIBLE_ROOM_AREA_M2 = (1.0, 60.0)
++PLAUSIBLE_ROOM_SPAN_M = 14.0
+ ...
++        reason = _implausible(largest)
++        if reason:
++            warnings.append(
++                f"{name}: reconstruction rejected as physically implausible ({reason}); "
++                f"reported as not reconstructed rather than published"
++            )
 ```
 
 A 113 m² bedroom is not a wide estimate, it is a wrong one.
@@ -112,8 +145,8 @@ Full post-mortem: [POSTMORTEM.md](POSTMORTEM.md)
 ## Round 2 — LiDAR ceiling evidence
 
 **Declared gate:** LiDAR footprint, 25.27 m² against a taped 28.75 m² (−12%) on the long
-walk, 16.57 m² (−42%) on the first walk. Declaration committed at `88af4e3`, fix at
-`20cb44a`.
+walk, 16.57 m² (−42%) on the first walk. Declaration committed at `0a8c579`, fix at
+`11cebf3`.
 
 ### Root cause hypothesis
 
@@ -131,35 +164,32 @@ Evidence from `163f18d3ac`:
 
 ### Code diff
 
+Shipped in `11cebf3` (`git show 11cebf3`); the excerpts are cut from its diff.
+
 #### Occupancy: ceiling evidence channel (`src/cozmo/geometry/occupancy.py`)
 
 ```diff
-+def rasterise_ceiling_evidence(
-+    cloud: FusedCloud,
-+    grid: OccupancyGrid,
-+    ceiling_height_m: float,
-+    height_band_m: float = 0.3,
-+) -> np.ndarray:
-+    """Rasterise downward-facing returns near ceiling height as interior evidence."""
-+    mask = (cloud.normals[:, 1] < -0.7) & (
-+        np.abs(cloud.points[:, 1] - ceiling_height_m) < height_band_m
++CEILING_EVIDENCE_MIN_HEIGHT_M = 1.95
++CEILING_EVIDENCE_NORMAL = 0.90
+ ...
++    ceiling_hits = np.zeros(grid.shape, dtype=bool)
++    ceiling_seen = (cloud.normals[:, 1] < -CEILING_EVIDENCE_NORMAL) & (
++        height > CEILING_EVIDENCE_MIN_HEIGHT_M
 +    )
-+    return grid.rasterise(cloud.points[mask], channel="ceiling")
++    if ceiling_y is not None:
++        ceiling_seen &= height < (ceiling_y - floor_y) + 0.15
++    if ceiling_seen.any():
++        cells = grid.to_cell(points_xz[ceiling_seen])
++        keep = grid.inside(cells)
++        ceiling_hits[cells[keep, 0], cells[keep, 1]] = True
 ```
 
 #### Cell complex: use ceiling evidence (`src/cozmo/geometry/cellcomplex.py`)
 
 ```diff
- def label_faces(self, evidence: OccupancyMaps) -> None:
-     for face in self.faces:
--        interior = evidence.floor[face.mask].sum() > 0
--        interior |= evidence.freespace[face.mask].sum() > 0
--        interior |= evidence.camera_track[face.mask].sum() > 0
-+        interior = evidence.floor[face.mask].sum() > 0
-+        interior |= evidence.freespace[face.mask].sum() > 0
-+        interior |= evidence.camera_track[face.mask].sum() > 0
-+        interior |= evidence.ceiling[face.mask].sum() > 0
-         face.label = "interior" if interior else "exterior"
+     evidence_mask = occ.floor_hits | (occ.free_mask & occ.observed)
++    if occ.ceiling_hits is not None:
++        evidence_mask = evidence_mask | (occ.ceiling_hits & ~(occ.wall_weight > 0))
 ```
 
 ### Before / after

@@ -40,7 +40,7 @@ saw through. A single photograph's depth map is a 2.5D surface with little behin
 stills at 0.5× detect no opening at all and the 12 of the hall at 1× detect one window, so the
 photo tier cannot join rooms at a doorway; it joins them by folder name, and the plan says so.
 
-The LiDAR tier finds 7 openings on the same flat.
+The LiDAR tier finds 8 openings on the long walk of the same flat.
 
 Fixing this needs a different detector for the photo tier — appearance-based door detection,
 or a learned layout estimator — not a threshold change.
@@ -53,7 +53,7 @@ sample has 61 downward-facing points in the entire scan.
 
 The pipeline reports `ceiling unmeasured` rather than substituting a default. On the first
 capture of the benchmark property, 1.4% of frames were aimed up and the result was poor; on
-the second, 24.3% were, and per-room heights came out at 2.56–2.68 m, with the
+the second, 24.3% were, and per-room heights came out at 2.56–2.67 m, with the
 window bay, whose only upward surface is a ledge, reporting none.
 
 ## 4. Mirrors, glass and wet-look surfaces
@@ -100,18 +100,25 @@ alone one at 79°, and the 1× photo hall two corners at 61°, so those rooms ar
 
 ## 6. A room the operator did not walk into is not reported
 
-Room segmentation requires camera track inside a face to label it interior. This is
-deliberate — it is what stops the reconstruction leaking through a glass balcony door and
-reporting the courtyard as a room, which it did before the rule existed (195 m² for a 44 m²
-flat). The cost is that a room seen only from its doorway is omitted.
+A face of the floor plan is interior only on direct evidence, and an unwalked face that no wall
+faces is dropped. This is deliberate — it is what stops the reconstruction leaking through a glass
+balcony door and reporting the courtyard as a room, which it did before the rule existed (195 m²
+for a 44 m² flat). Faces with interior evidence that join a walked face across a boundary with no
+wall behind it are kept, so the middle of a large room survives: without that the first walk's
+hall came out at 6.04 m² against a taped 14.86 m², and with it at 13.90 m². The cost runs the other
+way too. A space entered for a moment is drawn out to its walls however little of its floor was
+seen: the assignment's single-room scan reports an 8.82 m² room beside the living room that the
+walk entered only briefly, and 7.87 m² of that plan's 26.90 m² has no floor seen within 10 cm and
+no walking within 30 cm.
 
 ## 7. Damage detection without model weights
 
-With no weights present the classical detector runs: colour-anomaly for stains, black-hat
-ridge with tiling-pattern rejection for cracks. It is genuinely discriminative on synthetic
-walls (clean → nothing; stain → one stain, no crack; crack → one crack, no stain; tile grid →
-nothing) but it has no open-vocabulary capability and will miss classes it was not written
-for. The plan records which detector produced each finding.
+The classical detector runs: colour-anomaly for stains, black-hat ridge with tiling-pattern
+and straight-edge rejection for cracks. It is discriminative on synthetic walls (clean →
+nothing; stain → one stain, no crack; wandering crack → one crack, no stain; tile grid →
+nothing; a long ruler-straight line → nothing) but it has no open-vocabulary capability and will
+miss classes it was not written for. It also misses a crack that runs dead straight for more than
+about 150 px. The plan records which detector produced each finding.
 
 ## 8. Ultra-wide lens distortion is not modelled
 
@@ -141,12 +148,12 @@ scored as the passage and the first walk's bedroom as the hall. Rooms are now na
 taken by the camera standing deepest inside each room (`capture/room_identity/`), and the map is
 keyed by capture.
 
-## 12. Bathroom and passage merge
+## 12. Bathroom and passage merge on the long walk
 
-On both home walks one reconstructed room holds the bathroom and part of the passage, with fill
-ratios of 0.50 and 0.56. Neither room is then measured on its own: the long walk's bathroom reads
-+29% and its passage −22%, and the hall–passage connection is missed because the hall appears to
-open into the bathroom.
+On the long walk one reconstructed room still holds the bathroom and part of the passage in front
+of it, so the bathroom reads 3.02 m² against a taped 2.04 m² (+48%) and the passage 2.27 m² against
+2.55 m² (−11%). On the first walk the two are now separate rooms: the bathroom reads 2.08 m² (+2%)
+and the passage 1.93 m² (−24%).
 
 ## 13. The same bedroom differs by 0.3–1.2 m between walks
 
@@ -172,12 +179,17 @@ scored as written and is not softened for the tape's precision.
 
 ## 16. Damage on a damage-free flat
 
-The first walk reports one 0.08 m² water stain seen from two frames. The flat has no damage, so it
-is a false positive. The long walk reports none.
+No LiDAR run reports damage now. Before the surface, straight-edge and same-patch tests (§7 and
+`docs/design.md` §7), the first walk reported a 0.08 m² water stain and later a crack on the rim
+of a toilet seat, the assignment's floor-only scan reported the lower edge of a picture frame as a
+crack, and its two flat scans a vanity front and the edge of a fridge. All were false. Neither
+flat is known to have damage, so these runs show the detector staying silent, not that it finds
+real damage.
 
 ## 17. Segmentation moves with the height band
 
-The whole-property floor and ceiling bound the height bands for wall voting (to 6 cm below the
+Measured on the code at `4c7f3e2`, before the drift, segmentation and damage changes of 14 Sep, and
+not re-measured since. The whole-property floor and ceiling bound the height bands for wall voting (to 6 cm below the
 ceiling) and occupancy (to 12 cm below it). Reading those two levels over the centre of the floor
 instead of at the world origin raises the long walk's property ceiling by 2.8 cm, well inside both
 margins. It should change nothing. It changes the footprint from 25.27 to 24.51 m²; the bathroom
@@ -200,17 +212,21 @@ lights, the wet-look case in §4. Which of the two inflates the outline is not y
 
 ## 19. A room walked on its own keeps the passage it was entered from
 
-The bedroom-only walk began and ended at the doorway, outside the room, so the plan holds a 3.70 m²
-strip of passage beside the 7.81 m² bedroom, and the footprint row compares 11.51 m² with the
-bedroom's 9.29 m². The protocol asks for both still periods just inside the doorway.
+The bedroom-only walk began and ended at the doorway, outside the room, so the plan holds a 4.68 m²
+strip of passage beside the 8.90 m² bedroom, and the footprint row compares 13.58 m² with the
+bedroom's 9.29 m². The strip is 5.58 m long against a taped passage of 3.35 m. The protocol asks for
+both still periods just inside the doorway.
 
 ## 20. The assignment's flat, scanned twice, disagrees with itself
 
 `single_scan_floor_only.zip` and `single_scan_with_ceiling.zip` cover the same space. They
-reconstruct as 7 rooms and 35.74 m² and as 6 rooms and 31.57 m², 13% apart. Neither has tape, so
-neither can be called right. Both plans also close the gaps between declared neighbours by moving
-whole rooms, by up to 1.73 m, which says those rooms were not reconstructed touching in the first
-place; `quality.warnings` in each plan lists every move.
+reconstruct as 8 rooms and 42.26 m² and as 7 rooms and 47.31 m², 11% apart. Neither has tape, so
+neither can be called right. Aligned on their walls, 63% of the with-ceiling scan's wall points lie
+within 5 cm of the floor-only scan's walls and 81% within 10 cm, and the two room footprints
+overlap at an intersection-over-union of 0.65.
 
-Each plan now names every declared connection it draws more than 0.30 m apart: two on the
-with-ceiling scan, at 1.52 m and 3.84 m, and one on the 0.5× photo set, at 0.84 m.
+Rooms are drawn where they were measured. Some floor between rooms is not in any room, so rooms the
+operator walked between stand apart, and `quality.warnings` names every declared connection a plan
+draws more than 0.30 m apart: six on each scan, at 0.31–1.11 m on the floor-only scan and
+0.40–2.06 m on the with-ceiling scan. An earlier version closed those gaps by moving whole rooms, by
+up to 1.73 m, which made the plans look connected and put rooms where they were not measured.

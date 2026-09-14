@@ -1,7 +1,11 @@
 import re
 import os
 import sys
+from pathlib import Path
+
 from reportlab.lib.pagesizes import letter, A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import (
@@ -48,6 +52,38 @@ class NumberedCanvas(canvas.Canvas):
         
         self.restoreState()
 
+FONT_DIR = Path("/System/Library/Fonts/Supplemental")
+
+
+def register_fonts():
+    """Fonts that carry the report's minus signs, arrows, inequalities and box-drawing characters.
+
+    The built-in Helvetica and Courier have none of them, and ReportLab draws each as a blank or a
+    black box. Falls back to the built-ins where the macOS fonts are not installed.
+    """
+    faces = {
+        "Body": FONT_DIR / "Arial Unicode.ttf",
+        "Body-Bold": FONT_DIR / "Arial Bold.ttf",
+        "Body-Italic": FONT_DIR / "Arial Italic.ttf",
+        "Mono": FONT_DIR / "Courier New.ttf",
+    }
+    if not all(path.exists() for path in faces.values()):
+        return "Helvetica", "Helvetica-Bold", "Courier"
+    for name, path in faces.items():
+        pdfmetrics.registerFont(TTFont(name, str(path)))
+    pdfmetrics.registerFontFamily("Body", normal="Body", bold="Body-Bold", italic="Body-Italic", boldItalic="Body-Bold")
+    return "Body", "Body-Bold", "Mono"
+
+
+def _starts_block(line):
+    """Whether a source line starts something other than a continuation of the paragraph above it."""
+    return (
+        line.startswith(("```", "|", "#", "- ", "* ", "**Technical Report**"))
+        or line.strip() == "---"
+        or re.match(r"^\d+\.\s", line) is not None
+    )
+
+
 def md_to_pdf(md_path, pdf_path):
     with open(md_path, "r", encoding="utf-8") as f:
         text = f.read()
@@ -57,17 +93,18 @@ def md_to_pdf(md_path, pdf_path):
         pagesize=A4,
         leftMargin=24,
         rightMargin=24,
-        topMargin=24,
-        bottomMargin=24
+        topMargin=52,
+        bottomMargin=58
     )
 
     styles = getSampleStyleSheet()
+    body_font, bold_font, mono_font = register_fonts()
     
     # Custom styles
     title_style = ParagraphStyle(
         'DocTitle',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=bold_font,
         fontSize=14,
         leading=17,
         textColor=colors.HexColor("#1A202C"),
@@ -77,7 +114,7 @@ def md_to_pdf(md_path, pdf_path):
     subtitle_style = ParagraphStyle(
         'DocSubtitle',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=bold_font,
         fontSize=9,
         leading=11.5,
         textColor=colors.HexColor("#4A5568"),
@@ -87,7 +124,7 @@ def md_to_pdf(md_path, pdf_path):
     h1_style = ParagraphStyle(
         'Heading1_Custom',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=bold_font,
         fontSize=10,
         leading=12.5,
         textColor=colors.HexColor("#2B6CB0"),
@@ -99,7 +136,7 @@ def md_to_pdf(md_path, pdf_path):
     h2_style = ParagraphStyle(
         'Heading2_Custom',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=bold_font,
         fontSize=8.5,
         leading=11,
         textColor=colors.HexColor("#2D3748"),
@@ -111,7 +148,7 @@ def md_to_pdf(md_path, pdf_path):
     body_style = ParagraphStyle(
         'Body_Custom',
         parent=styles['Normal'],
-        fontName='Helvetica',
+        fontName=body_font,
         fontSize=7.2,
         leading=9.0,
         textColor=colors.HexColor("#2D3748"),
@@ -129,7 +166,7 @@ def md_to_pdf(md_path, pdf_path):
     code_style = ParagraphStyle(
         'Code_Custom',
         parent=styles['Normal'],
-        fontName='Courier',
+        fontName=mono_font,
         fontSize=6.8,
         leading=8.5,
         textColor=colors.HexColor("#1A202C"),
@@ -144,7 +181,7 @@ def md_to_pdf(md_path, pdf_path):
     table_cell_style = ParagraphStyle(
         'TableCell',
         parent=styles['Normal'],
-        fontName='Helvetica',
+        fontName=body_font,
         fontSize=7,
         leading=8.5,
         textColor=colors.HexColor("#2D3748")
@@ -153,7 +190,7 @@ def md_to_pdf(md_path, pdf_path):
     table_cell_bold = ParagraphStyle(
         'TableCellBold',
         parent=table_cell_style,
-        fontName='Helvetica-Bold'
+        fontName=bold_font
     )
 
     story = []
@@ -167,7 +204,7 @@ def md_to_pdf(md_path, pdf_path):
         txt = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'<u>\1</u>', txt)
         txt = re.sub(r'\*\*([^*]+)\*\*', r'<b>\1</b>', txt)
         txt = re.sub(r'\*([^*]+)\*', r'<i>\1</i>', txt)
-        txt = re.sub(r'`([^`]+)`', r'<font face="Courier" color="#C53030">\1</font>', txt)
+        txt = re.sub(r'`([^`]+)`', r'<font face="' + mono_font + r'" color="#C53030">\1</font>', txt)
         return txt
 
     while i < len(lines):
@@ -254,7 +291,7 @@ def md_to_pdf(md_path, pdf_path):
             i += 1
             continue
         elif line.startswith('**Technical Report**'):
-            story.append(Paragraph(line, subtitle_style))
+            story.append(Paragraph(format_inline(line), subtitle_style))
             i += 1
             continue
 
@@ -270,18 +307,24 @@ def md_to_pdf(md_path, pdf_path):
             i += 1
             continue
 
-        # Normal text paragraph
+        # Normal text paragraph. Markdown wraps one paragraph over several source lines, and bold
+        # and code spans often cross those breaks, so the lines are joined before formatting.
         if line.strip():
-            story.append(Paragraph(format_inline(line), body_style))
-        else:
-            story.append(Spacer(1, 4))
-            
+            paragraph = [line.strip()]
+            i += 1
+            while i < len(lines) and lines[i].strip() and not _starts_block(lines[i]):
+                paragraph.append(lines[i].strip())
+                i += 1
+            story.append(Paragraph(format_inline(" ".join(paragraph)), body_style))
+            continue
+        story.append(Spacer(1, 4))
         i += 1
 
     doc.build(story, canvasmaker=NumberedCanvas)
     print(f"Successfully compiled {md_path} -> {pdf_path}")
 
 if __name__ == '__main__':
-    md_file = "/Users/anuj/Desktop/cozmo_ass/cozmo/technical_report.md"
-    pdf_file = "/Users/anuj/Desktop/cozmo_ass/cozmo/technical_report.pdf"
+    root = Path(__file__).resolve().parents[1]
+    md_file = str(root / "technical_report.md")
+    pdf_file = str(root / "technical_report.pdf")
     md_to_pdf(md_file, pdf_file)

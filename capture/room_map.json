@@ -7,29 +7,33 @@
     "room_05": "passage"
   },
   "ae3edc814d": {
-    "room_01": "bedroom",
-    "room_02": "hall",
-    "room_03": "passage"
+    "room_01": "hall",
+    "room_02": "bedroom",
+    "room_03": "bathroom",
+    "room_04": "passage"
   },
   "5621ec5c54": {
     "room_01": "bedroom"
   },
   "_evidence": {
     "163f18d3ac": {
-      "room_01": "frames 17905 2800 870: sofa, curtained window, tray ceiling with downlights",
-      "room_02": "frames 9516 14082 11696: split AC, ceiling fan, glass-panel wardrobe",
-      "room_03": "frames 16771 15309 5760: shampoo niches, geyser, shower mixer; also an LED cove and a door. Holds the bathroom plus the upper passage",
-      "room_04": "frame 1467 only, 8 cameras: curtained window bay. Its only upward surface is a ledge 0.52 m above the floor and its ceiling is unmeasured. Not in the tape; left unmapped",
-      "room_05": "frames 15460 5847 12955: corridor with Nice Day doormat, bedroom door with red bedspread"
+      "room_01": "frame 4184: sofa, TV unit, stool with a laptop. Frames 17905 2800 870 (sofa, curtained window, tray ceiling with downlights) also stand in this room",
+      "room_02": "frame 8533: glass-panel wardrobe. Frame 9516 (split AC, ceiling fan) also stands in this room",
+      "room_03": "frames 15826 17000: WC, wall niches and shower seen from inside the bathroom door; frames 16771 15309 5760 (shampoo niches, geyser, shower mixer) also stand here. Frames 4948 16309 look along the marble-clad passage outside, so this room holds the bathroom plus part of the passage",
+      "room_04": "frame 1467 only, 6 keyframes: curtained window bay off the hall. Not in the tape; left unmapped",
+      "room_05": "frames 7045 12164 5847 12955: standing in the passage looking through the bedroom door at the red bedspread",
+      "room_06": "frames 6080 7259 11762 14124: red bedspread, split AC, ceiling fan, LED cove; frames 14082 11696 also stand here. A 0.9 m wide strip of the bedroom split off room_02. Left unmapped so the bedroom tape is not scored twice; room_02 and room_06 together are 7.82 m2",
+      "room_07": "no keyframe stands inside it; never walked. Left unmapped"
     },
     "ae3edc814d": {
-      "room_01": "frames 2677 3174: bed with red bedspread, padded headboard, wardrobe",
-      "room_02": "frames 1184 4355 1697: mandir, wall clock, shoe rack, front door, view down the corridor",
-      "room_03": "frames 2032 3758 4131: deepest frame is a doorway onto the bedroom (passage); 4131 is the bathroom WC and basin. Merged passage and bathroom, named by the deepest frame"
+      "room_01": "frames 1184 4355 (mandir, wall clock, shoe rack, front door) stand in this room; its deepest frame 1226 faces a window blind",
+      "room_02": "frames 2822 2677 3174: padded headboard, pillows, red bedspread, wardrobe",
+      "room_03": "frames 3885 4067 4192 4131: WC, wall niches and shower seen from the bathroom doorway; frames 1738 1936 look along the passage. 0.86 m by 2.57 m",
+      "room_04": "frames 2032 3442 2443: standing in the passage looking through the bedroom door"
     },
     "5621ec5c54": {
-      "room_01": "frames 5240 7680 2010: ceiling fan under an LED cove, wardrobe beside the bed, padded headboard",
-      "room_02": "frames 6726 142 1398: every one looks through the doorway into the bedroom from outside it. The strip of passage where the walk began and ended; not scored"
+      "room_01": "frame 5240: ceiling fan under an LED cove",
+      "room_02": "frame 6426: looks through the doorway into the bedroom from outside it. The strip of passage where the walk began and ended; not scored"
     }
   }
 }

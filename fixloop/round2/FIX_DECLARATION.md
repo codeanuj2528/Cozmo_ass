@@ -84,4 +84,4 @@ cozmo benchmark --runs fixloop/round2/after --ground-truth capture/ground_truth.
     --room-map capture/room_map.json --out fixloop/round2/gates
 ```
 
-`fixloop/round2/before/` is committed with this declaration, produced by commit `50d192b`.
+`fixloop/round2/before/` is committed with this declaration, produced by commit `5091f2a`.

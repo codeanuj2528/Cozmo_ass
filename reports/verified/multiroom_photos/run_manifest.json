@@ -3,17 +3,17 @@
   "schema_version": "1.0",
   "capture_id": "ae3edc814d",
   "tier": "photo",
-  "generated_at": "2026-09-13T08:05:27.467612+00:00",
-  "git_commit": "61c98a7",
-  "runtime_seconds": 198.456,
+  "generated_at": "2026-09-14T16:35:27.419244+00:00",
+  "git_commit": "4c7f3e2-dirty",
+  "runtime_seconds": 193.697,
   "timings": {
-    "total_s": 198.4556
+    "total_s": 193.6966
   },
   "keyframes_used": 0,
   "frames_available": 58,
   "points_fused": 0,
   "rooms_found": 3,
-  "total_floor_area_m2": 91.997,
+  "total_floor_area_m2": 97.189,
   "warnings": [
     "bathroom: no photograph in this room showed enough floor to recover scale; using property consensus scale 0.613 from other rooms",
     "bedroom: no photograph in this room showed enough floor to recover scale; using property consensus scale 0.613 from other rooms",

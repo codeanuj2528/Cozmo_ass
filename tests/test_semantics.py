@@ -46,6 +46,18 @@ def _wall(seed: int = 0) -> np.ndarray:
     ).astype(_np.uint8)
 
 
+def _draw_crack(image: np.ndarray, start, end, colour, thickness: int) -> None:
+    """A crack between two points that wanders either side of the straight line, as real ones do."""
+    import cv2
+
+    wander = np.array([0, 5, -3, 7, 2, -6, -2, 4, 8, 1, -5, 3, 0], dtype=float)
+    t = np.linspace(0.0, 1.0, len(wander))[:, None]
+    a, b = np.array(start, dtype=float), np.array(end, dtype=float)
+    normal = np.array([a[1] - b[1], b[0] - a[0]]) / np.linalg.norm(b - a)
+    points = a + t * (b - a) + wander[:, None] * normal
+    cv2.polylines(image, [np.round(points).astype(np.int32).reshape(-1, 1, 2)], False, colour, thickness)
+
+
 def test_clean_wall_yields_no_damage():
     """The property this module most needs: silence when there is nothing there."""
     from cozmo.damage.detect import detect_cracks, detect_water_stains
@@ -71,12 +83,10 @@ def test_stain_is_found_and_is_not_called_a_crack():
 
 
 def test_crack_is_found_and_is_not_called_a_stain():
-    import cv2
-
     from cozmo.damage.detect import detect_cracks, detect_water_stains
 
     cracked = _wall()
-    cv2.line(cracked, (80, 300), (520, 320), (40, 40, 40), 2)
+    _draw_crack(cracked, (80, 300), (520, 320), (40, 40, 40), 2)
 
     assert len(detect_cracks(cracked)) == 1
     assert detect_water_stains(cracked) == []
@@ -113,10 +123,13 @@ def test_a_crack_across_tiles_still_survives_the_grout_filter():
         cv2.line(tiled, (x, 0), (x, 400), (150, 150, 150), 2)
     for y in range(60, 400, 90):
         cv2.line(tiled, (0, y), (600, y), (150, 150, 150), 2)
-    cv2.line(tiled, (90, 340), (500, 120), (30, 30, 30), 3)
+    _draw_crack(tiled, (90, 340), (500, 120), (30, 30, 30), 3)
 
     found = detect_cracks(tiled)
-    assert len(found) == 1, "the diagonal crack must survive while the grid is suppressed"
+    # Where the crack crosses a grout line its ridge response dips, so it can come back in pieces.
+    # Every piece must lie on the crack, and none may be a grout line running across the image.
+    assert found, "the diagonal crack must survive while the grid is suppressed"
+    assert all(80 <= d.bbox[0] and d.bbox[2] <= 510 and 110 <= d.bbox[1] and d.bbox[3] <= 350 for d in found)
 
 
 def test_detector_never_claims_a_conformal_interval_it_has_not_fitted():
@@ -131,3 +144,67 @@ def test_detector_never_claims_a_conformal_interval_it_has_not_fitted():
 
     regions = build_damage_regions([], IntervalBook(), Tier.LIDAR, "classical")
     assert regions == []
+
+
+def test_detection_in_front_of_a_wall_is_not_damage_to_it():
+    """A cabinet front or a fridge edge a few centimetres off the wall is not the wall.
+
+    On the assignment's scans the only findings that passed the two-view rule were a wooden
+    vanity front 6-15 cm in front of the wall and the top edge of a fridge 9-10 cm off it.
+    """
+    from cozmo.damage.detect import ImageDetection, _WallView, project_detection
+    from cozmo.schema import DamageClass
+
+    k = np.array([[200.0, 0.0, 128.0], [0.0, 200.0, 96.0], [0.0, 0.0, 1.0]])
+    wall = _WallView(start=np.array([-2.0, 2.0]), direction=np.array([1.0, 0.0]), normal_xz=np.array([0.0, -1.0]), length=4.0)
+    detection = ImageDetection(
+        frame_index=0, damage_class=DamageClass.WATER_STAIN, bbox=(800.0, 600.0, 1100.0, 840.0), score=0.8, detector="classical"
+    )
+
+    on_wall = np.full((192, 256), 2.0, dtype=np.float32)
+    placed = project_detection(detection, on_wall, k, np.eye(4), (1920, 1440), [wall], {0: "room_01_s00"}, floor_y=-1.4)
+    assert placed is not None and placed[0] == "room_01_s00"
+
+    in_front = on_wall.copy()
+    in_front[70:125, 95:160] = 1.90
+    assert project_detection(detection, in_front, k, np.eye(4), (1920, 1440), [wall], {0: "room_01_s00"}, floor_y=-1.4) is None
+
+
+def test_straight_edge_on_a_wall_is_not_a_crack():
+    """The edge of a picture frame is thin, dark and long, and dead straight.
+
+    On the assignment's floor-only scan the lower edge of a picture frame was reported as a
+    crack seen from two frames. Its centreline stayed within 1.4 px of a straight line over
+    471 px.
+    """
+    import cv2
+
+    from cozmo.damage.detect import detect_cracks
+
+    edged = _wall()
+    cv2.line(edged, (80, 300), (520, 320), (40, 40, 40), 2)
+    assert detect_cracks(edged) == []
+
+
+def test_two_sightings_are_one_finding_only_on_the_same_patch_of_wall():
+    """Seen twice has to mean the same place seen twice.
+
+    On the first home walk the rim of a toilet lid and the edge of its seat, 15 cm apart on
+    the wall, were joined into one crack corroborated by two frames.
+    """
+    from cozmo.damage.detect import ImageDetection, build_damage_regions
+    from cozmo.schema import DamageClass, Tier
+    from cozmo.uncertainty.calibration import IntervalBook
+
+    def sighting(frame: int, u: float):
+        uv = np.array([[u, 0.70], [u + 0.06, 0.76]])
+        world = np.array([[u, 0.70, 2.0], [u + 0.06, 0.76, 2.0]])
+        detection = ImageDetection(
+            frame_index=frame, damage_class=DamageClass.CRACK, bbox=(0.0, 0.0, 10.0, 10.0), score=0.6, detector="classical"
+        )
+        return "room_03", "room_03_s01", uv, world, detection
+
+    apart = build_damage_regions([sighting(4045, 2.13), sighting(4175, 2.33)], IntervalBook(), Tier.LIDAR, "classical")
+    assert apart == []
+    together = build_damage_regions([sighting(4045, 2.13), sighting(4175, 2.15)], IntervalBook(), Tier.LIDAR, "classical")
+    assert len(together) == 1 and together[0].evidence_frames == [4045, 4175]

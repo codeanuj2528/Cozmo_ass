@@ -22,6 +22,13 @@ The corrected poses are applied by re-fusing. Correcting the fused cloud in plac
 cheaper, but voxel reduction has already averaged points from several frames into each
 voxel and kept only one frame's identity, so an in-place correction would apply one frame's
 delta to another frame's contribution.
+
+Only heading and horizontal position are corrected. Height and tilt are referenced to gravity
+and do not accumulate the way heading and position do, while ICP between two keyframes that
+mostly see ceiling or a blank wall is barely constrained vertically. With height free, closures
+of that kind lowered the last part of the assignment's with-ceiling walk by about 40 cm and
+spread its floor over 38 cm; held at what the phone measured, the floor lies within 3 cm over
+87% of the scan.
 """
 
 from __future__ import annotations
@@ -31,7 +38,6 @@ from dataclasses import dataclass, field
 import numpy as np
 from scipy.optimize import least_squares
 from scipy.sparse import lil_matrix
-from scipy.spatial.transform import Rotation
 
 from cozmo.geometry.icp import point_to_plane_icp
 from cozmo.io.base import CaptureSource, Frame
@@ -53,6 +59,19 @@ KEYFRAME_POINTS = 900
 # walked to distance closed.
 LOOP_MIN_PATH_RATIO = 6.0
 LOOP_MIN_PATH_M = 6.0
+
+# Visual-inertial odometry drifts by around a percent of the distance walked. A closure asking
+# for many times that is a match that slid, not drift: every closure on the assignment's
+# single-room scan asked for 56-88 cm after 6-7 m of walking, while on the 90 m home walk the
+# median closure asked for 0.13% of the path between the two visits.
+LOOP_MAX_DRIFT_SHARE = 0.03
+LOOP_MIN_ALLOWED_CORRECTION_M = 0.10
+# Height and tilt are referenced to gravity, and odometry does not drift in them the way it does
+# in heading and position. A settled ICP match that moves a keyframe further than this vertically,
+# or tips it further than this, matched the wrong surfaces: on the assignment's scans such matches
+# claimed up to 59 cm of height and 11 degrees of tilt.
+LOOP_MAX_HEIGHT_DISAGREEMENT_M = 0.05
+LOOP_MAX_TILT_DISAGREEMENT_RAD = float(np.deg2rad(2.0))
 
 # Information weights. Rotation and translation residuals are in different units and a
 # pose graph that adds radians to metres is weighting one arbitrarily against the other.
@@ -87,19 +106,39 @@ class DriftSolution:
     closures: list[LoopClosure] = field(default_factory=list)
 
 
-def _pose_to_vector(pose: np.ndarray) -> np.ndarray:
-    return np.concatenate([Rotation.from_matrix(pose[:3, :3]).as_rotvec(), pose[:3, 3]])
+def _rotation_about_up(theta: float) -> np.ndarray:
+    c, s = np.cos(theta), np.sin(theta)
+    return np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]])
 
 
-def _vector_to_pose(vector: np.ndarray) -> np.ndarray:
-    return make_pose(Rotation.from_rotvec(vector[:3]).as_matrix(), vector[3:])
+def _heading(rotation: np.ndarray) -> float:
+    """Angle about the vertical of a rotation that is close to identity."""
+    x_axis = rotation[:, 0]
+    return float(np.arctan2(-x_axis[2], x_axis[0]))
 
 
-def _relative_error(measured: np.ndarray, a: np.ndarray, b: np.ndarray) -> np.ndarray:
-    """Six-vector error between a measured relative pose and the one the estimate implies."""
-    predicted = invert_pose(a) @ b
-    delta = invert_pose(measured) @ predicted
-    return np.concatenate([Rotation.from_matrix(delta[:3, :3]).as_rotvec(), delta[:3, 3]])
+def _turn_and_shift(xz: np.ndarray, theta: np.ndarray, shift: np.ndarray) -> np.ndarray:
+    """Rotate rows of (x, z) about the vertical by `theta`, then add `shift`."""
+    c, s = np.cos(theta), np.sin(theta)
+    return np.stack(
+        [c * xz[:, 0] + s * xz[:, 1] + shift[:, 0], -s * xz[:, 0] + c * xz[:, 1] + shift[:, 1]], axis=1
+    )
+
+
+def _wrap_angle(a: np.ndarray) -> np.ndarray:
+    return (a + np.pi) % (2 * np.pi) - np.pi
+
+
+def _plausible_drift(horizontal_m: float, walked_m: float) -> bool:
+    """Whether odometry could have drifted this far horizontally over this much walking."""
+    return horizontal_m <= max(LOOP_MIN_ALLOWED_CORRECTION_M, LOOP_MAX_DRIFT_SHARE * walked_m)
+
+
+def _agrees_with_gravity(implied: np.ndarray, recorded: np.ndarray) -> bool:
+    """Whether a closure leaves the keyframe's height and tilt where gravity-referenced odometry put them."""
+    height = abs(float(implied[1, 3] - recorded[1, 3]))
+    tilt = float(np.arccos(np.clip((implied[:3, :3] @ recorded[:3, :3].T)[1, 1], -1.0, 1.0)))
+    return height <= LOOP_MAX_HEIGHT_DISAGREEMENT_M and tilt <= LOOP_MAX_TILT_DISAGREEMENT_RAD
 
 
 def load_keyframe_clouds(
@@ -203,6 +242,8 @@ def verify_loops(
     """Confirm candidate closures with ICP, keeping only those that align well."""
     by_position = {c.index: c for c in clouds}
     closures: list[LoopClosure] = []
+    positions = np.array([poses[k][[0, 2], 3] for k in keyframes])
+    walked = np.concatenate([[0.0], np.cumsum(np.linalg.norm(np.diff(positions, axis=0), axis=1))])
     for i, j in candidates:
         ci = by_position.get(keyframes[i])
         cj = by_position.get(keyframes[j])
@@ -226,6 +267,12 @@ def verify_loops(
         # disagrees wildly is more likely a false match than a real revisit.
         if correction < 0.004 or correction > 0.9:
             continue
+        implied = poses[keyframes[i]] @ result.transform
+        horizontal = float(np.linalg.norm((implied - poses[keyframes[j]])[[0, 2], 3]))
+        if not _plausible_drift(horizontal, float(walked[j] - walked[i])):
+            continue
+        if not _agrees_with_gravity(implied, poses[keyframes[j]]):
+            continue
         closures.append(LoopClosure(i=i, j=j, transform=result.transform,
                                     fitness=result.fitness, rmse=result.inlier_rmse))
     return closures
@@ -237,54 +284,78 @@ def optimise_pose_graph(
     closures: list[LoopClosure],
     max_iterations: int = 40,
 ) -> tuple[np.ndarray, float, float]:
-    """Least-squares over keyframe poses. Returns (poses, residual before, residual after)."""
+    """Least squares over each keyframe's heading and horizontal position.
+
+    Returns (poses, residual before, residual after). A keyframe's correction is a turn about
+    the vertical and a horizontal shift applied to the pose odometry reported, so height and
+    tilt are never changed. An edge compares where the second keyframe ends up with where the
+    first keyframe's correction and the edge's measurement put it, evaluated at the second
+    keyframe's own position: a small turn applied far from the origin is then a turn, not a
+    shift.
+    """
     n = len(keyframes)
     initial = np.stack([poses[k] for k in keyframes])
+    anchors = initial[:, [0, 2], 3]
 
-    edges: list[tuple[int, int, np.ndarray, np.ndarray]] = []
-    odometry_weight = np.array([1.0 / ODOMETRY_SIGMA_ROT_RAD] * 3 + [1.0 / ODOMETRY_SIGMA_TRANS_M] * 3)
+    first, second, turn, target, rot_weight, trans_weight = [], [], [], [], [], []
     for i in range(n - 1):
-        measured = invert_pose(initial[i]) @ initial[i + 1]
-        edges.append((i, i + 1, measured, odometry_weight))
+        first.append(i)
+        second.append(i + 1)
+        turn.append(0.0)
+        target.append(anchors[i + 1])
+        rot_weight.append(1.0 / ODOMETRY_SIGMA_ROT_RAD)
+        trans_weight.append(1.0 / ODOMETRY_SIGMA_TRANS_M)
     for closure in closures:
+        measured = initial[closure.i] @ closure.transform
         confidence = float(np.clip(closure.fitness, 0.1, 1.0))
-        weight = confidence * np.array(
-            [1.0 / LOOP_SIGMA_ROT_RAD] * 3 + [1.0 / LOOP_SIGMA_TRANS_M] * 3
-        )
-        edges.append((closure.i, closure.j, closure.transform, weight))
-
-    x0 = np.concatenate([_pose_to_vector(p) for p in initial])
+        first.append(closure.i)
+        second.append(closure.j)
+        turn.append(_heading((measured @ invert_pose(initial[closure.j]))[:3, :3]))
+        target.append(measured[[0, 2], 3])
+        rot_weight.append(confidence / LOOP_SIGMA_ROT_RAD)
+        trans_weight.append(confidence / LOOP_SIGMA_TRANS_M)
+    first_idx, second_idx = np.array(first), np.array(second)
+    turns, targets = np.array(turn), np.array(target)
+    rot_w, trans_w = np.array(rot_weight), np.array(trans_weight)
 
     def residuals(x: np.ndarray) -> np.ndarray:
-        estimates = [_vector_to_pose(x[6 * i : 6 * i + 6]) for i in range(n)]
-        out = np.empty(6 * len(edges) + 6)
-        for e, (i, j, measured, weight) in enumerate(edges):
-            out[6 * e : 6 * e + 6] = weight * _relative_error(measured, estimates[i], estimates[j])
-        # Gauge fixing. Without anchoring one pose the problem is invariant to a global
-        # rigid motion and the solver wanders through that null space.
-        out[-6:] = 1000.0 * (x[:6] - x0[:6])
-        return out
+        theta = x[0::3]
+        shift = np.stack([x[1::3], x[2::3]], axis=1)
+        moved = _turn_and_shift(anchors[second_idx], theta[second_idx], shift[second_idx])
+        predicted = _turn_and_shift(targets, theta[first_idx], shift[first_idx])
+        translation = (moved - predicted) * trans_w[:, None]
+        rotation = _wrap_angle(theta[second_idx] - theta[first_idx] - turns) * rot_w
+        # Gauge fixing: without holding the first keyframe the problem is invariant to a turn
+        # and a shift of the whole walk, and the solver wanders through that null space.
+        gauge = 1000.0 * x[:3]
+        return np.concatenate([np.stack([rotation, translation[:, 0], translation[:, 1]], axis=1).ravel(), gauge])
 
-    sparsity = lil_matrix((6 * len(edges) + 6, 6 * n), dtype=int)
-    for e, (i, j, _, _) in enumerate(edges):
-        sparsity[6 * e : 6 * e + 6, 6 * i : 6 * i + 6] = 1
-        sparsity[6 * e : 6 * e + 6, 6 * j : 6 * j + 6] = 1
-    sparsity[-6:, :6] = 1
-
+    x0 = np.zeros(3 * n)
     before = float(np.sqrt((residuals(x0) ** 2).mean()))
     if not closures:
         return initial, before, before
 
-    # A soft L1 loss keeps a single false closure that survived ICP verification from
-    # folding the whole map. Some always do survive: two bathrooms in the same flat look
-    # alike to a geometric matcher.
+    sparsity = lil_matrix((3 * len(first_idx) + 3, 3 * n), dtype=int)
+    for e, (i, j) in enumerate(zip(first_idx, second_idx)):
+        sparsity[3 * e : 3 * e + 3, 3 * i : 3 * i + 3] = 1
+        sparsity[3 * e : 3 * e + 3, 3 * j : 3 * j + 3] = 1
+    sparsity[-3:, :3] = 1
+
+    # A soft L1 loss keeps a single false closure that survived ICP verification from folding
+    # the whole map. Some always do survive: two bathrooms in the same flat look alike to a
+    # geometric matcher.
     solution = least_squares(
         residuals, x0, jac_sparsity=sparsity, method="trf", loss="soft_l1",
         f_scale=3.0, max_nfev=max_iterations, verbose=0,
     )
     after = float(np.sqrt((solution.fun**2).mean()))
-    optimised = np.stack([_vector_to_pose(solution.x[6 * i : 6 * i + 6]) for i in range(n)])
-    return optimised, before, after
+    theta = solution.x[0::3]
+    shift = np.stack([solution.x[1::3], solution.x[2::3]], axis=1)
+    corrected = np.stack([
+        make_pose(_rotation_about_up(theta[k]), np.array([shift[k, 0], 0.0, shift[k, 1]])) @ initial[k]
+        for k in range(n)
+    ])
+    return corrected, before, after
 
 
 def correct_drift(
@@ -301,7 +372,7 @@ def correct_drift(
 
     report = DriftReport(
         method=(
-            "keyframe pose graph, ICP-verified loop closures, gauge-fixed least squares"
+            "keyframe pose graph over heading and horizontal position, ICP-verified loop closures, gauge-fixed least squares"
             if closures
             else "pose graph built; no loop closure passed ICP verification"
         ),

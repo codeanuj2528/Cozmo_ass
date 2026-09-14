@@ -1,17 +1,17 @@
 # One-room run: which inputs, and why
 
-Unbiased means: pick the capture that *is* one room, not the capture that makes the
+Unbiased means: pick the capture closest to one room, not the capture that makes the
 pipeline look good. Rejected inputs are listed so the choice can be checked.
 
 ## Selected
 
 | Tier | Path | Why this one |
 |---|---|---|
-| LiDAR | `data/raw/c00a170fe1` (`single_room.zip`) | The assignment named it a single room. 37 s, 1,715 frames. The only Stray export that is not a multi-room walk. |
-| Video | that same folder's `rgb.mp4` (42 MB), copied as a *video-only* folder so the loader cannot see `odometry.csv` and cheat into the LiDAR tier | Same physical room, same walk, no depth, no poses. This is the fair video of that room. |
+| LiDAR | `data/raw/c00a170fe1` (`single_room.zip`) | The assignment named it a single room: 37 s, 1,715 frames, the shortest Stray export and the only one not walked through a whole flat. It is not strictly one room. The walk covers a living room, its bathroom and the lobby between them, and the plan reports four rooms. |
+| Video | that same folder's `rgb.mp4` (42 MB), copied as a *video-only* folder so the loader cannot see `odometry.csv` and cheat into the LiDAR tier | Same walk, no depth, no poses. This is the fair video of that capture. |
 | Photo | `03_multiroom_photos/bathroom/` — **7 stills** | Brief says 2–8 stills per room. Bathroom is the only home folder inside that band. |
 
-LiDAR + video are the **same room**. Photo is a **different room** (your bathroom). That is disclosed: we do not have 2–8 stills of `c00a170fe1`, and inventing them by dumping video frames would not be a photo-tier capture.
+LiDAR + video are the **same walk**. Photo is a **different room**, the home bathroom. That is disclosed: there are no 2–8 stills of `c00a170fe1`, and inventing them by dumping video frames would not be a photo-tier capture.
 
 ## Rejected, and why
 

@@ -502,73 +502,6 @@ def _nearest_opening(
     return None if best is None else best[1]
 
 
-def close_declared_gaps(
-    rooms: list[Room],
-    adjacencies: list[Adjacency],
-    max_gap_m: float = 2.0,
-) -> list[str]:
-    """Translate a room so a declared adjacency is also a geometric one.
-
-    The cell complex drops sliver faces (doorway throats, unwalked strips). Those faces
-    sat between two rooms, so the rooms come out adjacent in the graph and 20-40 cm
-    apart in the plan. A homeowner's floor plan does not have voids between rooms that
-    share a doorway, and the room-overlap gate passes vacuously on a scattered plan.
-
-    The smaller room is moved onto the larger along the shortest vector that closes the
-    gap. Areas, wall lengths and ceiling heights are unchanged; only the placement is.
-    Returns a warning per move so the shift is visible in the run.
-    """
-    from collections import defaultdict, deque
-
-    from shapely.ops import nearest_points
-
-    if not rooms or not adjacencies:
-        return []
-
-    by_id = {r.room_id: r for r in rooms}
-    graph: dict[str, list[str]] = defaultdict(list)
-    for edge in adjacencies:
-        graph[edge.room_a].append(edge.room_b)
-        graph[edge.room_b].append(edge.room_a)
-
-    # Anchor the largest room and pull every other room onto the growing
-    # component. Moving the smaller of each pair independently reopens the
-    # previous edge -- that is how room_03 closed onto room_02 and left a
-    # 40 cm void back to room_01.
-    root = max(rooms, key=lambda r: r.floor_area.value).room_id
-    frozen = {root}
-    queue: deque[str] = deque([root])
-    warnings: list[str] = []
-    while queue:
-        u = queue.popleft()
-        for v in graph[u]:
-            if v in frozen:
-                continue
-            pu, pv = Polygon(by_id[u].polygon), Polygon(by_id[v].polygon)
-            if pu.is_empty or pv.is_empty or not pu.is_valid or not pv.is_valid:
-                frozen.add(v)
-                queue.append(v)
-                continue
-            gap = float(pu.distance(pv))
-            if 0.01 <= gap <= max_gap_m:
-                p_on_u, p_on_v = nearest_points(pu, pv)
-                _translate_room(by_id[v], p_on_u.x - p_on_v.x, p_on_u.y - p_on_v.y)
-                warnings.append(
-                    f"closed {gap:.3f} m gap between {u} and {v} by translating {v} "
-                    f"onto the component anchored at {root}"
-                )
-            frozen.add(v)
-            queue.append(v)
-    return warnings
-
-
-def _translate_room(room: Room, tx: float, ty: float) -> None:
-    room.polygon = [(x + tx, y + ty) for x, y in room.polygon]
-    for wall in room.walls:
-        wall.start = (wall.start[0] + tx, wall.start[1] + ty)
-        wall.end = (wall.end[0] + tx, wall.end[1] + ty)
-
-
 # A partition is 0.1-0.25 m thick, so rooms drawn that far apart can still share one wall.
 UNMET_ADJACENCY_TOLERANCE_M = 0.30
 
@@ -576,10 +509,9 @@ UNMET_ADJACENCY_TOLERANCE_M = 0.30
 def unmet_adjacency_warnings(rooms, adjacencies, tolerance_m: float = UNMET_ADJACENCY_TOLERANCE_M) -> list[str]:
     """Declared connections the drawn plan does not show.
 
-    Gap closing moves each room onto one neighbour, so a room with two declared neighbours can
-    end up touching one and far from the other. The connection is still evidence from the
-    capture; the drawing does not show it, and the plan says so rather than leave a reader to
-    find the gap.
+    Rooms are drawn where they were measured, so two rooms the operator walked between are
+    drawn apart when the floor between them was left out. The connection is still evidence
+    from the capture; the drawing does not show it, and the plan says so.
     """
     shapes = {room.room_id: Polygon(room.polygon) for room in rooms if len(room.polygon) >= 3}
     warnings: list[str] = []

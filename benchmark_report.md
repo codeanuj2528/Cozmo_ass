@@ -121,7 +121,7 @@ mean half-width of 6.9 m, which is coverage by being uninformative.
 | Bathroom | 2.04 m² | 19.45 m² | no floor in frame; scale borrowed |
 | **Footprint** | **28.75 m²** | **92.00 m², +220%, FAIL** | gate ±8% |
 
-It was 60.87 m² over two rooms before `8aaf149`. Every photographed room passes through the LiDAR
+It was 60.87 m² over two rooms before `2937d35`. Every photographed room passes through the LiDAR
 geometry, and the level changes in that commit other than the 2.20 m bound re-cut it: restoring
 the old 1.6 m bound alone still gives 92.00 m². It fails its gate either way.
 
@@ -168,7 +168,7 @@ there is no telling which is closer. Both plans close the gaps between rooms by 
 by up to 1.73 m on the floor-only scan and 1.34 m on the other, and each reports one damage region
 nobody has checked: a 0.99 m crack and a 0.03 m² water stain.
 
-`single_room.zip` published 17.36 m² until `50d192b`, which merges a short step the cell complex
+`single_room.zip` published 17.36 m² until `5091f2a`, which merges a short step the cell complex
 leaves in the middle of a straight wall back into the wall.
 
 ## Head-to-head

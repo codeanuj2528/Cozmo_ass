@@ -1,6 +1,6 @@
 # Fix loop, round 2: what happened
 
-Declaration: `FIX_DECLARATION.md`, committed first (88af4e3). This is the account of running it.
+Declaration: `FIX_DECLARATION.md`, committed first (0a8c579). This is the account of running it.
 
 ## The fix moved nothing
 

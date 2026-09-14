@@ -258,7 +258,7 @@ rescue it.
 coverage fell from three wrong rooms to one plausible one. By the brief's own rubric that
 earns marks for the post-mortem and none for the prediction, which is correct.
 
-**Round 2, LiDAR, against the operator's tape.** Declared before the fix (`88af4e3`): footprint
+**Round 2, LiDAR, against the operator's tape.** Declared before the fix (`0a8c579`): footprint
 −12% on the long walk and −42% on the first walk, every room short, the bedroom 5.28 m² against
 9.29 m². Hypothesis: the strip between furniture and the wall behind it has no floor evidence, so
 faces there are labelled exterior and rooms end at the wardrobe front; ceiling returns above the

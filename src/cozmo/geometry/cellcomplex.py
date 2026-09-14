@@ -24,6 +24,7 @@ The two decisions are kept deliberately separate:
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass, field
 
 import cv2
@@ -46,6 +47,13 @@ MIN_ROOM_AREA_M2 = 1.5
 # is an open span (an L-shaped room, a missing wall, furniture that looked like a
 # partition) and the faces either side are one room.
 MAX_DOOR_WIDTH_M = 1.60
+# Faces of one room that meet only at a corner union into two polygons, and a room that is
+# not one polygon is dropped. Closing the union by this much joins them without moving a wall
+# by an amount the plan could report.
+ROOM_CLOSING_M = 0.03
+# An unwalked strip narrower than this that touches the rest of the interior only at its ends
+# is the gap between two close parallel wall lines, not floor anyone could stand on.
+APPENDAGE_MAX_WIDTH_M = 0.30
 
 
 @dataclass
@@ -261,6 +269,70 @@ def _wall_support(cells: np.ndarray, grid: Grid2D, segments: list[WallSegment]) 
     return float(supported.mean())
 
 
+def _recover_walked_floor(
+    faces: list[Face],
+    label_raster: np.ndarray,
+    grid: Grid2D,
+    segments: list[WallSegment],
+) -> None:
+    """Mark floor reachable from where the operator walked, without crossing a wall, as interior.
+
+    `_label_interior` drops an unwalked face that no wall faces, which keeps the outdoors and
+    reflections out of the plan. It also drops the middle of any room too wide for a wall probe
+    to reach, and on the first home walk that left the hall at 6.04 m2 against a taped 14.86 m2.
+    A face with interior evidence that joins a walked face across a boundary with no wall
+    behind it is part of the same room.
+    """
+    by_index = {f.index: f for f in faces}
+    neighbours: dict[int, list[int]] = {}
+    for (a, b), cells in _shared_boundaries(label_raster).items():
+        if len(cells) * grid.resolution < 0.12:
+            continue
+        if _wall_support(np.array(cells), grid, segments) < WALL_SUPPORT_THRESHOLD:
+            neighbours.setdefault(a, []).append(b)
+            neighbours.setdefault(b, []).append(a)
+    queue = deque(f.index for f in faces if f.track_cells > 0)
+    reached = set(queue)
+    while queue:
+        u = queue.popleft()
+        for v in neighbours.get(u, ()):
+            face = by_index.get(v)
+            if v in reached or face is None or face.evidence < INTERIOR_EVIDENCE_THRESHOLD:
+                continue
+            face.interior = True
+            reached.add(v)
+            queue.append(v)
+
+
+def _remove_appendage_strips(faces: list[Face]) -> None:
+    """Drop unwalked strips narrower than a person that meet the interior only at their ends.
+
+    Two close parallel wall lines cut a sliver the thickness of a partition. Inside a room the
+    sliver has floor along both long sides and stays. Where it runs out past the room along a
+    wall, only its end touches the room and it draws as a spike rather than a place to stand;
+    in the shipped plan of the assignment's with-ceiling scan such spikes carried 1.8 m2.
+    """
+    for _ in range(10):
+        interior = [f for f in faces if f.interior]
+        removed = False
+        for face in interior:
+            if face.track_cells > 0:
+                continue
+            width, length = _rectangle_sides_m(face.polygon)
+            if width >= APPENDAGE_MAX_WIDTH_M or length < 3 * width:
+                continue
+            shared = sum(
+                face.polygon.boundary.intersection(other.polygon.boundary).length
+                for other in interior
+                if other is not face and face.polygon.intersects(other.polygon)
+            )
+            if shared <= 2 * width + 0.10:
+                face.interior = False
+                removed = True
+        if not removed:
+            break
+
+
 def _assign_rooms(
     faces: list[Face],
     label_raster: np.ndarray,
@@ -268,6 +340,8 @@ def _assign_rooms(
     segments: list[WallSegment],
 ) -> None:
     """Group interior faces into rooms by union-find over unsupported boundaries."""
+    _recover_walked_floor(faces, label_raster, grid, segments)
+    _remove_appendage_strips(faces)
     interior = {f.index: f for f in faces if f.interior}
     if not interior:
         return
@@ -300,8 +374,7 @@ def _assign_rooms(
         # A wall line that continues across an open span scores as "supported" because
         # the line is near the cells, even when most of those cells have no wall
         # material on them. The longest unsupported stretch is the opening; if it is
-        # wider than a door the faces are one room. This is how the assignment
-        # single-room scan was being cut into two.
+        # wider than a door the faces are one room.
         span = _unsupported_span_m(np.array(cells), grid, segments)
         if span > MAX_DOOR_WIDTH_M:
             union(a, b)
@@ -429,6 +502,7 @@ def room_polygons(
     out: dict[int, Polygon] = {}
     for room, polys in grouped.items():
         merged = unary_union([p.buffer(1e-6) for p in polys]).buffer(-1e-6)
+        merged = merged.buffer(ROOM_CLOSING_M, join_style=2).buffer(-ROOM_CLOSING_M, join_style=2)
         if merged.is_empty:
             continue
         merged = clean_polygon(merged)
@@ -438,6 +512,16 @@ def room_polygons(
             continue
         out[room] = merged
     return _merge_diagonal_splits(out)
+
+
+def _rectangle_sides_m(geometry) -> tuple[float, float]:
+    """Short and long side of the smallest rectangle, at any angle, around a geometry."""
+    # GEOS flags a division by zero on edges parallel to an axis; the rectangle is still right.
+    with np.errstate(divide="ignore", invalid="ignore"):
+        xs, ys = geometry.minimum_rotated_rectangle.exterior.coords.xy
+    a = float(np.hypot(xs[1] - xs[0], ys[1] - ys[0]))
+    b = float(np.hypot(xs[2] - xs[1], ys[2] - ys[1]))
+    return min(a, b), max(a, b)
 
 
 def _merge_diagonal_splits(
@@ -475,11 +559,13 @@ def _merge_diagonal_splits(
                 inter = pa.buffer(0.03).intersection(pb.buffer(0.03))
             if inter.is_empty:
                 continue
-            minx, miny, maxx, maxy = inter.bounds
-            sx, sy = maxx - minx, maxy - miny
-            if min(sx, sy) < strip_width_m and max(sx, sy) > 1.0:
+            # Width is measured in the overlap's own frame. An axis-aligned bounding box calls a
+            # partition strip that runs diagonally across the world axes fat, and the
+            # assignment's living room and bathroom, scanned about 40 degrees off those axes,
+            # were joined into one room that way.
+            if inter.buffer(-strip_width_m / 2).is_empty:
                 continue
-            if max(sx, sy) >= min_span_m:
+            if _rectangle_sides_m(inter)[1] >= min_span_m:
                 union(a, b)
 
     groups: dict[int, list[Polygon]] = {}

@@ -90,19 +90,39 @@ camera track). A flood fill was tried first and leaked through a glass balcony d
 reporting 195 m² for a 44 m² flat. A face of an arrangement is bounded by lines on all
 sides, so a labelling mistake cannot propagate.
 
+An unwalked face that no wall faces is dropped, which keeps the outdoors out of the plan but
+also dropped the middle of any room too wide for a wall probe to reach: the first home walk's
+hall came out at 6.04 m² against a taped 14.86 m². A face with interior evidence that joins a
+walked face across a boundary with no wall behind it is therefore floor of the same room.
+Unwalked strips narrower than 30 cm that meet a room only at their ends, the gap between two
+close parallel wall lines, are removed. Two rooms are merged across a diagonal split only when
+their overlap is wide in its own frame; measured with an axis-aligned box instead, the
+assignment's living room and bathroom, scanned about 40° off the world axes, became one room.
+
 ### Drift correction (`cozmo/geometry/drift.py`)
 
 ARKit's odometry is locally excellent and globally not: on the long walk, 107 m of
-odometry over 312 s, the pose graph starts with a 0.709 m residual. Correction is a pose
-graph over keyframes:
+odometry over 312 s, the pose graph starts with a 0.389 m residual. Correction is a pose
+graph over keyframes that moves only their heading and horizontal position:
 
 - **Odometry edges** at the reported relative pose
 - **Loop-closure edges** at the pose ICP measured
 
+Height and tilt stay as the phone measured them. They are referenced to gravity and do not
+accumulate the way heading and position do, while ICP between two keyframes that mostly see
+ceiling or blank wall is barely constrained vertically: with all six degrees of freedom free,
+closures of that kind lowered part of the assignment's with-ceiling walk by about 40 cm.
+
 Loop candidates are proposed by geometry and confirmed by ICP, never the reverse. A
 candidate must be a genuine revisit — path walked at least 6× the distance closed, and at
-least 6 m. Rotation and translation residuals are weighted by separate information terms,
-and a soft-L1 loss keeps one false closure from folding the map.
+least 6 m — and its ICP match must reach 0.55 fitness and 0.035 m RMSE, converge within its
+iterations, ask for no more horizontal drift than 10 cm or 3% of the path walked between the
+two keyframes, whichever is larger, and leave height within 5 cm and tilt within 2° of
+odometry. On the assignment's single-room scan every one of the 16 candidates that passed
+fitness asked for 56–88 cm after under 7 m of walking, and none is kept. On the long walk 77
+of 110 are kept and the residual falls to 0.262 m. Rotation and translation residuals are
+weighted by separate information terms, and a soft-L1 loss keeps one false closure that
+survives all of this from folding the map.
 
 ### Levels (`cozmo/geometry/levels.py`)
 
@@ -163,8 +183,12 @@ MET, not hidden.
 1. **Doorway matching** — if two rooms both see an opening, the opening connects them
 2. **Folder-name fallback** — if no doorway matches (the photo tier), rooms are connected
    by folder naming convention (e.g., `room_01` and `room_02` are adjacent)
-3. **Gap closing** — rooms connected by declared adjacency are translated to close their
-   gap, by up to a configurable maximum
+
+On a LiDAR capture rooms are never moved to make a connection touch. Every room is already in
+one world frame, so a gap between two connected rooms is floor the segmentation left out, not a
+misplaced room. An earlier step translated rooms to close such gaps and moved them by up to
+1.73 m on the assignment's scans. Each plan now lists in `quality.warnings` every declared
+connection it draws more than 0.30 m apart.
 
 Room overlap is checked: if any room polygon overlaps another, it is an automatic failure
 per the brief. The cell complex prevents this structurally in the LiDAR tier; the photo
@@ -181,6 +205,16 @@ bounding box in an image is not a finding; a region of a named wall with an area
 Multi-view corroboration is required: a specular highlight is view-dependent and never
 reprojects to the same patch of surface twice. On the author's marble-and-glass flat that
 took damage from 21 false regions to 1.
+
+On the assignment's scans the two findings that still passed that rule were a vanity front and
+the top edge of a fridge, both centimetres in front of the wall, so at least 70% of a detection's
+depth points must now lie within 4 cm of the wall plane. The two that passed that as well, across
+all seven LiDAR runs, were the lower edge of a picture frame and the rim of a toilet seat. A crack
+candidate longer than 150 px whose centreline stays within 1% of its length of a straight line is
+an edge, not a crack: the picture frame stayed within 1.4 px of a line over 471 px. And two
+sightings are one finding only where they also land on the same patch of the same wall, within
+5 cm: the toilet's lid rim and seat edge were 15 cm apart. No LiDAR run in `reports/verified/`
+now reports damage.
 
 ### Rule engine (`cozmo/damage/rules.py`)
 
