@@ -35,5 +35,20 @@
       "room_01": "frame 5240: ceiling fan under an LED cove",
       "room_02": "frame 6426: looks through the doorway into the bedroom from outside it. The strip of passage where the walk began and ended; not scored"
     }
+  },
+  "c00a170fe1": {
+    "room_01": "bedroom"
+  },
+  "c7d28f72c6": {
+    "room_01": "hall",
+    "room_03": "bedroom",
+    "room_05": "passage",
+    "room_06": "bathroom"
+  },
+  "1a8384c3f6": {
+    "room_01": "hall",
+    "room_02": "bedroom",
+    "room_07": "passage",
+    "room_08": "bathroom"
   }
 }
