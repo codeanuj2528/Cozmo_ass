@@ -2,7 +2,7 @@
 <rect width="1096" height="1552" fill="#ffffff"/>
 <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
 <text x="28" y="38" font-size="22" font-weight="600" fill="#22222a">Floor Plan - Capture 163f18d3ac</text>
-<text x="28" y="62" font-size="12" fill="#7a7a86">Tier: LIDAR | Total Floor Area: 31.26 m²</text>
+<text x="28" y="62" font-size="12" fill="#7a7a86">Tier: LIDAR | Total Floor Area: 29.13 m²</text>
 <line x1="28" y1="82" x2="1068" y2="82" stroke="#dedcd4" stroke-width="1"/>
 <polygon points="193.19,594.13 257.04,226.41 812.76,322.90 814.87,702.08" stroke="none" fill="#f4f1ea"/>
 <polygon points="426.32,1364.84 469.47,1116.32 817.51,1176.76 818.72,1394.82 759.62,1384.55 753.19,1421.59" stroke="none" fill="#eceadf"/>
@@ -10,14 +10,12 @@
 <polygon points="812.76,322.90 966.36,349.57 915.51,642.42 814.55,645.85" stroke="none" fill="#eceadf"/>
 <polygon points="130.41,1045.23 148.04,943.68 419.10,990.75 417.79,937.30 482.66,948.57 456.06,1101.77" stroke="none" fill="#f4f1ea"/>
 <polygon points="496.48,1004.18 816.04,1059.67 796.34,1173.08 503.01,1122.15" stroke="none" fill="#eceadf"/>
-<polygon points="521.46,816.93 542.14,697.83 815.11,745.23 815.79,868.04" stroke="none" fill="#f4f1ea"/>
 <polygon points="193.19,594.13 257.04,226.41 812.76,322.90 814.87,702.08" stroke="#22222a" stroke-width="14.08" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="426.32,1364.84 469.47,1116.32 817.51,1176.76 818.72,1394.82 759.62,1384.55 753.19,1421.59" stroke="#22222a" stroke-width="14.08" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="180.33,757.70 196.11,666.82 336.17,662.07 412.63,675.35 413.75,691.49 419.30,676.50 526.67,695.15 505.99,814.25 485.76,810.73 490.80,901.72 483.03,946.44 382.70,887.29 398.62,795.60" stroke="#22222a" stroke-width="14.08" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="812.76,322.90 966.36,349.57 915.51,642.42 814.55,645.85" stroke="#22222a" stroke-width="14.08" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="130.41,1045.23 148.04,943.68 419.10,990.75 417.79,937.30 482.66,948.57 456.06,1101.77" stroke="#22222a" stroke-width="14.08" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="496.48,1004.18 816.04,1059.67 796.34,1173.08 503.01,1122.15" stroke="#22222a" stroke-width="14.08" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<polygon points="521.46,816.93 542.14,697.83 815.11,745.23 815.79,868.04" stroke="#22222a" stroke-width="14.08" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <line x1="524.11" y1="651.59" x2="433.30" y2="635.83" stroke="#ffffff" stroke-width="17.60" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <line x1="524.11" y1="651.59" x2="433.30" y2="635.83" stroke="#22222a" stroke-width="2.30" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <line x1="524.11" y1="651.59" x2="539.88" y2="560.79" stroke="#8a8a96" stroke-width="1.54" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
@@ -32,10 +30,6 @@
 <line x1="746.02" y1="1420.35" x2="448.38" y2="1368.67" stroke="#ffffff" stroke-width="17.60" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <line x1="745.49" y1="1423.40" x2="447.85" y2="1371.72" stroke="#3d6fa8" stroke-width="2.82" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <line x1="746.55" y1="1417.30" x2="448.91" y2="1365.61" stroke="#3d6fa8" stroke-width="2.82" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="525.14" y1="703.94" x2="513.75" y2="769.52" stroke="#ffffff" stroke-width="17.60" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="525.14" y1="703.94" x2="513.75" y2="769.52" stroke="#22222a" stroke-width="2.30" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="525.14" y1="703.94" x2="459.56" y2="692.55" stroke="#8a8a96" stroke-width="1.54" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<path d="M 513.75 769.52 A 66.56 66.56 0 1 0 459.56 692.55" stroke="#8a8a96" stroke-width="1.28" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="7.68,6.40"/>
 <line x1="953.33" y1="424.65" x2="927.05" y2="575.99" stroke="#ffffff" stroke-width="17.60" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <line x1="956.38" y1="425.18" x2="930.10" y2="576.52" stroke="#3d6fa8" stroke-width="2.82" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <line x1="950.27" y1="424.12" x2="923.99" y2="575.46" stroke="#3d6fa8" stroke-width="2.82" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
@@ -94,18 +88,10 @@
 <text x="780.97" y="1112.00" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-80.15 780.97 1112.00)">0.90 ±3.5cm</text>
 <text x="654.06" y="1122.39" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-350.15 654.06 1122.39)">2.33 ±2.8cm</text>
 <text x="525.31" y="1061.75" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-273.17 525.31 1061.75)">0.92 ±2.8cm</text>
-<text x="673.56" y="744.37" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 07</text>
-<text x="673.56" y="780.21" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">2.12 m2</text>
-<text x="673.56" y="816.05" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
-<text x="557.02" y="761.76" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-80.15 557.02 761.76)">0.94 ±2.8cm</text>
-<text x="674.24" y="746.76" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(9.85 674.24 746.76)">2.16 ±6.5cm</text>
-<text x="789.85" y="806.78" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(89.68 789.85 806.78)">0.96 ±4.1cm</text>
-<text x="673.00" y="817.26" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-350.15 673.00 817.26)">2.33 ±7.0cm</text>
 <line x1="519.18" y1="464.87" x2="877.31" y2="479.09" stroke="#7a7a86" stroke-width="1.02" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.80,12.80" opacity="0.50"/>
 <line x1="519.18" y1="464.87" x2="378.29" y2="761.14" stroke="#7a7a86" stroke-width="1.02" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.80,12.80" opacity="0.50"/>
 <line x1="378.29" y1="761.14" x2="314.54" y2="1018.09" stroke="#7a7a86" stroke-width="1.02" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.80,12.80" opacity="0.50"/>
 <line x1="314.54" y1="1018.09" x2="653.01" y2="1088.95" stroke="#7a7a86" stroke-width="1.02" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.80,12.80" opacity="0.50"/>
 <line x1="628.86" y1="1271.82" x2="653.01" y2="1088.95" stroke="#7a7a86" stroke-width="1.02" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.80,12.80" opacity="0.50"/>
-<line x1="378.29" y1="761.14" x2="673.56" y2="782.77" stroke="#7a7a86" stroke-width="1.02" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.80,12.80" opacity="0.50"/>
 <g><line x1="28" y1="1532" x2="668.0" y2="1532" stroke="#22222a" stroke-width="2"/><line x1="28" y1="1528" x2="28" y2="1536" stroke="#22222a" stroke-width="2"/><line x1="668.0" y1="1528" x2="668.0" y2="1536" stroke="#22222a" stroke-width="2"/><text x="676.0" y="1536" font-size="11" fill="#7a7a86">5 m</text></g>
 </g></svg>

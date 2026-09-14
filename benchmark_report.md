@@ -1,6 +1,8 @@
 # Benchmark report
 
-15 Sep 2026, on the code of 14 Sep. Every number regenerates with `scripts/regenerate_verified.sh`.
+15 Sep 2026, after fix loop round 3: the LiDAR plans at `3dc8471`, the photo and video plans at
+`8b53ef4`, which changes only those two tiers. Every number regenerates with
+`scripts/regenerate_verified.sh`.
 Ground truth is the operator's tape (`capture/ground_truth.csv`, `tool=tape`), recorded in whole or
 half feet. It covers wall lengths, floor areas and adjacency for the home flat. It does not cover
 ceilings, doors or bathroom walls, or anything on the assignment's flat, so those gates report SKIP.
@@ -9,17 +11,19 @@ ceilings, doors or bathroom walls, or anything on the assignment's flat, so thos
 
 | status | count |
 |---|---|
-| PASS | 14 |
-| FAIL | 19 |
+| PASS | 15 |
+| FAIL | 18 |
 | SKIP | 33 |
 
 Full table: `reports/verified/gates/gate_table.txt`.
 
 PASS: drift accountability on the six LiDAR runs; room overlap on the two home walks, the bedroom
-scan, the assignment's three scans and the 0.5× photo set; interval coverage on the 1× hall photos,
-whose intervals are metres wide. FAIL: walls, footprint and interval coverage on the two home walks,
-the bedroom scan and the 0.5× photo set; adjacency on the two home walks and the 0.5× photo set;
-walls and footprint on the 1× hall photos; both repeatability pairs. SKIP: ceiling height and opening
+scan, the assignment's three scans and the 0.5× photo set; footprint on the long walk, inside ±5%
+because its per-room errors offset and, since fix loop round 3, a room never walked into is no
+longer in it; interval coverage on the 1× hall photos, whose intervals are metres wide. FAIL: walls
+and interval coverage on the two home walks, the bedroom scan and the 0.5× photo set; footprint on
+the first walk, the bedroom scan and the 0.5× photo set; adjacency on the two home walks and the 0.5×
+photo set; walls and footprint on the 1× hall photos; both repeatability pairs. SKIP: ceiling height and opening
 widths on all eight scored runs (no tape); walls, footprint, interval coverage and adjacency on the
 assignment's three scans (a different property, no tape); adjacency on the bedroom scan and the 1×
 hall photos; room overlap on the 1× hall photos; drift on both photo sets (not applicable).
@@ -29,10 +33,10 @@ hall photos; room overlap on the 1× hall photos; drift on both photo sets (not 
 Named from RGB frames taken by the camera standing inside each room (`capture/room_identity/`),
 never from area, because area is one of the scored quantities. An earlier map named rooms by matching
 areas and was wrong on both captures. Room ids changed with the code of 14 Sep, so the map was rebuilt
-from new frames, and each id's evidence is in `capture/room_map.json`. Three rooms of the long walk
+from new frames, and each id's evidence is in `capture/room_map.json`. Two rooms of the long walk
 are left out of it on purpose: a 0.9 m strip of the bedroom that the segmentation split off
-(`room_06`), so the bedroom tape is not scored twice; a window bay off the hall; and a space no
-keyframe stands in.
+(`room_06`), so the bedroom tape is not scored twice, and a window bay off the hall. A third, a space
+no keyframe stands in, was removed from the plan by fix loop round 3.
 
 ## LiDAR against tape
 
@@ -46,14 +50,15 @@ Long walk `163f18d3ac`, which followed the protocol: ceiling lap done, loop clos
 | Passage | 2.55 m² | 2.27 m² | −11% | 8.5 × 4.0 ft | 11 × 2.5 ft |
 | Window bay | not taped | 2.41 m² | — | 8.3 × 3.9 ft | — |
 | Bedroom strip | not taped | 2.18 m² | — | 8.3 × 3.0 ft | — |
-| Not walked into | not taped | 2.12 m² | — | 7.7 × 3.1 ft | — |
-| **Footprint** | **28.75 m²** | **31.26 m²** | **+9%, FAIL** | | the four taped rooms alone sum to 24.54 m², −15% |
+| **Footprint** | **28.75 m²** | **29.13 m²** | **+1%, PASS** | | the four taped rooms alone sum to 24.54 m², −15% |
 
-Extents are the sides of the smallest rectangle around each room. Adjacency 2/6: found hall–bathroom
-and passage–bathroom; missed hall–passage and passage–bedroom, because the walk crosses from the
-passage into the split-off strip of the bedroom, which the map leaves unnamed; the four other edges
-lead to the three unnamed rooms, and the hall does open onto its window bay. Walls 0/15 within 2 cm,
-worst 134.4 cm, 3 unpaired. 8 openings.
+Extents are the sides of the smallest rectangle around each room. The footprint passes because a
+2.12 m² room that no keyframe stands in left the plan in fix loop round 3; before that it read
+31.26 m², +9%, and no taped room changed. It passes with the bedroom 39% short and the bathroom 48%
+long. Adjacency 2/5: found hall–bathroom and passage–bathroom; missed hall–passage and
+passage–bedroom, because the walk crosses from the passage into the split-off strip of the bedroom,
+which the map leaves unnamed; the three other edges lead to the two unnamed rooms, and the hall does
+open onto its window bay. Walls 0/15 within 2 cm, worst 134.4 cm, 3 unpaired. 7 openings.
 
 Home first walk `ae3edc814d`: 73 s, 1.4% of frames aimed at the ceiling.
 
@@ -83,9 +88,10 @@ about ±15 cm.
 | Ceiling | not taped | 2.625 m | 2.625 m | 2.617 m |
 
 The scan's area is within the tape's precision; its shape is not, 12.4 ft long against 10 ft. The plan
-also holds a 4.68 m² strip of passage where the walk began and ended, so its footprint row reads
-13.58 m² against the bedroom's 9.29 m² (+46%). Against the long walk's bedroom 1 of 6 walls agrees
-within 1 cm (worst 123.7 cm) and the ceilings are 0.1 cm apart: FAIL.
+also holds a 1.98 m² strip of passage where the walk began and ended (4.68 m² until fix loop round 3
+cut it off where its walls end), so its footprint row reads 10.88 m² against the bedroom's 9.29 m²
+(+17%). Against the long walk's bedroom 1 of 6 walls agrees
+within 1 cm (worst 123.7 cm) and the ceilings are under 0.05 cm apart: FAIL.
 
 ## Repeatability
 
@@ -155,35 +161,40 @@ showed enough floor. Interval coverage passes 5/5 only because the intervals are
 ## Video tier
 
 Metric scale is not solved. The whole-flat walkthrough produces one room of about 371 m², and the
-assignment zip's own `rgb.mp4` without its poses gives 339.61 m² for a walk LiDAR puts at 26.90 m².
+assignment zip's own `rgb.mp4` without its poses gives 339.61 m² for a walk LiDAR puts at 20.91 m².
 Do not choose this tier at a walk-in.
 
 ## The assignment's three samples
 
-The zips that came with the brief, run unchanged; unzipped afresh and rerun, they give the same plans
-room for room. They are a different property with no tape, so every accuracy gate on them is SKIP.
-Drift accountability and room overlap pass on all three.
+The zips that came with the brief, run unchanged; unzipped afresh and rerun after fix loop round 3,
+they give the same plans room for room. They are a different property with no tape, so every
+accuracy gate on them is SKIP. Drift accountability and room overlap pass on all three.
 
 | Zip | Capture | Walk | Rooms | Area | Ceilings | Openings | Loop closures kept |
 |---|---|---|---|---|---|---|---|
-| `single_room.zip` | `c00a170fe1` | 37 s, no upward frames | 4 | 26.90 m² (290 sq ft) | unmeasured | 1 | 0 of 16 |
-| `single_scan_floor_only.zip` | `1a8384c3f6` | 115 s, no upward frames | 8 | 42.26 m² (455 sq ft) | unmeasured | 3 | 1 of 19 |
-| `single_scan_with_ceiling.zip` | `c7d28f72c6` | 215 s, 16.6% of frames look up | 7 | 47.31 m² (509 sq ft) | 2.27–3.08 m in all 7 rooms | 7 | 21 of 41 |
+| `single_room.zip` | `c00a170fe1` | 37 s, no upward frames | 4 | 20.91 m² (225 sq ft) | unmeasured | 1 | 0 of 16 |
+| `single_scan_floor_only.zip` | `1a8384c3f6` | 115 s, no upward frames | 8 | 38.86 m² (418 sq ft) | unmeasured | 3 | 1 of 19 |
+| `single_scan_with_ceiling.zip` | `c7d28f72c6` | 215 s, 16.6% of frames look up | 7 | 41.24 m² (444 sq ft) | 2.27–3.08 m in all 7 rooms | 6 | 21 of 41 |
 
 `single_room.zip` covers a living room (10.77 m²), its bathroom (3.93 m²) and the lobby between them
-(3.38 m²), named here from its video frames, and briefly enters a fourth space the plan draws at
-8.82 m² from little seen floor. It was published as one 17.87 m² room before 14 Sep: its living room
-and bathroom had been merged, and all 16 loop closures that passed ICP were slides, asking for 56–88 cm
-after under 7 m of walking, which moved keyframes by up to 58 cm.
+(1.71 m²), named here from its video frames, and stands at the mouth of a corridor the plan draws at
+4.51 m². It was published as one 17.87 m² room before 14 Sep: its living room and bathroom had been
+merged, and all 16 loop closures that passed ICP were slides, asking for 56–88 cm after under 7 m of
+walking, which moved keyframes by up to 58 cm. Until fix loop round 3 it read 26.90 m²: the corridor
+ran on across the passage beyond it and into a bathroom, 8.82 m², and the lobby held 1.67 m² of a
+walled space none of the three scans saw into.
 
-The two whole-flat scans cover the same space. Their areas are 11% apart and they differ by one room.
+The two whole-flat scans cover the same space. Their areas are 6% apart and they differ by one room.
 Aligned on their walls, 63% of the with-ceiling scan's wall points lie within 5 cm of the floor-only
 scan's walls and 81% within 10 cm, and their room footprints overlap at an intersection-over-union of
-0.65. Before 14 Sep they read 35.74 m² over 7 rooms and 31.57 m² over 6, rooms had been moved by up to
-1.73 m to close the gaps between them, and each reported a damage region that was the edge of
-furniture in front of a wall. Rooms now stay where they were measured, and each plan lists the six
-connections it draws more than 0.30 m apart. No damage is reported on any of the three, and none is
-visible in the sampled video frames.
+0.61. Round 3 took the stairwell out of both stair halls, 3.39 and 4.57 m², and 0.75 and 1.05 m² of
+that was floor the scan had seen (`known_failure_modes.md` §21). The floor-only scan's living room is
+still cut short at 5.35 m² by diagonal wall segments from its curtains. Before 14 Sep they read
+35.74 m² over 7 rooms and 31.57 m² over 6, rooms had been moved by up to 1.73 m to close the gaps
+between them, and each reported a damage region that was the edge of furniture in front of a wall.
+Rooms now stay where they were measured, and each plan lists the connections it draws more than
+0.30 m apart. No damage is reported on any of the three, and none is visible in the sampled video
+frames.
 
 ## Head-to-head
 

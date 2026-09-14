@@ -41,7 +41,7 @@ saw through. A single photograph's depth map is a 2.5D surface with little behin
 stills at 0.5× detect no opening at all and the 12 of the hall at 1× detect one window, so the
 photo tier cannot join rooms at a doorway; it joins them by folder name, and the plan says so.
 
-The LiDAR tier finds 8 openings on the long walk of the same flat.
+The LiDAR tier finds 7 openings on the long walk of the same flat.
 
 Fixing this needs a different detector for the photo tier — appearance-based door detection,
 or a learned layout estimator — not a threshold change.
@@ -87,20 +87,23 @@ survives all of that from dominating. On the assignment's single-room scan all 1
 reached the fitness bar asked for 56–88 cm after under 7 m of walking, and none is kept.
 
 Every plan reports its loop closures, pose residuals and largest correction. On `163f18d3ac`
-(the 107 m long walk) the four-way ablation, regenerated on the code of 14 Sep, with rooms named by
-overlap with the published plan's named rooms:
+(the 107 m long walk) the ablation, regenerated after fix loop round 3, with rooms named by overlap
+with the named rooms of the plan before that round:
 
 | variant | rooms | footprint | hall | bedroom | bathroom | passage | loop closures |
 |---|---|---|---|---|---|---|---|
 | drift off, snap off | 6 | 27.93 m² (−3%) | −5% | −48% | +38% | −20% | 0 |
 | drift off, snap on | 5 | 24.17 m² (−16%) | −10% | −45% | −18% | not found | 0 |
 | drift on, snap off | 6 | 29.10 m² (+1%) | −7% | −48% | +48% | +19% | 77 |
-| drift on, snap on | 7 | 31.26 m² (+9%) | −8% | −39% | +48% | −11% | 77 |
+| drift on, snap on | 6 | 29.13 m² (+1%) | −8% | −39% | +48% | −11% | 77 |
+| drift on, snap on, no room refinement | 7 | 31.26 m² (+9%) | −8% | −39% | +48% | −11% | 77 |
 
-The last row is the published plan, and it is not the closest footprint. It also carries three
-rooms outside the tape (a window bay, a strip of the bedroom and a space never walked into, 6.71 m²
-together), and both variants with snapping off come within 3%. Per taped room it is the closest, a
-mean absolute error of 26.5% against 27.8% and 30.5% with snapping off, and with snapping on the walk
+The fourth row is the published plan. The room refinement of fix loop round 3 changes only that
+variant, where it removes a 2.12 m² room no keyframe stands in, and no taped room moves. The published
+plan is now within 1% on footprint, level with drift on and snap off, and still the closest per taped
+room, a mean absolute error of 26.6% against 27.7% and 30.6% with snapping off. It carries two rooms
+outside the tape, a window bay and a strip of the bedroom, 4.59 m² together, and its footprint passes
+on errors that offset, the bedroom 39% short and the bathroom 48% long. With snapping on, the walk
 without correction loses the passage. This walk drifted little, its largest correction is 8.5 cm, so
 correction changes less here than it would on a walk that drifts more.
 
@@ -115,10 +118,13 @@ balcony door and reporting the courtyard as a room, which it did before the rule
 for a 44 m² flat). Faces with interior evidence that join a walked face across a boundary with no
 wall behind it are kept, so the middle of a large room survives: without that the first walk's
 hall came out at 6.04 m² against a taped 14.86 m², and with it at 13.90 m². The cost runs the other
-way too. A space entered for a moment is drawn out to its walls however little of its floor was
-seen: the assignment's single-room scan reports an 8.82 m² room beside the living room that the
-walk entered only briefly, and 7.87 m² of that plan's 26.90 m² has no floor seen within 10 cm and
-no walking within 30 cm.
+way too. A space entered for a moment is drawn out to whatever face the wall lines give it, however
+little of its floor was seen. The assignment's single-room scan stood only at the mouth of a
+corridor, all 25 of its keyframes there within 0.31 m of the mouth; the corridor's face ran 6.02 m,
+across the passage beyond it and into a bathroom, and the plan drew an 8.82 m² room. Since fix loop
+round 3 a room ends where neither of its sides has a wall for more than a door width, and that room
+is 4.51 m². It is still about twice the 2.20 m² the with-ceiling scan walked, because its unwalled
+side was never measured from the mouth.
 
 ## 7. Damage detection without model weights
 
@@ -171,7 +177,7 @@ separate room, the first walk at 2.91 × 2.61 m, and the bedroom walked alone at
 a taped 10 × 10 ft (3.05 × 3.05 m). The planes just outside the long walk's bedroom are the far faces
 of 230 mm brick partitions, not hidden walls, so the loss is not furniture standing in front of the
 walls. The cause is not yet found. Against the long walk, 1 of 6 of the solo walk's walls agrees within
-1 cm (worst 123.7 cm). The bedroom ceiling repeats to 0.8 cm between the two home walks and to 0.1 cm
+1 cm (worst 123.7 cm). The bedroom ceiling repeats to 0.8 cm between the two home walks and to under 0.05 cm
 between the long walk and the solo walk.
 
 ## 14. LiDAR intervals do not cover the tape
@@ -223,21 +229,54 @@ lights, the wet-look case in §4. Which of the two inflates the outline is not y
 
 ## 19. A room walked on its own keeps the passage it was entered from
 
-The bedroom-only walk began and ended at the doorway, outside the room, so the plan holds a 4.68 m²
-strip of passage beside the 8.90 m² bedroom, and the footprint row compares 13.58 m² with the
-bedroom's 9.29 m². The strip is 5.58 m long against a taped passage of 3.35 m. The protocol asks for
-both still periods just inside the doorway.
+The bedroom-only walk began and ended at the doorway, outside the room, so the plan holds a strip of
+passage beside the 8.90 m² bedroom, and the footprint row compares the two together with the
+bedroom's 9.29 m². The strip was 4.68 m² and 5.58 m long against a taped passage of 3.35 m. Since fix
+loop round 3 it ends where its walls end, at 1.98 m², so the footprint row reads 10.88 m² (+17%), and
+a 0.90 m door is now found in the bedroom doorway at its end. The protocol asks for both still
+periods just inside the doorway.
 
 ## 20. The assignment's flat, scanned twice, disagrees with itself
 
 `single_scan_floor_only.zip` and `single_scan_with_ceiling.zip` cover the same space. They
-reconstruct as 8 rooms and 42.26 m² and as 7 rooms and 47.31 m², 11% apart. Neither has tape, so
+reconstruct as 8 rooms and 38.86 m² and as 7 rooms and 41.24 m², 6% apart; before the room
+refinement of fix loop round 3 they read 42.26 and 47.31 m², 11% apart. Neither has tape, so
 neither can be called right. Aligned on their walls, 63% of the with-ceiling scan's wall points lie
-within 5 cm of the floor-only scan's walls and 81% within 10 cm, and the two room footprints
-overlap at an intersection-over-union of 0.65.
+within 5 cm of the floor-only scan's walls and 81% within 10 cm. The two room footprints overlap at
+an intersection-over-union of 0.61, down from 0.65: each scan's stair hall lost a different
+rectangle to its stairwell (§21), and the floor-only scan's living room is still cut short by
+diagonal wall segments from its curtains.
 
 Rooms are drawn where they were measured. Some floor between rooms is not in any room, so rooms the
 operator walked between stand apart, and `quality.warnings` names every declared connection a plan
-draws more than 0.30 m apart: six on each scan, at 0.31–1.11 m on the floor-only scan and
-0.40–2.06 m on the with-ceiling scan. An earlier version closed those gaps by moving whole rooms, by
+draws more than 0.30 m apart: six on the floor-only scan, at 0.31–1.19 m, and seven on the
+with-ceiling scan, at 0.40–2.06 m. Before fix loop round 3 there were six on each; taking floor out
+of rooms can only widen those gaps. An earlier version closed those gaps by moving whole rooms, by
 up to 1.73 m, which made the plans look connected and put rooms where they were not measured.
+
+## 21. Removing a stairwell or a walled space takes some seen floor with it
+
+`geometry/refine.py` (fix loop round 3) takes a stairwell and a walled space nobody saw into out of
+a room as a rectangle on the room's own axis. A drop is not rectangular, so the rectangle covers
+landing along its edges; a strip under 30 cm wide left between the rectangle and a wall is opened
+away; and a piece of landing the rectangle separates from the rest of the room is dropped, because a
+room is one polygon. Classified on a 5 cm raster of each scan:
+
+| room | removed | floor seen in it | below the floor | nothing seen |
+|---|---|---|---|---|
+| floor-only scan, stair hall | 3.39 m² | 0.75 m² | 1.32 m² | 1.46 m² |
+| with-ceiling scan, stair hall | 4.57 m² | 1.05 m² | 1.72 m² | 1.60 m² |
+| single-room scan, room_04, walled space | 1.67 m² | 0.49 m² | — | 1.29 m² |
+| with-ceiling scan, bathroom, walled space | 1.51 m² | 0.26 m² | — | 1.40 m² |
+
+Shrinking the rectangle off seen floor gave back 0.45 and 0.29 m² of landing and left 0.31 and
+0.15 m² of the well in the hall; cutting the seen floor out of it gave back more and left more of the
+well, with outlines of 32 and 45 vertices. Neither shipped. The stair halls also keep the flight
+going up, and only returns below the floor are treated as a stairwell.
+
+The corrections run on the LiDAR tier only. The photo and video tiers reconstruct each room through
+the same builder, and on their first regeneration with the corrections the rules read monocular
+depth error as absent floor: the 1× hall photos went from 35.12 to 2.11 m² when the open-end rule
+cut 33.01 m², the 0.5× bedroom lost 99.88 m² the same way and 6.27 m² to "stairwells" below a floor
+that was never measured, and the 0.5× set gained a room overlap. A monocular depth map has partial
+walls and no trustworthy returns below the floor, so it cannot show that floor is absent.

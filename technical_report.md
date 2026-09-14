@@ -21,16 +21,17 @@ quantity carries a confidence interval and the name of the method that produced 
 The pipeline is validated against an operator's tape measurement of a real flat,
 recorded in whole and half feet, covering wall lengths, floor areas and adjacency.
 On the strongest tier (LiDAR with drift correction, closed loop, ceiling lap done),
-the home flat reconstructs to 31.26 m² against a taped 28.75 m² (**+9%**): the hall
-within 8%, the bedroom 39% short with a strip of it drawn as another room, and three
-rooms outside the tape. Per-room ceilings read 2.56–2.67 m and 8 openings are found.
+the home flat reconstructs to 29.13 m² against a taped 28.75 m² (**+1%**, inside the ±5%
+gate): the hall within 8%, the bedroom 39% short with a strip of it drawn as another room,
+the bathroom 48% long, and two rooms outside the tape, so the footprint passes on errors that
+offset. Per-room ceilings read 2.56–2.67 m and 7 openings are found.
 The photo tier fails at +238% and the video tier does not produce a metric plan. The
 assignment's three samples have no tape and are checked against the scans themselves.
 
 The central finding is stated up front: **the LiDAR tier is the only one that
 delivers usable accuracy, and even it does not meet its repeatability gates.**
 Two walks of the same flat agree on the hall to 4 cm and its ceiling to 4 mm, but
-differ on the bedroom by up to 0.64 m. Twenty failure modes are documented with
+differ on the bedroom by up to 0.64 m. Twenty-one failure modes are documented with
 measurements in `known_failure_modes.md`, each observed on real data.
 
 ## Scope
@@ -158,21 +159,24 @@ Drift alone does not remove residual yaw, so walls within 6° of the building fr
 rotated onto it and their offsets refit from their own points — the plane-anchored half.
 Only the direction comes from the prior; the position stays measured.
 
-**Ablation, `163f18d3ac`, the 107 m long walk.** All four rows regenerate from
-`--no-drift-correction` and `--no-snap-walls`; the last row is the published plan. Rooms are
-named by overlap with the published plan's named rooms.
+**Ablation, `163f18d3ac`, the 107 m long walk.** Every row regenerates from
+`--no-drift-correction`, `--no-snap-walls` and `--no-refine-rooms`; the fourth row is the published
+plan. Rooms are named by overlap with the named rooms of the plan before fix loop round 3.
 
 | variant | rooms | footprint | against 28.75 m² | taped rooms, mean error | loop closures | max correction |
 |---|---|---|---|---|---|---|
-| drift off, snap off | 6 | 27.93 m² | −3% | 27.8% | 0 | — |
+| drift off, snap off | 6 | 27.93 m² | −3% | 27.7% | 0 | — |
 | drift off, snap on | 5 | 24.17 m² | −16% | passage lost | 0 | — |
-| drift on, snap off | 6 | 29.10 m² | +1% | 30.5% | 77 | 8.5 cm |
-| **drift on, snap on** | **7** | **31.26 m²** | **+9%** | **26.5%** | **77** | **8.5 cm** |
+| drift on, snap off | 6 | 29.10 m² | +1% | 30.6% | 77 | 8.5 cm |
+| **drift on, snap on** | **6** | **29.13 m²** | **+1%** | **26.6%** | **77** | **8.5 cm** |
+| drift on, snap on, no room refinement | 7 | 31.26 m² | +9% | 26.6% | 77 | 8.5 cm |
 
 This walk drifted little, and the ablation says so. Correction matters with snapping on, where
-the uncorrected walk loses the passage; with snapping off it changes little. The published plan
-is not the closest footprint: it carries three rooms outside the tape, 6.71 m² together, and both
-variants with snapping off come within 3%. Per taped room it is the closest. Snapping stays on as
+the uncorrected walk loses the passage; with snapping off it changes little. The room refinement
+changes only the published variant, where it removes a room no keyframe stands in, and moves no
+taped room. The published plan is the closest per taped room and level with snapping off on
+footprint; it carries two rooms outside the tape, 4.59 m² together, and its footprint passes on
+errors that offset. Snapping stays on as
 the plane-anchored half of the correction: the 23 wall runs it rotates sat 2.24° off the building
 frame on average, which is yaw error if the flat's walls are square.
 
@@ -256,11 +260,20 @@ polygon identical, on both captures.** Diagnosing the non-result found a worse d
 map had been assigned by matching areas and was wrong on both captures. Rooms are now named
 from camera frames. No gate moved.
 
+**Round 3, LiDAR, the assignment's samples and the tape.** Declared before the fix (`949d24b`):
+footprint +8.7% on the long walk. Hypothesis: a room runs past where its space ends wherever no wall
+line crosses there, as a corridor seen from its doorway through two walls, two stairwells and a
+walled space no scan saw into on the samples, and a never-walked room on the long walk. Unlike
+rounds 1 and 2, the corrections had already been tried on saved intermediates before the ranges
+were written. **Result: 29.13 m², +1.3%, PASS, every number inside its range.** The pass comes from
+removing that untaped room; no taped room changed. The removals also take 0.26–1.05 m² of floor
+that had been seen from each room they correct.
+
 ---
 
 ## 7. Known failure modes
 
-Twenty are documented with measurements in `known_failure_modes.md`. The four that matter:
+Twenty-one are documented with measurements in `known_failure_modes.md`. The four that matter:
 
 **The photo tier does not meet its gates.** §4 and §6 above. What would fix it, in order:
 capture at 1× rather than 0.5×, which the protocol now requires, though the hall re-shot at 1×
@@ -284,7 +297,7 @@ toilet seat. No captured flat has damage, so recall is unmeasured.
 height, by any method. The pipeline reports `unmeasured` rather than substituting a default.
 The company's own `single_room` sample has 61 downward-facing points in the entire scan; the
 author's first capture had 1.4% of frames aimed up and the second had 24.3%, and the long walk
-measures 2.56–2.67 m in five of its seven rooms; a window bay whose only upward surface is a
+measures 2.56–2.67 m in five of its six rooms; a window bay whose only upward surface is a
 ledge abstains.
 
 ---
@@ -292,26 +305,28 @@ ledge abstains.
 ## 8. State of the evidence
 
 The LiDAR tier is the one to run at a walk-in. On the home flat walked with the ceiling lap and a
-closed loop (`163f18d3ac`) it returns 7 rooms and 31.26 m² against a taped 28.75 m² (+9%), with
-per-room ceilings of 2.56–2.67 m and 8 openings. The hall comes closest, 13.61 m² against
-14.86 m² (−8%). The bedroom is furthest, 5.64 m² against 9.29 m² (−39%), with a 2.18 m² strip of
+closed loop (`163f18d3ac`) it returns 6 rooms and 29.13 m² against a taped 28.75 m² (+1%, inside
+the ±5% gate), with per-room ceilings of 2.56–2.67 m and 7 openings. That footprint passes on errors
+that offset. The hall comes closest, 13.61 m² against 14.86 m² (−8%). The bedroom is furthest, 5.64 m² against 9.29 m² (−39%), with a 2.18 m² strip of
 it drawn as a separate room; the first walk gives 7.58 m² and the bedroom walked alone 8.90 m²
 (−4%), so the defect is in the reconstruction, not in the tape. The first walk, without the
 ceiling lap, reads −11% overall with its bathroom within 2%.
 
-Against the tape the gates read 14 PASS, 19 FAIL, 33 SKIP. Ceiling and opening gates are SKIP
+Against the tape the gates read 15 PASS, 18 FAIL, 33 SKIP. Ceiling and opening gates are SKIP
 because neither was taped. LiDAR intervals cover the tape on 3 of 37 measurements: they model
 sensor and drift error, not a merged or a split room. The photo tier fails at +238%;
 photographed on the 1× lens, the hall reads 35.12 m² against 14.86 m². The video tier does not
 produce a metric plan.
 
-The assignment's three samples have no tape, so they are checked against the scans themselves.
-`single_room.zip` is a living room, its bathroom and the lobby between them, plus a space the
-walk entered briefly: 4 rooms, 26.90 m². Its two whole-flat scans give 42.26 m² over 8 rooms and
-47.31 m² over 7; aligned on their walls, 63% of one scan's wall points lie within 5 cm of the
-other's walls, and the room footprints overlap at an intersection-over-union of 0.65. No damage is
-reported on any of them, and the same plans come out of the zips unzipped afresh. Every id in
-every published plan resolves: `cozmo run` checks before writing, and a test checks every plan in
+The assignment's three samples have no tape, so they are checked against the scans themselves:
+each plan drawn over its own scan and over the other two scans registered onto it.
+`single_room.zip` is a living room, its bathroom and the lobby between them, plus the mouth of a
+corridor: 4 rooms, 20.91 m². Its two whole-flat scans give 38.86 m² over 8 rooms and 41.24 m² over
+7; aligned on their walls, 63% of one scan's wall points lie within 5 cm of the other's walls, and
+the room footprints overlap at an intersection-over-union of 0.61. Fix loop round 3 took out of
+these plans a corridor that ran through two walls, both stairwells and a walled space no scan saw
+into, and some floor that had been seen with them. No damage is reported on any of them, and the same plans come out of the zips unzipped afresh. Every id
+in every published plan resolves: `cozmo run` checks before writing, and a test checks every plan in
 `reports/verified/`.
 
 An earlier generator in this repository produced a benchmark over procedurally generated rooms, a
@@ -348,24 +363,24 @@ bathroom's walls. These are recorded as NOT MET or SKIP, not softened.
 
 ## 10. Results
 
-### Gate summary — 14 PASS / 19 FAIL / 33 SKIP
+### Gate summary — 15 PASS / 18 FAIL / 33 SKIP
 
 | Gate | LiDAR (6 captures) | Photo (2 captures) | Video | Status |
 |---|---|---|---|---|
 | `wall_lengths` | 0/15 within 2 cm (long walk), 0/14 (first walk), 0/6 (bedroom) | 0/10 within 8% (0.5×), 0/4 (1×) | not scored | **FAIL** |
-| `footprint` | +9% (long walk), −11% (first walk), +46% (bedroom scan with its passage strip) | +238% (0.5×), +136% (1× hall) | not scored | **FAIL** |
+| `footprint` | +1% (long walk), −11% (first walk), +17% (bedroom scan with its passage strip) | +238% (0.5×), +136% (1× hall) | not scored | **FAIL**, long walk PASS |
 | `ceiling_height` | 2.56–2.67 m per room | 2.74 m (1× hall) | — | **SKIP** (no tape) |
-| `opening_widths` | 8 found (long walk) | 1 found on each set | — | **SKIP** (no tape) |
-| `adjacency` | 2/6 (long), 3/4 (first) | 2/4 (folder names) | — | **FAIL** |
+| `opening_widths` | 7 found (long walk) | 1 found on each set | — | **SKIP** (no tape) |
+| `adjacency` | 2/5 (long), 3/4 (first) | 2/4 (folder names) | — | **FAIL** |
 | `room_overlap` | 0 overlaps, 6 captures | 0 overlaps | — | **PASS** |
 | `drift_accountability` | 6 PASS | not applicable | — | **PASS** |
 | `interval_coverage` | 3/37 covered | 7/11 and 5/5 (by being wide) | — | **FAIL**, 1× PASS |
-| `repeatability` | 0/27 walls, ceiling 13.1 cm; bedroom alone 1/6, 0.1 cm | — | — | **FAIL** |
+| `repeatability` | 0/27 walls, ceiling 13.1 cm; bedroom alone 1/6, under 0.05 cm | — | — | **FAIL** |
 
 ### Accuracy against tape
 
 Best results: the bedroom walked alone, 8.90 m² against 9.29 m² (−4%), and the first walk's
-bathroom, 2.08 m² against 2.04 m² (+2%). Whole-flat LiDAR footprints: +9% on the long walk, −11%
+bathroom, 2.08 m² against 2.04 m² (+2%). Whole-flat LiDAR footprints: +1% on the long walk, −11%
 on the first. Worst: the photo tier, 97.19 m² against 28.75 m² (+238%).
 
 Per-room LiDAR errors on the long walk range from −8% (hall) to +48% (bathroom, which holds part
@@ -376,9 +391,9 @@ same room give 5.64, 7.58 and 8.90 m².
 
 | Capture | Tier | Runtime, one run on an Apple laptop |
 |---|---|---|
-| Long walk (18,649 frames) | LiDAR | 63 s |
-| 58 photos (0.5×) | Photo | 141 s |
-| Assignment single room (1,715 frames) | LiDAR | 15 s |
+| Long walk (18,649 frames) | LiDAR | 60 s |
+| 58 photos (0.5×) | Photo | 139 s |
+| Assignment single room (1,715 frames) | LiDAR | 14 s |
 
 ---
 
@@ -395,7 +410,7 @@ tier's dominant error is the monocular depth model's scale, measured at 1.57–1
 photographs, a field-of-view mismatch between the model's training data and the 0.5× ultra-wide
 lens. The 1× lens halves the error but still fails. The video tier does not solve metric scale.
 
-Twenty failure modes are documented with measurements. Four of them — mirrors, glass, low light,
+Twenty-one failure modes are documented with measurements. Four of them — mirrors, glass, low light,
 and the upward lap — are named in the brief and each is addressed: geometric mirror rejection,
 two-view corroboration on the same patch of wall, luma-based low-light flagging, and
 ceiling-height abstention when no downward-facing returns exist.

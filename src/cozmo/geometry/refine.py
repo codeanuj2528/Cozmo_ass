@@ -22,6 +22,10 @@ so some floor that was seen is removed too: on the assignment's scans 0.75 and 1
 the two stair halls and 0.49 and 0.26 m2 beside the walled space (known_failure_modes.md, section
 21). Shrinking the rectangles off seen floor, or cutting seen floor out of them, gave some of that
 back only by leaving part of the well in the room.
+
+The corrections run on the LiDAR tier only (see `pipeline/lidar.py`). A monocular depth map has
+partial walls and no trustworthy returns below the floor, so it cannot show that floor is absent;
+on the 1x hall photos the open-end rule cut a 35.12 m2 hall to 2.11 m2.
 """
 
 from __future__ import annotations

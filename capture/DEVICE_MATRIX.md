@@ -17,17 +17,17 @@ Measured on one iPhone 17 Pro against the operator's tape, which is recorded in 
 covers walls, floor areas and adjacency but no ceilings or doors. Wall length and floor area are
 the median and 90th-percentile absolute error from `scripts/accuracy_table.py`, relative error in
 brackets; the other rows are gate measurements from `reports/verified/gates/gate_table.txt`. Both
-were regenerated on the code of 14 Sep.
+were regenerated on 15 Sep, after fix loop round 3.
 
 | Quantity | Photo | Video | LiDAR | Gate |
 |---|---|---|---|---|
 | Wall length | median 2.20 m (81%), p90 3.82 m (144%), n = 12 | not taped | median 0.37 m (14%), p90 1.15 m (38%), n = 28 | photo 8%, video 3%, LiDAR 2 cm |
 | Room floor area | median 23.02 m² (642%), p90 35.81 m² (962%), n = 4 | not taped | median 0.97 m² (11%), p90 2.10 m² (41%), n = 9 | no separate gate |
 | Ceiling height | not taped | not taped | not taped | 1.5 cm per room |
-| Ceiling height spread across repeats | no repeat capture | no repeat capture | 0.1 cm for the bedroom walked alone against the long walk; 13.1 cm across the two flat walks | 1 cm |
+| Ceiling height spread across repeats | no repeat capture | no repeat capture | 0.0 cm for the bedroom walked alone against the long walk; 13.1 cm across the two flat walks | 1 cm |
 | Opening width | not taped | not taped | not taped | 2 cm on 85% of openings |
 | Repeatability per wall | no repeat capture | no repeat capture | 1/6 walls, worst 123.7 cm (bedroom); 0/27, worst 267.3 cm (flat walks) | 1 cm or 0.5% |
-| Whole-property footprint | +238% (58 stills at 0.5×); the hall alone at 1× +136% | not taped | +9% (protocol walk), −11% (walk without the ceiling lap) | photo 8% |
+| Whole-property footprint | +238% (58 stills at 0.5×); the hall alone at 1× +136% | not taped | +1% (protocol walk), −11% (walk without the ceiling lap) | photo 8%, LiDAR 5% |
 
 Every cell comes from one of those two outputs. `not taped` means the ground truth that would score
 it does not exist, and `no repeat capture` means that tier was captured once.

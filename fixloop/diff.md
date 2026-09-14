@@ -2,17 +2,21 @@
 
 Declaration (written first, committed first): [FIX_DECLARATION.md](FIX_DECLARATION.md)
 
-This fix loop shipped in two rounds against two different tiers. Round 1 targeted the
-photo tier's worst gate (footprint +422%). Round 2 targeted the LiDAR tier's footprint
-against tape (−12%). Both are real, both are shown below with their own before/after.
+This fix loop shipped in three rounds. Round 1 targeted the photo tier's worst gate (footprint
++422%). Round 2 targeted the LiDAR tier's footprint against tape (−12%). Rounds 1 and 2 are shown
+below with their own before/after. Round 3 targeted the LiDAR footprint on the long walk (+8.7%);
+its code change is `git diff 949d24b..02be79e`, and its declaration, runs and post-mortem are in
+`round3/`.
 
 | Round | Target | Declared gate | Command |
 |---|---|---|---|
 | 1 (photo EXIF) | Photo footprint +422% | `aa7be32` → `db4cfa9` | See §1 below |
 | 2 (ceiling evidence) | LiDAR footprint −12% | `0a8c579` → `11cebf3` | See §2 below |
+| 3 (room refinement) | LiDAR footprint +8.7%, long walk | `949d24b` → `02be79e` | `round3/FIX_DECLARATION.md` §4 |
 
 All before/after plans are committed in `fixloop/before/`, `fixloop/after/`,
-`fixloop/round2/before/`, `fixloop/round2/after/`.
+`fixloop/round2/before/`, `fixloop/round2/after/`, `fixloop/round3/before/` and
+`fixloop/round3/after/`.
 
 ---
 

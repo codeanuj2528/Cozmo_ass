@@ -3,11 +3,11 @@
   "schema_version": "1.0",
   "capture_id": "photos_1x",
   "tier": "photo",
-  "generated_at": "2026-09-14T19:49:38.714435+00:00",
-  "git_commit": "83c6dff-dirty",
-  "runtime_seconds": 37.972,
+  "generated_at": "2026-09-14T21:26:41.820134+00:00",
+  "git_commit": "8b53ef4",
+  "runtime_seconds": 37.625,
   "timings": {
-    "total_s": 37.9718
+    "total_s": 37.6254
   },
   "keyframes_used": 0,
   "frames_available": 12,
@@ -36,6 +36,7 @@
     "max_wall_lines": 44,
     "min_room_area_m2": 1.5,
     "min_inscribed_radius_m": 0.33,
+    "refine_rooms": true,
     "calibration_path": "calibration/intervals.json",
     "weights_dir": "weights",
     "seed": 0,

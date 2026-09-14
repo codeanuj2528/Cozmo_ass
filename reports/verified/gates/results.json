@@ -34,13 +34,13 @@
     "gate": "footprint",
     "scope": "5621ec5c54",
     "tier": "lidar",
-    "measured": "13.58 m2 vs 9.29 m2 (46.1%)",
+    "measured": "10.88 m2 vs 9.29 m2 (17.2%)",
     "threshold": "within +-5%",
     "status": "FAIL",
     "detail": {
-      "reported": 13.576477700266961,
+      "reported": 10.883702754992878,
       "truth": 9.2903,
-      "relative_error": 0.46136052659945975
+      "relative_error": 0.1715125189706337
     }
   },
   {
@@ -220,13 +220,13 @@
     "gate": "footprint",
     "scope": "163f18d3ac",
     "tier": "lidar",
-    "measured": "31.26 m2 vs 28.75 m2 (8.7%)",
+    "measured": "29.13 m2 vs 28.75 m2 (1.3%)",
     "threshold": "within +-5%",
-    "status": "FAIL",
+    "status": "PASS",
     "detail": {
-      "reported": 31.256518201563328,
+      "reported": 29.132670088846954,
       "truth": 28.7535,
-      "relative_error": 0.08705090516157438
+      "relative_error": 0.013186919465350477
     }
   },
   {
@@ -258,7 +258,7 @@
     "gate": "adjacency",
     "scope": "163f18d3ac",
     "tier": "lidar",
-    "measured": "2/6 correct (33%); 2 missed, 4 phantom",
+    "measured": "2/5 correct (40%); 2 missed, 3 phantom",
     "threshold": "every real connection found, none invented",
     "status": "FAIL",
     "detail": {
@@ -268,7 +268,6 @@
         "hall-passage"
       ],
       "phantom": [
-        "bathroom-room_07",
         "bedroom-room_06",
         "hall-room_04",
         "passage-room_06"
@@ -518,8 +517,8 @@
     "threshold": "no overlap above 2% of the smallest room",
     "status": "PASS",
     "detail": {
-      "worst_m2": 1.3342423703655015e-06,
-      "fraction": 3.946765668760892e-07
+      "worst_m2": 8.493265471476441e-08,
+      "fraction": 4.960098037812987e-08
     }
   },
   {
@@ -708,19 +707,19 @@
     "status": "FAIL",
     "detail": {
       "worst_cm": 267.3165433507493,
-      "ceiling_spread_cm": 13.088276974785273
+      "ceiling_spread_cm": 13.091489610505391
     }
   },
   {
     "gate": "repeatability",
     "scope": "bedroom_solo vs multiroom_long",
     "tier": "lidar",
-    "measured": "1/6 walls agree (17%), worst 123.7 cm; ceiling spread 0.1 cm",
+    "measured": "1/6 walls agree (17%), worst 123.7 cm; ceiling spread 0.0 cm",
     "threshold": "1 cm or 0.5% per wall; ceiling spread <= 1 cm",
     "status": "FAIL",
     "detail": {
       "worst_cm": 123.72687978710842,
-      "ceiling_spread_cm": 0.05493076957323595
+      "ceiling_spread_cm": 0.03580818908721639
     }
   }
 ]

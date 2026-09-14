@@ -63,7 +63,7 @@ The reference implementation. Every other tier is measured against this one.
 ```
 Stray frames → fuse (voxel + plane fitting) → gravity (floor plane)
   → walls (Hough over normals) → rotate to building frame
-  → walls again (aligned grid) → cell complex → rooms → levels
+  → walls again (aligned grid) → cell complex → rooms → room refinement → levels
   → openings → damage → concealed rules → scope → plan.json
 ```
 
@@ -105,6 +105,32 @@ Unwalked strips narrower than 30 cm that meet a room only at their ends, the gap
 close parallel wall lines, are removed. Two rooms are merged across a diagonal split only when
 their overlap is wide in its own frame; measured with an axis-aligned box instead, the
 assignment's living room and bathroom, scanned about 40° off the world axes, became one room.
+
+### Room refinement (`cozmo/geometry/refine.py`)
+
+A face of the arrangement is kept whole, so a room is as large as the wall lines around it allow,
+and where no wall line crosses the place a space ends the room runs on past it. Three corrections
+run on every room once rooms exist, and each only removes floor:
+
+- **A stairwell.** A connected region of upward-facing returns below the floor, at least 0.25 m² of
+  it and at least 0.10 m² deeper than 0.30 m, is a flight going down. It is removed as a rectangle on
+  the room's own axis.
+- **An open end.** Where neither side of a room has a wall segment for longer than a door, 1.60 m,
+  the room ends. Before this, the single-room scan's corridor, seen only from its mouth, ran across
+  the passage beyond it and into a bathroom.
+- **A walled space nobody saw into.** A region of at least 0.60 m² with no floor, furniture, ceiling
+  or walk evidence in it, whose outline is at least 60% wall returns, is removed the same way.
+
+What is left is opened by 15 cm, so no strip too narrow to stand in survives against a wall, and a
+room stays one polygon. The rectangles and the opening take some floor that was seen with them,
+0.26–1.05 m² per corrected room on the assignment's scans (`known_failure_modes.md` §21).
+`--no-refine-rooms` turns the step off.
+
+The step runs on the LiDAR tier only. All three rules read the scan's returns as evidence that
+floor is absent, which a depth sensor can show and a monocular depth map cannot: its walls are
+partial and its returns below the floor are depth error. Run on the photo tier, the open-end rule
+cut the 1× hall from 35.12 to 2.11 m². Fix loop round 3 has the declaration, the runs and the
+post-mortem.
 
 ### Drift correction (`cozmo/geometry/drift.py`)
 
