@@ -15,8 +15,13 @@ the camera frames taken inside the room:
     floor, furniture or ceiling return in any of the three scans, and two of them drew it as
     part of a room.
 
-Each correction removes floor only where the scan's own returns say it is not floor, and none
-of them moves a wall. A room is never grown here.
+None of the corrections moves a wall or grows a room. They are not exact. The stairwell and the
+walled space are taken out as rectangles on the room's own axis, and a strip left narrower than a
+person between a removed region and a wall, or cut off from the rest of the room, goes with them,
+so some floor that was seen is removed too: on the assignment's scans 0.75 and 1.05 m2 of it in
+the two stair halls and 0.49 and 0.26 m2 beside the walled space (known_failure_modes.md, section
+21). Shrinking the rectangles off seen floor, or cutting seen floor out of them, gave some of that
+back only by leaving part of the well in the room.
 """
 
 from __future__ import annotations
