@@ -7,8 +7,9 @@ measured on the benchmark captures and can be reproduced with the command given.
 
 **Status: fails, and is reported as failing.**
 
-On the benchmark property the photo tier reports one room of four at a footprint 36% below
-the LiDAR reconstruction. It does not reach the ±8% gate.
+On the benchmark property the photo tier reports three rooms of four at 97.19 m² against a taped
+28.75 m² (+238%), the hall rejected at 71.8 m². Photographed on the 1× lens, the hall alone reads
+35.12 m² against 14.86 m² (+136%). Neither reaches the ±8% gate.
 
 The cause is measured, not guessed. Depth Anything V2 Metric Indoor over-predicts depth on
 these photographs by a factor established two independent ways:
@@ -77,26 +78,34 @@ mirror is the worst case and is untested.
 ## 5. A false loop closure can fold the map
 
 Loop closure on a wrongly matched pair folds the map. Guards: a candidate must be a genuine
-revisit (path walked at least 6× the distance closed), ICP must reach 0.55 fitness and
-0.035 m RMSE, and the pose graph uses a soft-L1 loss so one surviving false closure cannot
-dominate.
+revisit (path walked at least 6× the distance closed, and at least 6 m); ICP must reach 0.55
+fitness and 0.035 m RMSE and actually converge; the correction it asks for must be no more
+horizontal drift than 10 cm or 3% of the path walked between the two keyframes; it must leave
+height within 5 cm and tilt within 2° of odometry, which is referenced to gravity; the pose graph
+moves only heading and horizontal position; and a soft-L1 loss keeps one false closure that
+survives all of that from dominating. On the assignment's single-room scan all 16 candidates that
+reached the fitness bar asked for 56–88 cm after under 7 m of walking, and none is kept.
 
 Every plan reports its loop closures, pose residuals and largest correction. On `163f18d3ac`
-(the 107 m long walk) the four-way ablation, regenerated at this commit:
+(the 107 m long walk) the four-way ablation, regenerated on the code of 14 Sep, with rooms named by
+overlap with the published plan's named rooms:
 
-| variant | rooms | footprint | loop closures |
-|---|---|---|---|
-| drift off, snap off | 5 | 20.25 m² | 0 |
-| drift off, snap on | 4 | 16.62 m² | 0 |
-| drift on, snap off | 5 | 25.77 m² | 110 |
-| drift on, snap on | 5 | 25.27 m² | 110 |
+| variant | rooms | footprint | hall | bedroom | bathroom | passage | loop closures |
+|---|---|---|---|---|---|---|---|
+| drift off, snap off | 6 | 27.93 m² (−3%) | −5% | −48% | +38% | −20% | 0 |
+| drift off, snap on | 5 | 24.17 m² (−16%) | −10% | −45% | −18% | not found | 0 |
+| drift on, snap off | 6 | 29.10 m² (+1%) | −7% | −48% | +48% | +19% | 77 |
+| drift on, snap on | 7 | 31.26 m² (+9%) | −8% | −39% | +48% | −11% | 77 |
 
-On this capture correction makes the plan better, not worse: with snapping on, the walk without
-it loses a room and a third of its footprint. The last row is the published plan.
+The last row is the published plan, and it is not the closest footprint. It also carries three
+rooms outside the tape (a window bay, a strip of the bedroom and a space never walked into, 6.71 m²
+together), and both variants with snapping off come within 3%. Per taped room it is the closest, a
+mean absolute error of 26.5% against 27.8% and 30.5% with snapping off, and with snapping on the walk
+without correction loses the passage. This walk drifted little, its largest correction is 8.5 cm, so
+correction changes less here than it would on a walk that drifts more.
 
 Snapping moves only walls within 6° of the building frame and leaves the rest where they were
-measured. The long walk's hall keeps one wall meeting its neighbours at 78°, the bedroom walked
-alone one at 79°, and the 1× photo hall two corners at 61°, so those rooms are drawn out of square.
+measured, so a room can be drawn out of square: the 1× photo hall has two corners at 61°.
 
 ## 6. A room the operator did not walk into is not reported
 
@@ -136,8 +145,8 @@ be. Identified but not fixed before the deadline.
 ## 10. Gates without ground truth are not evaluated
 
 The operator's tape covers walls, floor areas and adjacency on the home flat. It covers no
-ceilings, doors or bathroom walls, so 14 of 33 gate rows report `SKIP`. None is reported as
-passing.
+ceilings, doors or bathroom walls, and nothing on the assignment's flat, so 33 of 66 gate rows
+report `SKIP`. None is reported as passing.
 
 ## 11. Room identity has to come from what the camera saw
 
@@ -155,17 +164,19 @@ of it, so the bathroom reads 3.02 m² against a taped 2.04 m² (+48%) and the pa
 2.55 m² (−11%). On the first walk the two are now separate rooms: the bathroom reads 2.08 m² (+2%)
 and the passage 1.93 m² (−24%).
 
-## 13. The same bedroom differs by 0.3–1.2 m between walks
+## 13. The same bedroom differs between walks
 
-The long walk reconstructs the bedroom at 2.58 × 2.08 m and the first walk at 2.89 × 2.68 m, against
-a taped 10 × 10 ft. The planes just outside the long walk's bedroom are the far faces of 230 mm brick
-partitions, not hidden walls, so the loss is not furniture standing in front of the walls. The
-cause is not yet found. Walked on its own (§19), its walls sit up to 1.21 m from the long walk's. The
-bedroom ceiling repeats to 4 mm between the two home walks, and the solo walk reads it 2.9 cm lower.
+The long walk reconstructs the bedroom at 3.06 × 1.97 m with a 0.9 m wide strip of it split off as a
+separate room, the first walk at 2.91 × 2.61 m, and the bedroom walked alone at 3.78 × 2.64 m, against
+a taped 10 × 10 ft (3.05 × 3.05 m). The planes just outside the long walk's bedroom are the far faces
+of 230 mm brick partitions, not hidden walls, so the loss is not furniture standing in front of the
+walls. The cause is not yet found. Against the long walk, 1 of 6 of the solo walk's walls agrees within
+1 cm (worst 123.7 cm). The bedroom ceiling repeats to 0.8 cm between the two home walks and to 0.1 cm
+between the long walk and the solo walk.
 
 ## 14. LiDAR intervals do not cover the tape
 
-0 of 16, 0 of 15 and 0 of 5 measurements fall inside their intervals, on the long walk, the first
+0 of 16, 2 of 16 and 1 of 5 measurements fall inside their intervals, on the long walk, the first
 walk and the solo bedroom walk. The interval model includes sensor
 noise, plane roughness and residual drift, and excludes segmentation error, which on this flat is
 tens of centimetres. No quantiles were fitted to widen them: with three walks of one flat, the rows

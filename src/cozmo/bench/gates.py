@@ -142,6 +142,22 @@ def gate_ceiling_height(plan: PropertyPlan, truth: GroundTruth, capture_id: str)
     )
 
 
+def _match_widths(reported: list[float], actual: list[float]) -> list[tuple[float, float]]:
+    """Pair reported with taped opening widths so that the total width error is smallest.
+
+    Zipping the two sorted lists does that only when they are the same length. With one phantom it
+    pairs the smallest with the smallest and shifts every pair after it: a reported 0.70 m and
+    0.90 m against a single taped 0.91 m door would score the 0.70 m as that door.
+    """
+    if not reported or not actual:
+        return []
+    from scipy.optimize import linear_sum_assignment
+
+    cost = np.abs(np.subtract.outer(np.asarray(reported, dtype=float), np.asarray(actual, dtype=float)))
+    rows, cols = linear_sum_assignment(cost)
+    return [(float(reported[i]), float(actual[j])) for i, j in np.stack([rows, cols], axis=1)]
+
+
 def gate_opening_widths(plan: PropertyPlan, truth: GroundTruth, capture_id: str) -> GateResult:
     """Width accuracy and detection together, with phantoms and misses both counted.
 
@@ -165,7 +181,7 @@ def gate_opening_widths(plan: PropertyPlan, truth: GroundTruth, capture_id: str)
             continue
         truth_total += len(actual)
         reported_total += len(reported)
-        for predicted, real in zip(reported, actual):
+        for predicted, real in _match_widths(reported, actual):
             error = abs(predicted - real)
             worst = max(worst, error)
             if error <= OPENING_WIDTH_TOLERANCE_M:

@@ -306,6 +306,27 @@ def _implausible(room) -> str | None:
     return None
 
 
+def _rekey_room(room: Room, room_id: str, label: str) -> Room:
+    """The room under its property-wide id, with every id inside it renamed to follow.
+
+    Each folder is reconstructed on its own, so its room comes back as `room_01`, with walls
+    `room_01_w00`, surfaces `room_01_s00` and openings `room_01_o00`. Renaming only the room left
+    every surface of a stitched plan saying it sat in `room_01`: on the 58-still flat, 14 surfaces
+    named a room they were not in.
+    """
+    old, new = f"{room.room_id}_", f"{room_id}_"
+
+    def rename(value: str) -> str:
+        return new + value[len(old):] if value.startswith(old) else value
+
+    walls = [w.model_copy(update={"wall_id": rename(w.wall_id), "surface_id": rename(w.surface_id)}) for w in room.walls]
+    surfaces = [s.model_copy(update={"surface_id": rename(s.surface_id), "room_id": room_id}) for s in room.surfaces]
+    openings = [o.model_copy(update={"opening_id": rename(o.opening_id), "wall_id": rename(o.wall_id)}) for o in room.openings]
+    return room.model_copy(
+        update={"room_id": room_id, "label": label, "walls": walls, "surfaces": surfaces, "openings": openings}
+    )
+
+
 def build_photo_plan(
     source: CaptureSource,
     config: PipelineConfig | None = None,
@@ -413,7 +434,7 @@ def build_photo_plan(
             )
             continue
 
-        renamed = largest.model_copy(update={"room_id": room_id, "label": name})
+        renamed = _rekey_room(largest, room_id, name)
         reconstructions.append(
             RoomReconstruction(room_id, name, renamed, len(frames), len(frames), scale_sources, room_warnings)
         )

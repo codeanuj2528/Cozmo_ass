@@ -192,3 +192,12 @@ def test_room_map_loader_ignores_annotation_keys(tmp_path):
     truth = load_ground_truth(tmp_path / "missing.csv", path)
     assert set(truth.room_map) == {"cap"}
     assert truth.room_name("cap", "room_01") == "hall"
+
+
+
+def test_opening_widths_pair_with_the_nearest_taped_width_when_the_counts_differ():
+    from cozmo.bench.gates import _match_widths
+
+    assert _match_widths([0.70, 0.90], [0.91]) == [(0.90, 0.91)]
+    assert _match_widths([0.80, 0.90], [0.81, 0.92]) == [(0.80, 0.81), (0.90, 0.92)]
+    assert _match_widths([], [0.91]) == []

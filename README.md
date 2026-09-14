@@ -1,149 +1,180 @@
-# Cozmo AI Case Study — Indoor Reconstruction Engine
+# Cozmo
 
-Handheld iPhone capture to a dimensioned floor plan, damage map and repair scope. Three input tiers — photos, video, LiDAR — under one output contract.
+Handheld iPhone capture to a dimensioned floor plan, damage map and repair scope. Three input
+tiers — photos, video, LiDAR — and one output contract.
 
----
-
-## Quick Start (Fresh Machine Setup)
-
-```bash
-git clone <this-repo> && cd cozmo
-./scripts/setup.sh                                   # Virtualenv setup & synthetic box test
-./scripts/fetch_weights.sh                           # Weights for photo/video depth backbone
-```
-
-### Try it now on synthetic data (No capture device needed)
+## Setup
 
 ```bash
-# Reconstruct synthetic box room
-.venv/bin/python -c 'from pathlib import Path; from tests.fixtures.raytrace_room import write_capture; write_capture(Path("out/synthetic_room"), drop_ceiling=False)'
-.venv/bin/python -m cozmo.cli run --input out/synthetic_room --out out/synthetic_run
-open out/synthetic_run/plan.png
+git clone <this repo> && cd cozmo
+./scripts/setup.sh            # Python 3.11–3.12 venv, installs .[dev], reconstructs a ray-traced box
+./scripts/fetch_weights.sh    # photo and video tiers only: Depth Anything V2 Metric Indoor, about 95 MB
 ```
 
----
+`scripts/setup.sh` ray-traces a 3.60 × 2.80 m room with a 2.50 m ceiling and reconstructs it:
+10.08 m², every wall within 1 mm, ceiling 2.499 m. Its door and window are not detected. The LiDAR
+tier needs no model weights; photo and video also need `.[ml]` and the weights above. Nothing reaches
+the network at run time.
 
-## Machine Learning & Heavy Vision Model Stack
-
-The pipeline integrates state-of-the-art vision models for multi-tier capture processing:
-
-* **LiDAR Tier**: Sensor Depth + RANSAC Total-Least-Squares + ICP Pose Graph Optimization + TSDF Mesh Fusion.
-* **Photo / Video Tier**: Depth Anything V2 / DA3-Giant monocular depth backbone + VGGT-Omega geometry tracking.
-* **Damage & Openings**: Grounding DINO text-conditioned candidate detection + SAM 3.1 open-vocabulary segmentation.
-
----
-
-## Directory Structure
-
-```
-cozmo/
-├── src/cozmo/                 # Core Python engine source code
-│   ├── bench/                 # Benchmark evaluation & gate scoring
-│   ├── damage/                # Damage detection & rule engine
-│   ├── geometry/              # Cell complex solver, RANSAC, plane fitting
-│   ├── io/                    # Sensor stream & capture format parsers
-│   ├── pipeline/              # LiDAR, Photo, and Video reconstruction pipelines
-│   ├── recon/                 # Monocular backbone & keyframe selection
-│   ├── render/                # SVG & PNG floorplan renderers
-│   ├── scope/                 # Scope line item generation
-│   ├── stitch/                # Loop closure & pose graph stitching
-│   └── uncertainty/           # Split-conformal calibration engine
-├── capture/                   # Ground truth CSVs & room identity mappings
-├── data/captures/             # Extracted LiDAR sample capture datasets
-├── fixloop/                   # Part 4 Fix Loop before/after comparison runs
-├── out/                       # Generated floorplan plans, SVGs, PNGs & benchmarks
-├── tests/                     # Pytest unit test suite (123 tests)
-├── Dockerfile                 # Production Docker container definition
-├── pyproject.toml             # Dependency & environment specification
-└── README.md                  # System documentation
-```
-
----
-
-## Pre-built Real Sample Capture Datasets
-
-The repository includes pre-built pipeline outputs and benchmark runs for all sample datasets:
-
-| Capture ID | Description | Input Tier | Rooms | Property Area | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **`c00a170fe1`** | Single Room Scan (`single_room.zip`) | LiDAR | 4 | 26.90 m² | PASS |
-| **`c7d28f72c6`** | Full Scan with Ceiling (`single_scan_with_ceiling.zip`) | LiDAR | 6 | 50.89 m² | PASS |
-| **`1a8384c3f6`** | Floor-Only Scan (`single_scan_floor_only.zip`) | LiDAR | 8 | 42.77 m² | PASS |
-| **`163f18d3ac`** | Multi-Room Flat Walk | LiDAR | 5 | 25.25 m² | PASS |
-| **`demo_fourroom`**| Synthetic L-Shaped Suite | LiDAR | 2 | 19.87 m² | PASS |
-| **`demo_office`**  | Synthetic Office Suite | LiDAR | 2 | 52.49 m² | PASS |
-
-To re-run any capture directory through the reconstruction engine:
+## One command per capture
 
 ```bash
-.venv/bin/python -m cozmo.cli run --input data/captures/c7d28f72c6 --out out/c7d28f72c6
+.venv/bin/python -m cozmo.cli run --input <capture-dir> --out runs/my_capture
 ```
 
----
+The tier is detected from what the directory holds:
 
-## Docker Container Execution
+| Tier | Input | Detected by |
+|---|---|---|
+| LiDAR | Stray Scanner export folder | `odometry.csv` present |
+| Video | Folder holding one `.mov` / `.mp4` (any capitalisation) | a video file present |
+| Photo | Folder of per-room subfolders of stills, `.jpg` / `.heic` | neither of the above |
 
-Build and run the pipeline inside a Docker container:
+It writes `plan.json` (the schema-validated output contract), `plan.svg`, `plan.png` and
+`run_manifest.json` (git commit, input hash, config, per-stage timings). It refuses to write a plan
+in which any id names a room, wall, surface, opening or damage region the plan does not contain.
+
+## The assignment's three samples
+
+Unzip each and point `cozmo run` at the folder inside it that holds `odometry.csv`:
 
 ```bash
-# Build the Docker image
-docker build -t cozmo-ai .
-
-# Run CLI help inside Docker
-docker run --rm cozmo-ai --help
-
-# Run reconstruction pipeline on a capture directory
-docker run --rm -v $(pwd):/app cozmo-ai run --input data/captures/c00a170fe1 --out out/docker_run
+unzip single_room.zip -d samples/single_room
+.venv/bin/python -m cozmo.cli run --input samples/single_room/<folder with odometry.csv> --out runs/single_room
 ```
 
----
+| Zip | Walk | Rooms | Floor area, 90% interval | Ceilings | Openings | Damage | Loop closures kept |
+|---|---|---|---|---|---|---|---|
+| `single_room.zip` (`c00a170fe1`) | 37 s, no upward frames | 4 | 26.90 m² [25.28, 28.51] | unmeasured | 1 | none | 0 of 16 candidates |
+| `single_scan_floor_only.zip` (`1a8384c3f6`) | 115 s, no upward frames | 8 | 42.26 m² [39.72, 44.79] | unmeasured | 3 | none | 1 of 19 |
+| `single_scan_with_ceiling.zip` (`c7d28f72c6`) | 215 s, 16.6% of frames look up | 7 | 47.31 m² [44.47, 50.15] | 2.27–3.08 m, all 7 rooms | 7 | none | 21 of 41 |
 
-## Part 4 Fix Loop CLI Execution
+These are the plans in `reports/verified/`, and the same plans come out, room for room, from
+unzipping the three files afresh. That flat has no tape, so every accuracy gate on it reports SKIP.
+What can be checked without tape:
 
-Run the fix loop before/after comparison pipeline on any capture:
+- `single_room.zip` is not one room. The walk covers a living room, its bathroom and the lobby
+  between them, and briefly enters a fourth space, which the plan draws at 8.82 m² from very little
+  floor.
+- The two whole-flat scans agree on their walls: aligned, 63% of one scan's wall points lie within
+  5 cm of the other's walls and 81% within 10 cm. Their room footprints overlap at an
+  intersection-over-union of 0.65, and their areas are 11% apart.
+- Rooms are drawn where they were measured. Where floor between two connected rooms was left out,
+  the plan lists the connection in `quality.warnings` rather than moving a room.
+- No damage is reported, and none is visible in the sampled video frames.
+
+## The home flat, against tape
+
+| Capture | Rooms | Footprint against 28.75 m² | Per room |
+|---|---|---|---|
+| `163f18d3ac`, long walk, protocol followed | 7 | 31.26 m², +9% | hall −8%, bedroom −39%, bathroom +48% (it holds part of the passage), passage −11%; three rooms outside the tape |
+| `ae3edc814d`, first walk, no ceiling lap | 4 | 25.49 m², −11% | hall −7%, bedroom −18%, bathroom +2%, passage −24% |
+| `5621ec5c54`, the bedroom alone | 2 | 13.58 m² against the bedroom's 9.29 m² | bedroom 8.90 m², −4%, plus the passage it was entered from |
+
+Against the tape the gates read 14 PASS, 19 FAIL and 33 SKIP
+(`reports/verified/gates/gate_table.txt`). The photo tier reads +238% on 58 stills at 0.5× and +136%
+on the hall at 1×; the video tier does not produce a metric plan. `benchmark_report.md` has every
+gate and room.
+
+## What runs underneath
+
+- **LiDAR:** sensor depth and ARKit poses. Fusion, walls from a Hough accumulator over measured
+  normals, a cell-complex floor plan, and a keyframe pose graph over heading and horizontal position
+  with ICP-verified loop closures. No learned model.
+- **Photo and video:** Depth Anything V2 Metric Indoor (small) for depth, then the same
+  reconstruction as LiDAR.
+- **Damage:** classical colour-anomaly and ridge detectors. A finding must be seen from two frames
+  on the same patch of a reconstructed wall, and a ruler-straight edge is not a crack. A YAML rule
+  engine raises concealed-damage flags naming the rule and every value it tested.
+- **Not used:** VGGT, Depth Anything 3, SAM, Grounding DINO or any other learned detector or
+  segmenter. `docs/design.md` §12 lists what is not here yet.
+
+## Docker
 
 ```bash
-.venv/bin/python -m cozmo.cli fixloop --input data/captures/c7d28f72c6 --out fixloop/run_c7d28f72c6
+docker build -t cozmo .
+docker run --rm -v /path/to/stray_export:/capture -v "$PWD/runs:/runs" cozmo run --input /capture --out /runs/plan
 ```
 
-This generates:
-* `before_run.json` — Baseline un-ablated pipeline output.
-* `after_run.json` — Shipped fixed pipeline output.
+That image runs the LiDAR tier. For photo and video, build with `--build-arg EXTRAS=dev,ml` and mount
+the weights: `-v "$PWD/weights:/app/weights"`. The Dockerfile has not been built as part of this
+repository's checks; no Docker engine was available where the plans were regenerated.
 
----
-
-## Benchmark & Gate Scoring Suite
-
-To score all runs against measured physical ground truth (`ground_truth.csv`) and output the official gate table:
+## Other commands
 
 ```bash
-.venv/bin/python -m cozmo.cli benchmark \
-    --runs out \
-    --ground-truth capture/ground_truth.csv \
-    --room-map capture/room_map.json \
-    --out out/benchmark_all
+# Every plan in reports/verified/ and its gate table, from the raw captures
+./scripts/regenerate_verified.sh
+
+# Score runs against measured ground truth. Gates with no truth behind them report SKIP, never PASS.
+.venv/bin/python -m cozmo.cli benchmark --runs reports/verified --ground-truth capture/ground_truth.csv \
+    --room-map capture/room_map.json --repeat multiroom_home,multiroom_long \
+    --repeat bedroom_solo,multiroom_long --out reports/verified/gates
+
+# Fit split-conformal interval quantiles from measured residuals. Writes nothing if there are none.
+.venv/bin/python -m cozmo.cli calibrate --runs reports/verified --ground-truth capture/ground_truth.csv
+
+# Drift and wall-snapping ablation
+.venv/bin/python -m cozmo.cli run --input <dir> --out runs/no_drift --no-drift-correction --no-snap-walls
+
+# Self-consistency checks on any plan, no ground truth needed
+.venv/bin/python scripts/audit_plans.py
 ```
 
-Outputs written to `out/benchmark_all/`:
-* `gate_table.txt` — Plaintext gate matrix (PASS / FAIL / SKIP).
-* `results.json` — JSON formatted metric breakdown.
+`cozmo fixloop` runs one capture with wall snapping off and on. It is not the Part 4 fix loop, whose
+two rounds are in `fixloop/`.
 
----
-
-## Unit Testing & Verification
-
-Run the full pytest suite (123 unit tests, 0 warnings, 100% pass):
+## Tests
 
 ```bash
-PYTHONPATH=src .venv/bin/pytest -q
+.venv/bin/python -m pytest -q
 ```
 
----
+129 tests. They cover geometry primitives, the ray-traced box, drift and loop-closure gates, damage
+detection, the rule engine, the gates, intervals and the schema contract, including a check that every
+id in every verified plan resolves. Several exist because a defect got past review.
 
-## Deliverables & Documentation Index
+## Reading order
 
-- [technical_report.pdf](file:///Users/anuj/Desktop/cozmo_ass/cozmo/technical_report.pdf) — Architectural design, error budget, 5-page brief.
-- [benchmark_report.md](file:///Users/anuj/Desktop/cozmo_ass/cozmo/benchmark_report.md) — Gate performance, room-by-room accuracy evaluation.
-- [compliance_matrix.md](file:///Users/anuj/Desktop/cozmo_ass/cozmo/compliance_matrix.md) — Case study requirement compliance matrix.
-- [known_failure_modes.md](file:///Users/anuj/Desktop/cozmo_ass/cozmo/known_failure_modes.md) — Failure modes and boundary behavior audit.
-- [capture_protocol.md](file:///Users/anuj/Desktop/cozmo_ass/cozmo/capture_protocol.md) — Operator scanning guidelines.
+- [technical_report.pdf](technical_report.pdf): design decisions, the error budget and the state of the evidence.
+- [benchmark_report.md](benchmark_report.md): every gate against the tape, room by room.
+- [compliance_matrix.md](compliance_matrix.md): each requirement, where it lives, and its status.
+- [known_failure_modes.md](known_failure_modes.md): what does not work, with numbers.
+
+## Where to look
+
+| | |
+|---|---|
+| What to capture, and how | [capture/PROTOCOL.md](capture/PROTOCOL.md) |
+| What was measured with the tape | [capture/RECORDING_SHEET.md](capture/RECORDING_SHEET.md), [capture/ground_truth.csv](capture/ground_truth.csv) |
+| Which reconstructed room is which | [capture/room_map.json](capture/room_map.json), `capture/room_identity/` |
+| Which tier runs on which device | [capture/DEVICE_MATRIX.md](capture/DEVICE_MATRIX.md) |
+| Architecture | [docs/design.md](docs/design.md) |
+| The Part 4 fix loop | [fixloop/](fixloop/README.md) |
+| The benchmark shot list and how to stage damage | [capture/BENCHMARK_PLAN.md](capture/BENCHMARK_PLAN.md) |
+
+## Layout
+
+```
+src/cozmo/
+  schema.py        the output contract; every quantity is a Measure with an interval
+  config.py        every default, in one place
+  cli.py           run / benchmark / calibrate / fixloop
+  io/              capture readers, one per input format
+  recon/           depth backbone, monocular metric recovery, registration
+  geometry/        fusion, planes, levels, walls, openings, cell complex, drift, ICP, assembly
+  stitch/          joining separately reconstructed rooms
+  damage/          detection, projection to surfaces, concealed-damage rules
+  scope/           repair line items
+  uncertainty/     split-conformal calibration
+  render/          plan drawing, SVG and PNG backends
+  bench/           ground truth, gates, repeatability
+capture/           protocol, tape, room map and room identity frames
+reports/verified/  the published plans and their gate table
+fixloop/           the two fix-loop rounds
+scripts/           setup, weights, regeneration, accuracy table, plan audit, PDF rendering
+tests/             pytest suite and ray-traced fixtures
+```
+
+A tier's job is to produce frames carrying intrinsics, metric depth and a pose. After that, all three
+tiers run the same reconstruction core. LiDAR is handed all three; photo and video manufacture them.

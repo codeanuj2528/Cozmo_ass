@@ -22,3 +22,9 @@ Against today's tape, round 1's photo-tier result reads 142.03 to 17.37 m² agai
 Neither round moved a gate to PASS. Diagnosing round 2's non-result found that the room map
 scoring every per-room number had been assigned by area and was wrong on both captures; the fix is
 `ecf5d76`.
+
+
+`run_c00a170fe1/`, `run_1a8384c3f6/` and `run_c7d28f72c6/` belong to neither round. They hold
+`cozmo fixloop` output on the assignment's three captures, and that command is the wall-snapping
+ablation: `before_run.json` is the plan with snapping off and `after_run.json` with it on, both
+from the code of 14 Sep. They are not the before and after of a fix.

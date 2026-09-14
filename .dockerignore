@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+out/
+runs/
+weights/
+data/
+reports/*
+!reports/verified/
+reports/verified/one_room/inputs/
+*.zip
+*.mp4
+*.mov

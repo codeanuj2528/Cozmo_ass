@@ -41,6 +41,13 @@ tell a calibrated interval from a guess into a falsehood.
 The contract uses Pydantic `BaseModel` with `frozen=True` on `Measure` (immutable once
 created) and `Field(ge=0.0, le=1.0)` on confidences to enforce constraints structurally.
 
+Ids have to resolve. `PropertyPlan.reference_problems()` lists every room, wall, surface, opening,
+damage or flag id that names something the plan does not contain, or names it twice, and `cozmo run`
+refuses to write a plan for which that list is not empty. It is a method rather than a validator so
+that plans written by earlier versions still load for scoring. It found that the photo tier's stitched
+rooms kept the ids of the single room each folder had been reconstructed as, so 14 surfaces on the
+58-still flat named a room they were not in.
+
 Key models:
 - `PropertyPlan` — root object, one per capture
 - `Room` → `Wall` → `Opening`, `Surface` — the floor plan
@@ -221,7 +228,10 @@ now reports damage.
 Concealed-damage flags are produced by a YAML rule engine that evaluates structured rules
 without `eval()`. Every `ConcealedFlag` records `rule_id`, `rule_text` (the rule as
 written), `triggered_by` (the damage and measurement IDs that fired it), and
-`recommended_action`. The rules are auditable, not a model.
+`recommended_action`, and `conditions`: every condition the rule tested and the value it read. The
+rules are auditable, not a model. A rule that names a field the engine never supplies, or an operator
+it does not know, is rejected when the rules load; it used to evaluate as a quiet False, so a misspelt
+field made its rule never fire.
 
 ### Scope items (`cozmo/scope/generate.py`)
 
@@ -251,7 +261,8 @@ also be the rows scored, which is grading intervals on their training data.
 
 `cozmo/bench/gates.py` implements the gates as the brief states them:
 
-- **Opening detection is scored**, not just measurement. Misses and phantoms both count.
+- **Opening detection is scored**, not just measurement. Misses and phantoms both count, and reported
+  widths are matched to taped ones by the assignment with the smallest total error.
 - **Ceiling height has two gates**: absolute error (catches bias) and spread across repeats
   (catches noise).
 - **SKIP is never a pass.** A gate that cannot be evaluated for lack of ground truth

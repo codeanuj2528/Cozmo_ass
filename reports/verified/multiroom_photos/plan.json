@@ -3,7 +3,7 @@
   "pipeline_version": "0.1.0",
   "capture_id": "ae3edc814d",
   "tier": "photo",
-  "created_at": "2026-09-14T16:35:27.419244Z",
+  "created_at": "2026-09-14T19:48:58.955659Z",
   "rooms": [
     {
       "room_id": "room_01",
@@ -343,8 +343,8 @@
       ],
       "walls": [
         {
-          "wall_id": "room_01_w00",
-          "surface_id": "room_01_s00",
+          "wall_id": "room_02_w00",
+          "surface_id": "room_02_s00",
           "start": [
             -7.438402174753796,
             -1.3584781277605407
@@ -373,8 +373,8 @@
           "point_support": 0
         },
         {
-          "wall_id": "room_01_w01",
-          "surface_id": "room_01_s01",
+          "wall_id": "room_02_w01",
+          "surface_id": "room_02_s01",
           "start": [
             -7.43840217590332,
             1.3740566366840483
@@ -403,8 +403,8 @@
           "point_support": 8617
         },
         {
-          "wall_id": "room_01_w02",
-          "surface_id": "room_01_s02",
+          "wall_id": "room_02_w02",
+          "surface_id": "room_02_s02",
           "start": [
             -0.39990486647806733,
             3.9358601767358063
@@ -433,8 +433,8 @@
           "point_support": 0
         },
         {
-          "wall_id": "room_01_w03",
-          "surface_id": "room_01_s03",
+          "wall_id": "room_02_w03",
+          "surface_id": "room_02_s03",
           "start": [
             3.4515977996243534,
             4.328573144497691
@@ -463,8 +463,8 @@
           "point_support": 0
         },
         {
-          "wall_id": "room_01_w04",
-          "surface_id": "room_01_s04",
+          "wall_id": "room_02_w04",
+          "surface_id": "room_02_s04",
           "start": [
             3.4515978240966785,
             -1.3584781043614444
@@ -495,8 +495,8 @@
       ],
       "surfaces": [
         {
-          "surface_id": "room_01_s00",
-          "room_id": "room_01",
+          "surface_id": "room_02_s00",
+          "room_id": "room_02",
           "type": "wall",
           "area": null,
           "plane": {
@@ -509,8 +509,8 @@
           }
         },
         {
-          "surface_id": "room_01_s01",
-          "room_id": "room_01",
+          "surface_id": "room_02_s01",
+          "room_id": "room_02",
           "type": "wall",
           "area": null,
           "plane": {
@@ -523,8 +523,8 @@
           }
         },
         {
-          "surface_id": "room_01_s02",
-          "room_id": "room_01",
+          "surface_id": "room_02_s02",
+          "room_id": "room_02",
           "type": "wall",
           "area": null,
           "plane": {
@@ -537,8 +537,8 @@
           }
         },
         {
-          "surface_id": "room_01_s03",
-          "room_id": "room_01",
+          "surface_id": "room_02_s03",
+          "room_id": "room_02",
           "type": "wall",
           "area": null,
           "plane": {
@@ -551,8 +551,8 @@
           }
         },
         {
-          "surface_id": "room_01_s04",
-          "room_id": "room_01",
+          "surface_id": "room_02_s04",
+          "room_id": "room_02",
           "type": "wall",
           "area": null,
           "plane": {
@@ -565,8 +565,8 @@
           }
         },
         {
-          "surface_id": "room_01_floor",
-          "room_id": "room_01",
+          "surface_id": "room_02_floor",
+          "room_id": "room_02",
           "type": "floor",
           "area": {
             "value": 49.395987806218244,
@@ -586,8 +586,8 @@
           }
         },
         {
-          "surface_id": "room_01_ceiling",
-          "room_id": "room_01",
+          "surface_id": "room_02_ceiling",
+          "room_id": "room_02",
           "type": "ceiling",
           "area": {
             "value": 49.395987806218244,
@@ -609,9 +609,9 @@
       ],
       "openings": [
         {
-          "opening_id": "room_01_o00",
+          "opening_id": "room_02_o00",
           "type": "window",
-          "wall_id": "room_01_w01",
+          "wall_id": "room_02_w01",
           "width": {
             "value": 1.9800000000000004,
             "lo": 0.7920000000000003,
@@ -694,8 +694,8 @@
       ],
       "walls": [
         {
-          "wall_id": "room_01_w00",
-          "surface_id": "room_01_s00",
+          "wall_id": "room_04_w00",
+          "surface_id": "room_04_s00",
           "start": [
             3.4515978240966785,
             8.275052033266642
@@ -724,8 +724,8 @@
           "point_support": 0
         },
         {
-          "wall_id": "room_01_w01",
-          "surface_id": "room_01_s01",
+          "wall_id": "room_04_w01",
+          "surface_id": "room_04_s01",
           "start": [
             4.576786553936502,
             6.978604866989614
@@ -754,8 +754,8 @@
           "point_support": 0
         },
         {
-          "wall_id": "room_01_w02",
-          "surface_id": "room_01_s02",
+          "wall_id": "room_04_w02",
+          "surface_id": "room_04_s02",
           "start": [
             7.971111564675523,
             0.646610388735068
@@ -784,8 +784,8 @@
           "point_support": 0
         },
         {
-          "wall_id": "room_01_w03",
-          "surface_id": "room_01_s03",
+          "wall_id": "room_04_w03",
+          "surface_id": "room_04_s03",
           "start": [
             8.646301985385373,
             -1.3584781041176326
@@ -814,8 +814,8 @@
           "point_support": 0
         },
         {
-          "wall_id": "room_01_w04",
-          "surface_id": "room_01_s04",
+          "wall_id": "room_04_w04",
+          "surface_id": "room_04_s04",
           "start": [
             3.4515978486452985,
             -1.3584781277605407
@@ -846,8 +846,8 @@
       ],
       "surfaces": [
         {
-          "surface_id": "room_01_s00",
-          "room_id": "room_01",
+          "surface_id": "room_04_s00",
+          "room_id": "room_04",
           "type": "wall",
           "area": null,
           "plane": {
@@ -860,8 +860,8 @@
           }
         },
         {
-          "surface_id": "room_01_s01",
-          "room_id": "room_01",
+          "surface_id": "room_04_s01",
+          "room_id": "room_04",
           "type": "wall",
           "area": null,
           "plane": {
@@ -874,8 +874,8 @@
           }
         },
         {
-          "surface_id": "room_01_s02",
-          "room_id": "room_01",
+          "surface_id": "room_04_s02",
+          "room_id": "room_04",
           "type": "wall",
           "area": null,
           "plane": {
@@ -888,8 +888,8 @@
           }
         },
         {
-          "surface_id": "room_01_s03",
-          "room_id": "room_01",
+          "surface_id": "room_04_s03",
+          "room_id": "room_04",
           "type": "wall",
           "area": null,
           "plane": {
@@ -902,8 +902,8 @@
           }
         },
         {
-          "surface_id": "room_01_s04",
-          "room_id": "room_01",
+          "surface_id": "room_04_s04",
+          "room_id": "room_04",
           "type": "wall",
           "area": null,
           "plane": {
@@ -916,8 +916,8 @@
           }
         },
         {
-          "surface_id": "room_01_floor",
-          "room_id": "room_01",
+          "surface_id": "room_04_floor",
+          "room_id": "room_04",
           "type": "floor",
           "area": {
             "value": 28.339419516417422,
@@ -937,8 +937,8 @@
           }
         },
         {
-          "surface_id": "room_01_ceiling",
-          "room_id": "room_01",
+          "surface_id": "room_04_ceiling",
+          "room_id": "room_04",
           "type": "ceiling",
           "area": {
             "value": 28.339419516417422,
@@ -1046,5 +1046,5 @@
     "coverage": 0.9,
     "method": "prior_only"
   },
-  "runtime_seconds": 193.69658224994782
+  "runtime_seconds": 140.8040381660103
 }

@@ -332,3 +332,37 @@ def test_property_plan_round_trip():
 def test_property_plan_has_schema_version():
     plan = _make_minimal_plan()
     assert plan.schema_version == "1.0.0"
+
+
+
+def test_reference_problems_names_a_dangling_opening():
+    plan = _make_minimal_plan()
+    plane = Plane(normal=(0.0, 0.0, 1.0), offset=0.0)
+    wall = Wall(
+        wall_id="room_01_w00", surface_id="room_01_s00", start=(0.0, 0.0), end=(4.0, 0.0),
+        length=Measure(value=4.0, lo=3.9, hi=4.1, unit="m"), plane=plane, point_support=10,
+    )
+    surface = Surface(surface_id="room_01_s00", room_id="room_01", type=SurfaceType.WALL, plane=plane)
+    opening = Opening(
+        opening_id="room_01_o00", type=OpeningType.DOOR, wall_id="room_01_w07",
+        width=Measure(value=0.85, lo=0.83, hi=0.87, unit="m"), height=Measure(value=2.05, lo=2.03, hi=2.07, unit="m"),
+        sill_height=Measure(value=0.0, lo=0.0, hi=0.0, unit="m"), offset_along_wall=Measure(value=1.2, lo=1.1, hi=1.3, unit="m"),
+        detection_confidence=0.9,
+    )
+    room = plan.rooms[0].model_copy(update={"walls": [wall], "surfaces": [surface], "openings": [opening]})
+    broken = plan.model_copy(update={"rooms": [room]})
+    assert broken.reference_problems() == ["room_01_o00: wall room_01_w07 is not in room_01"]
+    mended = room.model_copy(update={"openings": [opening.model_copy(update={"wall_id": "room_01_w00"})]})
+    assert plan.model_copy(update={"rooms": [mended]}).reference_problems() == []
+
+
+def test_every_verified_plan_resolves_its_own_references():
+    """Every id in a published plan names something that plan contains."""
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "reports" / "verified"
+    paths = sorted(root.glob("**/plan.json"))
+    assert paths, "no verified plans to check"
+    for path in paths:
+        problems = PropertyPlan.model_validate_json(path.read_text()).reference_problems()
+        assert problems == [], f"{path.relative_to(root)}: {problems[:3]}"

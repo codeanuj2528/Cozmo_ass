@@ -59,6 +59,16 @@ def main(
     pass
 
 
+def _refuse_broken_plan(plan) -> None:
+    """Stop before writing a plan whose ids name things it does not contain."""
+    problems = plan.reference_problems()
+    if problems:
+        console.print("[bold red]The plan refers to ids it does not contain, so it was not written:[/bold red]")
+        for problem in problems[:20]:
+            console.print(f"  {problem}")
+        raise typer.Exit(code=1)
+
+
 @app.command()
 def run(
     input_dir: Path = typer.Option(
@@ -112,6 +122,7 @@ def run(
     console.print("[bold blue]Running 3D reconstruction and semantic extraction...[/bold blue]")
     result = reconstruct(source, config=config)
     plan = result.plan
+    _refuse_broken_plan(plan)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     plan_json_path = out_dir / "plan.json"
@@ -158,31 +169,37 @@ def run(
 @app.command()
 def fixloop(
     input_dir: Path = typer.Option(
-        ..., "--input", "-i", help="Capture directory for fix loop benchmark."
+        ..., "--input", "-i", help="Capture directory to run with wall snapping off and on."
     ),
     out_dir: Path = typer.Option(
-        ..., "--out", "-o", help="Output directory for fix loop before/after runs."
+        ..., "--out", "-o", help="Output directory for before_run.json (snapping off) and after_run.json (snapping on)."
     ),
 ) -> None:
-    """Execute Part 4 Fix Loop before/after run comparison."""
-    console.print("[bold blue]Executing Part 4 Fix Loop...[/bold blue]")
+    """Wall-snapping ablation: the same capture with snapping to the building frame off, then on.
+
+    Not the Part 4 fix loop. Both of its rounds, their declarations and their before and after
+    runs are in `fixloop/`, and neither was a snapping change.
+    """
+    console.print("[bold blue]Running the wall-snapping ablation...[/bold blue]")
     source = load_capture(input_dir)
     
-    # Before run (uncalibrated / baseline config)
+    # Walls left where they were measured.
     cfg_before = PipelineConfig(snap_walls_to_frame=False)
     res_before = reconstruct(source, config=cfg_before)
 
-    # After run (shipped fix config)
+    # Walls within the snapping tolerance rotated onto the building frame, as `cozmo run` does.
     cfg_after = PipelineConfig(snap_walls_to_frame=True)
     res_after = reconstruct(source, config=cfg_after)
 
+    _refuse_broken_plan(res_before.plan)
+    _refuse_broken_plan(res_after.plan)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "before_run.json").write_text(res_before.plan.model_dump_json(indent=2))
     (out_dir / "after_run.json").write_text(res_after.plan.model_dump_json(indent=2))
 
-    console.print(f"[bold green]Fix loop runs generated in {out_dir}[/bold green]")
-    console.print("  - [cyan]before_run.json[/cyan] (Baseline)")
-    console.print("  - [cyan]after_run.json[/cyan] (Shipped Fix)")
+    console.print(f"[bold green]Ablation runs written to {out_dir}[/bold green]")
+    console.print("  - [cyan]before_run.json[/cyan] (snapping off)")
+    console.print("  - [cyan]after_run.json[/cyan] (snapping on, the default)")
 
 
 def parse_repeat_pairs(values: list[str]) -> list[list[str]]:

@@ -155,3 +155,34 @@ def test_device_model_from_empty_list():
     """An empty list should return 'unknown'."""
     result = device_model_from_exif([])
     assert result == "unknown"
+
+
+
+def test_a_stitched_photo_room_renames_every_id_inside_it():
+    """Each folder comes back as room_01; its walls, surfaces and openings must follow the new id."""
+    from cozmo.pipeline.photo import _rekey_room
+    from cozmo.schema import Measure, Opening, OpeningType, Plane, Room, Surface, SurfaceType, Wall
+
+    metre = Measure(value=1.0, lo=0.9, hi=1.1, unit="m")
+    plane = Plane(normal=(1.0, 0.0, 0.0), offset=0.0)
+    room = Room(
+        room_id="room_01",
+        label="room",
+        polygon=[(0, 0), (2, 0), (0, 2)],
+        walls=[Wall(wall_id="room_01_w00", surface_id="room_01_s00", start=(0.0, 0.0), end=(2.0, 0.0), length=metre, plane=plane, point_support=5)],
+        surfaces=[Surface(surface_id="room_01_s00", room_id="room_01", type=SurfaceType.WALL, plane=plane)],
+        openings=[
+            Opening(
+                opening_id="room_01_o00", type=OpeningType.DOOR, wall_id="room_01_w00", width=metre, height=metre,
+                sill_height=Measure(value=0.0, lo=0.0, hi=0.0, unit="m"), offset_along_wall=metre, detection_confidence=0.8,
+            )
+        ],
+        floor_area=Measure(value=2.0, lo=1.9, hi=2.1, unit="m2"),
+        perimeter=metre,
+        observation_quality=0.5,
+    )
+    moved = _rekey_room(room, "room_03", "passage")
+    assert (moved.room_id, moved.label) == ("room_03", "passage")
+    assert [(w.wall_id, w.surface_id) for w in moved.walls] == [("room_03_w00", "room_03_s00")]
+    assert [(s.surface_id, s.room_id) for s in moved.surfaces] == [("room_03_s00", "room_03")]
+    assert [(o.opening_id, o.wall_id) for o in moved.openings] == [("room_03_o00", "room_03_w00")]

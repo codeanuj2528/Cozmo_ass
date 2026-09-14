@@ -101,13 +101,13 @@
     "gate": "wall_lengths",
     "scope": "ae3edc814d",
     "tier": "lidar",
-    "measured": "0/14 within tolerance (0%), worst 283.5 cm, 6 unpaired",
+    "measured": "0/24 within tolerance (0%), worst 309.0 cm, 12 unpaired",
     "threshold": "<= 2 cm on >= 85%",
     "status": "FAIL",
     "detail": {
-      "worst_cm": 283.48966898157045,
+      "worst_cm": 308.9854306843835,
       "fraction": 0.0,
-      "unpaired": 6
+      "unpaired": 12
     }
   },
   {
@@ -145,12 +145,12 @@
     "gate": "interval_coverage",
     "scope": "ae3edc814d",
     "tier": "lidar",
-    "measured": "0/11 covered (0%), mean half-width 12.1 cm",
+    "measured": "0/15 covered (0%), mean half-width 9.6 cm",
     "threshold": ">= 90% of 90% intervals",
     "status": "FAIL",
     "detail": {
       "covered": 0,
-      "total": 11,
+      "total": 15,
       "fraction": 0.0
     }
   },
@@ -170,19 +170,16 @@
     "gate": "adjacency",
     "scope": "ae3edc814d",
     "tier": "lidar",
-    "measured": "1/4 correct (25%); 3 missed, 1 phantom",
+    "measured": "2/4 correct (50%); 2 missed, 0 phantom",
     "threshold": "every real connection found, none invented",
     "status": "FAIL",
     "detail": {
-      "correct": 1,
+      "correct": 2,
       "missed": [
-        "bathroom-passage",
-        "bedroom-passage",
-        "hall-passage"
+        "bathroom-hall",
+        "bathroom-passage"
       ],
-      "phantom": [
-        "bathroom-bedroom"
-      ]
+      "phantom": []
     }
   },
   {

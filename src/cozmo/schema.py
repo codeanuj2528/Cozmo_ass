@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -206,6 +206,16 @@ class DamageRegion(BaseModel):
     evidence_frames: list[int]
 
 
+class RuleCondition(BaseModel):
+    """One condition a concealed-damage rule tested, and the value it read."""
+
+    field: str
+    op: str
+    expected: Any
+    actual: Any
+    passed: bool
+
+
 class ConcealedFlag(BaseModel):
     flag_id: str
     rule_id: str
@@ -215,6 +225,10 @@ class ConcealedFlag(BaseModel):
     triggered_by: list[str] = Field(description="damage_ids and measurement ids that fired the rule.")
     confidence: float = Field(ge=0.0, le=1.0)
     recommended_action: str
+    conditions: list[RuleCondition] = Field(
+        default_factory=list,
+        description="Every condition the rule tested and the value it read, so the firing can be checked by hand.",
+    )
 
 
 class ScopeItem(BaseModel):
@@ -300,3 +314,64 @@ class PropertyPlan(BaseModel):
     quality: QualityReport
     total_floor_area: Measure
     runtime_seconds: float
+
+    def reference_problems(self) -> list[str]:
+        """Every id in the plan that names something the plan does not contain, or names it twice.
+
+        A method rather than a validator, so a plan written by an earlier version still loads for
+        scoring. `cozmo run` refuses to write a plan for which this is not empty.
+        """
+        problems: list[str] = []
+        rooms = {room.room_id for room in self.rooms}
+        if len(rooms) != len(self.rooms):
+            problems.append("room ids repeat")
+        owner: dict[str, dict[str, str]] = {"wall": {}, "surface": {}, "opening": {}}
+        for room in self.rooms:
+            for kind, ids in (
+                ("wall", [w.wall_id for w in room.walls]),
+                ("surface", [s.surface_id for s in room.surfaces]),
+                ("opening", [o.opening_id for o in room.openings]),
+            ):
+                for item in ids:
+                    if item in owner[kind]:
+                        problems.append(f"{kind} id {item} repeats")
+                    owner[kind][item] = room.room_id
+        walls, surfaces, openings = owner["wall"], owner["surface"], owner["opening"]
+        for room in self.rooms:
+            for wall in room.walls:
+                if surfaces.get(wall.surface_id) != room.room_id:
+                    problems.append(f"{wall.wall_id}: surface {wall.surface_id} is not in {room.room_id}")
+            for surface in room.surfaces:
+                if surface.room_id != room.room_id:
+                    problems.append(f"{surface.surface_id}: says room {surface.room_id} but sits in {room.room_id}")
+            for opening in room.openings:
+                if walls.get(opening.wall_id) != room.room_id:
+                    problems.append(f"{opening.opening_id}: wall {opening.wall_id} is not in {room.room_id}")
+                if opening.connects_to_room is not None and opening.connects_to_room not in rooms:
+                    problems.append(f"{opening.opening_id}: connects to unknown room {opening.connects_to_room}")
+        for link in self.adjacency:
+            for side in (link.room_a, link.room_b):
+                if side not in rooms:
+                    problems.append(f"adjacency names unknown room {side}")
+            if link.opening_a and openings.get(link.opening_a) != link.room_a:
+                problems.append(f"adjacency {link.room_a}-{link.room_b}: opening {link.opening_a} is not in {link.room_a}")
+            if link.opening_b and openings.get(link.opening_b) != link.room_b:
+                problems.append(f"adjacency {link.room_a}-{link.room_b}: opening {link.opening_b} is not in {link.room_b}")
+        damage_ids = {d.damage_id for d in self.damage}
+        if len(damage_ids) != len(self.damage):
+            problems.append("damage ids repeat")
+        for region in self.damage:
+            if surfaces.get(region.surface_id) != region.room_id:
+                problems.append(f"{region.damage_id}: surface {region.surface_id} is not in {region.room_id}")
+        known = damage_ids | set(walls) | set(surfaces) | set(openings)
+        for flag in self.concealed_flags:
+            if flag.room_id not in rooms:
+                problems.append(f"{flag.flag_id}: unknown room {flag.room_id}")
+            if flag.surface_id is not None and surfaces.get(flag.surface_id) != flag.room_id:
+                problems.append(f"{flag.flag_id}: surface {flag.surface_id} is not in {flag.room_id}")
+            problems.extend(f"{flag.flag_id}: triggered by unknown id {item}" for item in flag.triggered_by if item not in known)
+        for item in self.scope_items:
+            if surfaces.get(item.surface_id) != item.room_id:
+                problems.append(f"{item.item_id}: surface {item.surface_id} is not in {item.room_id}")
+            problems.extend(f"{item.item_id}: driven by unknown damage {d}" for d in item.driver_damage_ids if d not in damage_ids)
+        return problems

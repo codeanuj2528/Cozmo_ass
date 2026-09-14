@@ -83,3 +83,32 @@ def test_flags_are_traceable_to_their_damage():
 def test_confidence_is_a_probability():
     for flag in RuleEngine().evaluate_damage([_region(DamageClass.WATER_STAIN, 0.45)]):
         assert 0.0 <= flag.confidence <= 1.0
+
+
+
+def test_flag_carries_the_values_that_fired_it():
+    """The firing has to be checkable by hand, so the flag names each condition and what it read."""
+    from cozmo.damage.rules import RULE_FIELDS
+    from cozmo.schema import ConcealedFlag
+
+    flag = RuleEngine().evaluate_damage([_region(DamageClass.WATER_STAIN, 0.45)])[0]
+    assert flag.conditions, "a flag must say which conditions held"
+    assert all(c.passed for c in flag.conditions)
+    assert {c.field for c in flag.conditions} <= RULE_FIELDS
+    assert ConcealedFlag.model_validate_json(flag.model_dump_json()).conditions == flag.conditions
+
+
+def test_a_rule_the_engine_cannot_read_is_rejected_at_load(tmp_path):
+    """A misspelt field or operator used to make its rule quietly never fire."""
+    import pytest
+
+    from cozmo.damage.rules import RuleError
+
+    rules = tmp_path / "rules.yaml"
+    head = "rules:\n  - id: R1\n    text: water stain on a wall close to the floor line\n    predicate:\n      all_of:\n"
+    rules.write_text(head + "        - {field: damage_clas, op: eq, value: water_stain}\n")
+    with pytest.raises(RuleError, match="damage_clas"):
+        RuleEngine(rules)
+    rules.write_text(head + "        - {field: damage_class, op: equals, value: water_stain}\n")
+    with pytest.raises(RuleError, match="equals"):
+        RuleEngine(rules)

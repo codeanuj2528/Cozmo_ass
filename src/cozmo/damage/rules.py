@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import yaml
 
-from cozmo.schema import ConcealedFlag
+from cozmo.schema import ConcealedFlag, RuleCondition
 
 log = logging.getLogger("cozmo.damage.rules")
 DEFAULT_RULES_PATH = Path(__file__).with_name("rules.yaml")
@@ -44,6 +44,40 @@ OPERATORS: Dict[str, Callable[[Any, Any], bool]] = {
     "not_in": lambda a, b: a not in b if isinstance(b, (list, tuple, set)) else a != b,
     "contains": lambda a, b: b in (a or ()),
 }
+
+
+LOGICAL_KEYS = ("all_of", "any_of", "none_of")
+RULE_KEYS = {"id", "text", "predicate", "severity", "probability", "recommended_action", "inspection_priority"}
+
+
+class RuleError(ValueError):
+    """A rule the engine cannot evaluate as written."""
+
+
+def _validate_node(node: Any, rule_id: str, path: str = "predicate") -> None:
+    """Reject a predicate node the evaluator would read as a quiet False.
+
+    `_eval_node` returns False for a condition whose field or operator it does not know, so a
+    misspelt field used to make its rule never fire, with nothing to say why.
+    """
+    if not isinstance(node, Mapping):
+        raise RuleError(f"{rule_id}: {path} must be a mapping, got {type(node).__name__}")
+    logical = [key for key in LOGICAL_KEYS if key in node]
+    if logical:
+        if len(node) != 1:
+            raise RuleError(f"{rule_id}: {path} mixes keys {sorted(node)}; a logical node holds exactly one of {LOGICAL_KEYS}")
+        children = node[logical[0]]
+        if not isinstance(children, list) or not children:
+            raise RuleError(f"{rule_id}: {path}.{logical[0]} must be a non-empty list")
+        for index, child in enumerate(children):
+            _validate_node(child, rule_id, f"{path}.{logical[0]}[{index}]")
+        return
+    if set(node) != {"field", "op", "value"}:
+        raise RuleError(f"{rule_id}: {path} must be a condition with field, op and value, got keys {sorted(node)}")
+    if node["field"] not in RULE_FIELDS:
+        raise RuleError(f"{rule_id}: {path} names field {node['field']!r}, which the engine never supplies")
+    if node["op"] not in OPERATORS:
+        raise RuleError(f"{rule_id}: {path} uses operator {node['op']!r}; known operators are {sorted(OPERATORS)}")
 
 
 @dataclass
@@ -111,7 +145,18 @@ class RuleEngine:
         self.rules: List[ConcealedRule] = []
         if path.exists():
             data = yaml.safe_load(path.read_text()) or {}
+            seen: set[str] = set()
             for rdict in data.get("rules", []):
+                rule_id = rdict.get("id") if isinstance(rdict, Mapping) else None
+                if not rule_id or not rdict.get("text") or "predicate" not in rdict:
+                    raise RuleError(f"{path}: every rule needs an id, a text and a predicate, got {rdict!r}")
+                if rule_id in seen:
+                    raise RuleError(f"{path}: rule id {rule_id} is used twice")
+                unknown = set(rdict) - RULE_KEYS
+                if unknown:
+                    raise RuleError(f"{rule_id}: unknown keys {sorted(unknown)}")
+                _validate_node(rdict["predicate"], rule_id)
+                seen.add(rule_id)
                 self.rules.append(
                     ConcealedRule(
                         rule_id=rdict["id"],
@@ -145,7 +190,7 @@ class RuleEngine:
                 "surface_id": getattr(dmg, "surface_id", "surf_01"),
             }
             for rule in self.rules:
-                fired, _ = rule.evaluate(ctx)
+                fired, evaluations = rule.evaluate(ctx)
                 if fired:
                     flags.append(
                         ConcealedFlag(
@@ -157,6 +202,10 @@ class RuleEngine:
                             triggered_by=[getattr(dmg, "damage_id", f"dmg_{idx+1:03d}")],
                             confidence=rule.probability,
                             recommended_action=rule.recommended_action,
+                            conditions=[
+                                RuleCondition(field=e.field, op=e.op, expected=e.expected, actual=e.actual, passed=e.passed)
+                                for e in evaluations
+                            ],
                         )
                     )
         return flags

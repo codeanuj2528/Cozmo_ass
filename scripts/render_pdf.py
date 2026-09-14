@@ -317,7 +317,10 @@ def md_to_pdf(md_path, pdf_path):
                 i += 1
             story.append(Paragraph(format_inline(" ".join(paragraph)), body_style))
             continue
-        story.append(Spacer(1, 4))
+        # A heading keeps with the flowable after it, so a spacer there would let the heading end a
+        # page on its own.
+        if not (story and isinstance(story[-1], Paragraph) and story[-1].style.name in ("Heading1_Custom", "Heading2_Custom")):
+            story.append(Spacer(1, 4))
         i += 1
 
     doc.build(story, canvasmaker=NumberedCanvas)

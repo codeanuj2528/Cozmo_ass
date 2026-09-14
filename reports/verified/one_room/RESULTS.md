@@ -1,24 +1,26 @@
-# One-room run results
+# One-capture run results
 
-13 Sep 2026, regenerated at `2937d35`. The inputs, the reason for each and the three commands are in
-`SELECTION.md`.
+15 Sep 2026, regenerated on the code of 14 Sep. The inputs, the reason for each and the three commands
+are in `SELECTION.md`.
 
 | Tier | Input | Rooms | Area, 90% interval | Openings | Ceiling | Runtime | Verdict |
 |---|---|---|---|---|---|---|---|
-| LiDAR | `c00a170fe1` | 1 | **17.87 m²** [16.80, 18.94] | 1 window, 0.76 m [0.72, 0.80] | unmeasured | 31 s | usable outline |
-| Video | the same walk's `rgb.mp4`, no poses or depth | 2 | **339.61 m²** [135.84, 543.38] | 0 | 4.00 / 4.41 m, on a wrong scale | 58 s | scale failed, about 19 times LiDAR |
-| Photo | bathroom, 7 stills | 0 | **0.00 m²** | 0 | n/a | 15 s | room rejected as `no_room` |
+| LiDAR | `c00a170fe1` | 4 | **26.90 m²** [25.28, 28.51] | 1 window, 0.50 m [0.46, 0.54] | unmeasured | 14 s | a living room, its bathroom and the lobby between them, plus 8.82 m² of a space the walk entered briefly |
+| Video | the same walk's `rgb.mp4`, no poses or depth | 2 | **339.61 m²** [135.84, 543.38] | 0 | 4.00 / 4.41 m, on a wrong scale | 61 s | scale failed, about 13 times LiDAR |
+| Photo | bathroom, 7 stills | 0 | **0.00 m²** | 0 | n/a | 14 s | room rejected as `no_room` |
 
-LiDAR and video are the same physical room. Photo is a different room, the home bathroom: there are
-no stills of `c00a170fe1`.
+LiDAR and video are the same walk. Photo is a different room, the home bathroom: there are no stills of
+`c00a170fe1`.
 
-The LiDAR outline was 17.36 m² until `5091f2a`, which merges a short step the cell complex leaves in
-the middle of a straight wall back into the wall.
+The LiDAR plan was one 17.87 m² room until 14 Sep. Its living room and bathroom, scanned about 40°
+off the world axes, had been merged by a strip-width test that measured an axis-aligned bounding box,
+and 16 loop closures that were slides rather than revisits had moved its keyframes by up to 58 cm.
+Both are fixed; `known_failure_modes.md` §5 and `docs/design.md` §3 have the details.
 
 Video warnings, not hidden: iPhone main-camera intrinsics assumed; consensus scale 1.945 from 27 of
 120 keyframes that resolved a floor plane (range 0.775–3.43); registration broke at keyframe 92; 5
-keyframes failed to register and were skipped.
+keyframes failed to register and were skipped, and 116 of 120 registered.
 
 Photo warning: `bathroom: reconstruction rejected as physically implausible (no_room)`.
 
-There is no tape for this room, so its accuracy gates report SKIP.
+There is no tape for this capture, so its accuracy gates report SKIP.

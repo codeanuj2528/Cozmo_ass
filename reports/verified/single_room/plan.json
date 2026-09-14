@@ -3,7 +3,7 @@
   "pipeline_version": "0.1.0",
   "capture_id": "c00a170fe1",
   "tier": "lidar",
-  "created_at": "2026-09-14T16:27:46.742037Z",
+  "created_at": "2026-09-14T19:44:47.835651Z",
   "rooms": [
     {
       "room_id": "room_01",
@@ -1646,5 +1646,5 @@
     "coverage": 0.9,
     "method": "prior_only"
   },
-  "runtime_seconds": 15.278044125007
+  "runtime_seconds": 14.578264082956593
 }
