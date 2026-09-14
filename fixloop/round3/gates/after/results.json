@@ -1,0 +1,523 @@
+[
+  {
+    "gate": "wall_lengths",
+    "scope": "163f18d3ac",
+    "tier": "lidar",
+    "measured": "0/15 within tolerance (0%), worst 134.4 cm, 3 unpaired",
+    "threshold": "<= 2 cm on >= 85%",
+    "status": "FAIL",
+    "detail": {
+      "worst_cm": 134.44691633580217,
+      "fraction": 0.0,
+      "unpaired": 3
+    }
+  },
+  {
+    "gate": "ceiling_height",
+    "scope": "163f18d3ac",
+    "tier": "lidar",
+    "measured": "no ceiling ground truth",
+    "threshold": "<= 1.5 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "opening_widths",
+    "scope": "163f18d3ac",
+    "tier": "lidar",
+    "measured": "no opening ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "footprint",
+    "scope": "163f18d3ac",
+    "tier": "lidar",
+    "measured": "29.13 m2 vs 28.75 m2 (1.3%)",
+    "threshold": "within +-5%",
+    "status": "PASS",
+    "detail": {
+      "reported": 29.132670088846954,
+      "truth": 28.7535,
+      "relative_error": 0.013186919465350477
+    }
+  },
+  {
+    "gate": "interval_coverage",
+    "scope": "163f18d3ac",
+    "tier": "lidar",
+    "measured": "0/16 covered (0%), mean half-width 12.4 cm",
+    "threshold": ">= 90% of 90% intervals",
+    "status": "FAIL",
+    "detail": {
+      "covered": 0,
+      "total": 16,
+      "fraction": 0.0
+    }
+  },
+  {
+    "gate": "room_overlap",
+    "scope": "163f18d3ac",
+    "tier": "lidar",
+    "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+    "threshold": "no overlap above 2% of the smallest room",
+    "status": "PASS",
+    "detail": {
+      "worst_m2": 0.0,
+      "fraction": 0.0
+    }
+  },
+  {
+    "gate": "adjacency",
+    "scope": "163f18d3ac",
+    "tier": "lidar",
+    "measured": "2/5 correct (40%); 2 missed, 3 phantom",
+    "threshold": "every real connection found, none invented",
+    "status": "FAIL",
+    "detail": {
+      "correct": 2,
+      "missed": [
+        "bedroom-passage",
+        "hall-passage"
+      ],
+      "phantom": [
+        "bedroom-room_06",
+        "hall-room_04",
+        "passage-room_06"
+      ]
+    }
+  },
+  {
+    "gate": "drift_accountability",
+    "scope": "163f18d3ac",
+    "tier": "lidar",
+    "measured": "keyframe pose graph over heading and horizontal position, ICP-verified loop closures, gauge-fixed least squares; 77 closures, residual 0.3885 -> 0.2623, max correction 8.5 cm",
+    "threshold": "a stated method with an ablation; poses used as-is fails",
+    "status": "PASS",
+    "detail": {
+      "applied": true,
+      "closures": 77
+    }
+  },
+  {
+    "gate": "wall_lengths",
+    "scope": "1a8384c3f6",
+    "tier": "lidar",
+    "measured": "no wall ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "ceiling_height",
+    "scope": "1a8384c3f6",
+    "tier": "lidar",
+    "measured": "no ceiling ground truth",
+    "threshold": "<= 1.5 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "opening_widths",
+    "scope": "1a8384c3f6",
+    "tier": "lidar",
+    "measured": "no opening ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "footprint",
+    "scope": "1a8384c3f6",
+    "tier": "lidar",
+    "measured": "no footprint ground truth",
+    "threshold": "within +-5%",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "interval_coverage",
+    "scope": "1a8384c3f6",
+    "tier": "lidar",
+    "measured": "no ground truth to check coverage against",
+    "threshold": ">= 90%",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "room_overlap",
+    "scope": "1a8384c3f6",
+    "tier": "lidar",
+    "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+    "threshold": "no overlap above 2% of the smallest room",
+    "status": "PASS",
+    "detail": {
+      "worst_m2": 0.0,
+      "fraction": 0.0
+    }
+  },
+  {
+    "gate": "adjacency",
+    "scope": "1a8384c3f6",
+    "tier": "lidar",
+    "measured": "no adjacency ground truth",
+    "threshold": "all edges correct",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "drift_accountability",
+    "scope": "1a8384c3f6",
+    "tier": "lidar",
+    "measured": "keyframe pose graph over heading and horizontal position, ICP-verified loop closures, gauge-fixed least squares; 1 closures, residual 0.0319 -> 0.0041, max correction 9.7 cm",
+    "threshold": "a stated method with an ablation; poses used as-is fails",
+    "status": "PASS",
+    "detail": {
+      "applied": true,
+      "closures": 1
+    }
+  },
+  {
+    "gate": "wall_lengths",
+    "scope": "5621ec5c54",
+    "tier": "lidar",
+    "measured": "0/6 within tolerance (0%), worst 84.2 cm, 2 unpaired",
+    "threshold": "<= 2 cm on >= 85%",
+    "status": "FAIL",
+    "detail": {
+      "worst_cm": 84.18205094152813,
+      "fraction": 0.0,
+      "unpaired": 2
+    }
+  },
+  {
+    "gate": "ceiling_height",
+    "scope": "5621ec5c54",
+    "tier": "lidar",
+    "measured": "no ceiling ground truth",
+    "threshold": "<= 1.5 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "opening_widths",
+    "scope": "5621ec5c54",
+    "tier": "lidar",
+    "measured": "no opening ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "footprint",
+    "scope": "5621ec5c54",
+    "tier": "lidar",
+    "measured": "10.88 m2 vs 9.29 m2 (17.2%)",
+    "threshold": "within +-5%",
+    "status": "FAIL",
+    "detail": {
+      "reported": 10.883702754992878,
+      "truth": 9.2903,
+      "relative_error": 0.1715125189706337
+    }
+  },
+  {
+    "gate": "interval_coverage",
+    "scope": "5621ec5c54",
+    "tier": "lidar",
+    "measured": "1/5 covered (20%), mean half-width 13.9 cm",
+    "threshold": ">= 90% of 90% intervals",
+    "status": "FAIL",
+    "detail": {
+      "covered": 1,
+      "total": 5,
+      "fraction": 0.2
+    }
+  },
+  {
+    "gate": "room_overlap",
+    "scope": "5621ec5c54",
+    "tier": "lidar",
+    "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+    "threshold": "no overlap above 2% of the smallest room",
+    "status": "PASS",
+    "detail": {
+      "worst_m2": 0.0,
+      "fraction": 0.0
+    }
+  },
+  {
+    "gate": "adjacency",
+    "scope": "5621ec5c54",
+    "tier": "lidar",
+    "measured": "no adjacency ground truth",
+    "threshold": "all edges correct",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "drift_accountability",
+    "scope": "5621ec5c54",
+    "tier": "lidar",
+    "measured": "keyframe pose graph over heading and horizontal position, ICP-verified loop closures, gauge-fixed least squares; 98 closures, residual 0.1935 -> 0.0986, max correction 4.5 cm",
+    "threshold": "a stated method with an ablation; poses used as-is fails",
+    "status": "PASS",
+    "detail": {
+      "applied": true,
+      "closures": 98
+    }
+  },
+  {
+    "gate": "wall_lengths",
+    "scope": "ae3edc814d",
+    "tier": "lidar",
+    "measured": "0/14 within tolerance (0%), worst 262.1 cm, 2 unpaired",
+    "threshold": "<= 2 cm on >= 85%",
+    "status": "FAIL",
+    "detail": {
+      "worst_cm": 262.06827944328484,
+      "fraction": 0.0,
+      "unpaired": 2
+    }
+  },
+  {
+    "gate": "ceiling_height",
+    "scope": "ae3edc814d",
+    "tier": "lidar",
+    "measured": "no ceiling ground truth",
+    "threshold": "<= 1.5 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "opening_widths",
+    "scope": "ae3edc814d",
+    "tier": "lidar",
+    "measured": "no opening ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "footprint",
+    "scope": "ae3edc814d",
+    "tier": "lidar",
+    "measured": "25.49 m2 vs 28.75 m2 (11.4%)",
+    "threshold": "within +-5%",
+    "status": "FAIL",
+    "detail": {
+      "reported": 25.486204487954367,
+      "truth": 28.7535,
+      "relative_error": 0.11363122792166629
+    }
+  },
+  {
+    "gate": "interval_coverage",
+    "scope": "ae3edc814d",
+    "tier": "lidar",
+    "measured": "2/16 covered (12%), mean half-width 12.3 cm",
+    "threshold": ">= 90% of 90% intervals",
+    "status": "FAIL",
+    "detail": {
+      "covered": 2,
+      "total": 16,
+      "fraction": 0.125
+    }
+  },
+  {
+    "gate": "room_overlap",
+    "scope": "ae3edc814d",
+    "tier": "lidar",
+    "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+    "threshold": "no overlap above 2% of the smallest room",
+    "status": "PASS",
+    "detail": {
+      "worst_m2": 0.0,
+      "fraction": 0.0
+    }
+  },
+  {
+    "gate": "adjacency",
+    "scope": "ae3edc814d",
+    "tier": "lidar",
+    "measured": "3/4 correct (75%); 1 missed, 0 phantom",
+    "threshold": "every real connection found, none invented",
+    "status": "FAIL",
+    "detail": {
+      "correct": 3,
+      "missed": [
+        "hall-passage"
+      ],
+      "phantom": []
+    }
+  },
+  {
+    "gate": "drift_accountability",
+    "scope": "ae3edc814d",
+    "tier": "lidar",
+    "measured": "keyframe pose graph over heading and horizontal position, ICP-verified loop closures, gauge-fixed least squares; 86 closures, residual 0.2958 -> 0.2419, max correction 4.8 cm",
+    "threshold": "a stated method with an ablation; poses used as-is fails",
+    "status": "PASS",
+    "detail": {
+      "applied": true,
+      "closures": 86
+    }
+  },
+  {
+    "gate": "wall_lengths",
+    "scope": "c00a170fe1",
+    "tier": "lidar",
+    "measured": "no wall ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "ceiling_height",
+    "scope": "c00a170fe1",
+    "tier": "lidar",
+    "measured": "no ceiling ground truth",
+    "threshold": "<= 1.5 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "opening_widths",
+    "scope": "c00a170fe1",
+    "tier": "lidar",
+    "measured": "no opening ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "footprint",
+    "scope": "c00a170fe1",
+    "tier": "lidar",
+    "measured": "no footprint ground truth",
+    "threshold": "within +-5%",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "interval_coverage",
+    "scope": "c00a170fe1",
+    "tier": "lidar",
+    "measured": "no ground truth to check coverage against",
+    "threshold": ">= 90%",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "room_overlap",
+    "scope": "c00a170fe1",
+    "tier": "lidar",
+    "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+    "threshold": "no overlap above 2% of the smallest room",
+    "status": "PASS",
+    "detail": {
+      "worst_m2": 8.493265471476441e-08,
+      "fraction": 4.960098037812987e-08
+    }
+  },
+  {
+    "gate": "adjacency",
+    "scope": "c00a170fe1",
+    "tier": "lidar",
+    "measured": "no adjacency ground truth",
+    "threshold": "all edges correct",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "drift_accountability",
+    "scope": "c00a170fe1",
+    "tier": "lidar",
+    "measured": "pose graph built; no loop closure passed ICP verification; 0 closures, residual 0.0000 -> 0.0000, max correction 0.0 cm",
+    "threshold": "a stated method with an ablation; poses used as-is fails",
+    "status": "PASS",
+    "detail": {
+      "applied": false,
+      "closures": 0
+    }
+  },
+  {
+    "gate": "wall_lengths",
+    "scope": "c7d28f72c6",
+    "tier": "lidar",
+    "measured": "no wall ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "ceiling_height",
+    "scope": "c7d28f72c6",
+    "tier": "lidar",
+    "measured": "no ceiling ground truth",
+    "threshold": "<= 1.5 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "opening_widths",
+    "scope": "c7d28f72c6",
+    "tier": "lidar",
+    "measured": "no opening ground truth",
+    "threshold": "<= 2 cm",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "footprint",
+    "scope": "c7d28f72c6",
+    "tier": "lidar",
+    "measured": "no footprint ground truth",
+    "threshold": "within +-5%",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "interval_coverage",
+    "scope": "c7d28f72c6",
+    "tier": "lidar",
+    "measured": "no ground truth to check coverage against",
+    "threshold": ">= 90%",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "room_overlap",
+    "scope": "c7d28f72c6",
+    "tier": "lidar",
+    "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+    "threshold": "no overlap above 2% of the smallest room",
+    "status": "PASS",
+    "detail": {
+      "worst_m2": 0.0,
+      "fraction": 0.0
+    }
+  },
+  {
+    "gate": "adjacency",
+    "scope": "c7d28f72c6",
+    "tier": "lidar",
+    "measured": "no adjacency ground truth",
+    "threshold": "all edges correct",
+    "status": "SKIP",
+    "detail": {}
+  },
+  {
+    "gate": "drift_accountability",
+    "scope": "c7d28f72c6",
+    "tier": "lidar",
+    "measured": "keyframe pose graph over heading and horizontal position, ICP-verified loop closures, gauge-fixed least squares; 21 closures, residual 0.0963 -> 0.0698, max correction 7.1 cm",
+    "threshold": "a stated method with an ablation; poses used as-is fails",
+    "status": "PASS",
+    "detail": {
+      "applied": true,
+      "closures": 21
+    }
+  }
+]
