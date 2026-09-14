@@ -376,7 +376,13 @@ def _classify(
 ) -> OpeningType | None:
     room_height = (ceiling_y - floor_y) if ceiling_y is not None else 2.6
     if sill <= DOOR_MAX_SILL_M:
-        if height >= DOOR_MIN_HEIGHT_M and DOOR_MIN_WIDTH_M <= width <= DOOR_MAX_WIDTH_M:
+        # A gap that reaches the floor but is narrower than the narrowest door is not a way
+        # through: it is the space between a wall end and a column, or between a wardrobe and
+        # a wall. The pass-through branch below tests only height, and it put a 0.38 m
+        # pass-through into the plan of the assignment's with-ceiling scan.
+        if width < DOOR_MIN_WIDTH_M:
+            return None
+        if height >= DOOR_MIN_HEIGHT_M and width <= DOOR_MAX_WIDTH_M:
             return OpeningType.DOOR
         if width > DOOR_MAX_WIDTH_M or height >= min(DOOR_MIN_HEIGHT_M, room_height * 0.6):
             return OpeningType.PASS_THROUGH
