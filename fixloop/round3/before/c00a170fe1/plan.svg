@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1456" height="1315" viewBox="0 0 1456 1315">
+<rect width="1456" height="1315" fill="#ffffff"/>
+<g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<text x="28" y="38" font-size="22" font-weight="600" fill="#22222a">Floor Plan - Capture c00a170fe1</text>
+<text x="28" y="62" font-size="12" fill="#7a7a86">Tier: LIDAR | Total Floor Area: 26.90 m²</text>
+<line x1="28" y1="82" x2="1428" y2="82" stroke="#dedcd4" stroke-width="1"/>
+<polygon points="630.40,640.87 691.78,579.55 781.11,668.96 824.78,730.75 1070.53,485.23 1329.22,744.16 1119.80,953.38 1049.35,882.86 1022.05,910.14 1092.50,980.65 1039.11,1034.00" stroke="none" fill="#f4f1ea"/>
+<polygon points="126.78,1188.34 126.78,1144.02 630.40,640.87 772.43,783.04 366.76,1188.34" stroke="none" fill="#eceadf"/>
+<polygon points="607.54,423.39 808.33,222.78 955.44,370.03 764.48,560.80 677.53,510.69 649.20,482.33" stroke="none" fill="#f4f1ea"/>
+<polygon points="731.52,593.73 955.44,370.03 1070.53,485.23 846.61,708.94" stroke="none" fill="#eceadf"/>
+<polygon points="630.40,640.87 691.78,579.55 781.11,668.96 824.78,730.75 1070.53,485.23 1329.22,744.16 1119.80,953.38 1049.35,882.86 1022.05,910.14 1092.50,980.65 1039.11,1034.00" stroke="#22222a" stroke-width="13.58" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<polygon points="126.78,1188.34 126.78,1144.02 630.40,640.87 772.43,783.04 366.76,1188.34" stroke="#22222a" stroke-width="13.58" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<polygon points="607.54,423.39 808.33,222.78 955.44,370.03 764.48,560.80 677.53,510.69 649.20,482.33" stroke="#22222a" stroke-width="13.58" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<polygon points="731.52,593.73 955.44,370.03 1070.53,485.23 846.61,708.94" stroke="#22222a" stroke-width="13.58" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="892.32" y1="306.85" x2="935.96" y2="350.53" stroke="#ffffff" stroke-width="16.98" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="894.44" y1="304.74" x2="938.07" y2="348.42" stroke="#3d6fa8" stroke-width="2.72" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="890.21" y1="308.97" x2="933.84" y2="352.64" stroke="#3d6fa8" stroke-width="2.72" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<text x="1020.12" y="711.27" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 01</text>
+<text x="1020.12" y="745.84" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">10.77 m2</text>
+<text x="1020.12" y="780.42" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="678.54" y="627.68" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 678.54 627.68)">0.70 ±3.4cm</text>
+<text x="753.91" y="606.80" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(45.03 753.91 606.80)">1.02 ±1.7cm</text>
+<text x="823.11" y="685.60" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(54.75 823.11 685.60)">0.61 ±1.8cm</text>
+<text x="965.11" y="625.46" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 965.11 625.46)">2.81 ±2.7cm</text>
+<text x="1182.40" y="632.15" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(45.03 1182.40 632.15)">2.96 ±3.0cm</text>
+<text x="1207.06" y="831.30" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 1207.06 831.30)">2.40 ±2.9cm</text>
+<text x="1102.05" y="900.67" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-314.97 1102.05 900.67)">0.81 ±2.4cm</text>
+<text x="1074.75" y="927.94" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(45.03 1074.75 927.94)">0.81 ±1.6cm</text>
+<text x="1048.35" y="989.86" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 1048.35 989.86)">0.61 ±2.4cm</text>
+<text x="851.87" y="819.64" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-316.11 851.87 819.64)">4.59 ±3.6cm</text>
+<text x="460.23" y="909.69" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 02</text>
+<text x="460.23" y="944.26" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">8.82 m2</text>
+<text x="460.23" y="978.84" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="396.04" y="909.91" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 396.04 909.91)">5.77 ±4.6cm</text>
+<text x="683.95" y="729.41" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(45.03 683.95 729.41)">1.63 ±4.9cm</text>
+<text x="552.14" y="968.22" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 552.14 968.22)">4.64 ±13.9cm</text>
+<text x="246.77" y="1163.64" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">1.94 ±5.8cm</text>
+<text x="779.33" y="360.50" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 03</text>
+<text x="779.33" y="395.07" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">3.93 m2</text>
+<text x="779.33" y="429.64" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="725.39" y="340.55" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 725.39 340.55)">2.30 ±2.3cm</text>
+<text x="864.41" y="313.86" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(45.03 864.41 313.86)">1.69 ±2.6cm</text>
+<text x="842.50" y="447.94" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 842.50 447.94)">2.19 ±2.0cm</text>
+<text x="733.34" y="514.35" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-330.04 733.34 514.35)">0.81 ±2.4cm</text>
+<text x="648.53" y="438.61" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-305.25 648.53 438.61)">0.58 ±1.6cm</text>
+<text x="901.02" y="502.44" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 04</text>
+<text x="901.02" y="537.01" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">3.38 m2</text>
+<text x="901.02" y="571.59" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="860.93" y="499.35" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 860.93 499.35)">2.56 ±7.7cm</text>
+<text x="995.51" y="445.08" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(45.03 995.51 445.08)">1.32 ±2.5cm</text>
+<text x="941.12" y="579.61" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-44.97 941.12 579.61)">2.56 ±7.7cm</text>
+<text x="806.53" y="633.88" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-314.97 806.53 633.88)">1.32 ±4.0cm</text>
+<line x1="1020.12" y1="748.31" x2="901.02" y2="539.48" stroke="#7a7a86" stroke-width="0.99" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.35,12.35" opacity="0.50"/>
+<line x1="779.33" y1="397.54" x2="901.02" y2="539.48" stroke="#7a7a86" stroke-width="0.99" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.35,12.35" opacity="0.50"/>
+<line x1="1020.12" y1="748.31" x2="460.23" y2="946.73" stroke="#7a7a86" stroke-width="0.99" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="12.35,12.35" opacity="0.50"/>
+<g><line x1="28" y1="1295" x2="645.4" y2="1295" stroke="#22222a" stroke-width="2"/><line x1="28" y1="1291" x2="28" y2="1299" stroke="#22222a" stroke-width="2"/><line x1="645.4" y1="1291" x2="645.4" y2="1299" stroke="#22222a" stroke-width="2"/><text x="653.4" y="1299" font-size="11" fill="#7a7a86">5 m</text></g>
+</g></svg>

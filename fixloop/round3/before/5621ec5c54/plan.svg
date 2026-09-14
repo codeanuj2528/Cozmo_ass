@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="902" height="1552" viewBox="0 0 902 1552">
+<rect width="902" height="1552" fill="#ffffff"/>
+<g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<text x="28" y="38" font-size="22" font-weight="600" fill="#22222a">Floor Plan - Capture 5621ec5c54</text>
+<text x="28" y="62" font-size="12" fill="#7a7a86">Tier: LIDAR | Total Floor Area: 13.58 m²</text>
+<line x1="28" y1="82" x2="874" y2="82" stroke="#dedcd4" stroke-width="1"/>
+<polygon points="219.97,1035.12 759.90,982.80 733.67,1298.28 667.71,1304.67 674.55,1371.23 282.70,1409.21" stroke="none" fill="#f4f1ea"/>
+<polygon points="142.79,238.79 264.59,238.79 340.64,1023.43 219.97,1035.12" stroke="none" fill="#eceadf"/>
+<polygon points="219.97,1035.12 759.90,982.80 733.67,1298.28 667.71,1304.67 674.55,1371.23 282.70,1409.21" stroke="#22222a" stroke-width="15.78" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<polygon points="142.79,238.79 264.59,238.79 340.64,1023.43 219.97,1035.12" stroke="#22222a" stroke-width="15.78" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<text x="492.95" y="1146.08" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 01</text>
+<text x="492.95" y="1186.26" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">8.90 m2</text>
+<text x="492.95" y="1226.44" font-size="9.0" fill="#7a7a86" text-anchor="middle" font-weight="normal">h 2.625 m  [2.599, 2.652]</text>
+<text x="492.70" y="1037.52" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-5.54 492.70 1037.52)">3.78 ±3.4cm</text>
+<text x="718.18" y="1138.16" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-85.25 718.18 1138.16)">2.21 ±4.0cm</text>
+<text x="475.86" y="1361.65" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-5.54 475.86 1361.65)">2.74 ±4.3cm</text>
+<text x="279.64" y="1217.42" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-279.52 279.64 1217.42)">2.64 ±4.5cm</text>
+<text x="241.85" y="590.99" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 02</text>
+<text x="241.85" y="631.17" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">4.68 m2</text>
+<text x="241.85" y="671.35" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="203.69" y="267.49" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">0.85 ±2.5cm</text>
+<text x="274.05" y="633.88" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(84.46 274.05 633.88)">5.49 ±4.5cm</text>
+<text x="277.54" y="1000.71" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-5.54 277.54 1000.71)">0.84 ±2.5cm</text>
+<text x="209.95" y="634.19" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-275.54 209.95 634.19)">5.58 ±16.7cm</text>
+<line x1="492.95" y1="1189.13" x2="241.85" y2="634.04" stroke="#7a7a86" stroke-width="1.15" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="14.35,14.35" opacity="0.50"/>
+<g><line x1="28" y1="1532" x2="171.5" y2="1532" stroke="#22222a" stroke-width="2"/><line x1="28" y1="1528" x2="28" y2="1536" stroke="#22222a" stroke-width="2"/><line x1="171.5" y1="1528" x2="171.5" y2="1536" stroke="#22222a" stroke-width="2"/><text x="179.5" y="1536" font-size="11" fill="#7a7a86">1 m</text></g>
+</g></svg>
