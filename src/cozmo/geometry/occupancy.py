@@ -43,6 +43,14 @@ class OccupancyMaps:
     floor_hits: np.ndarray
     structural_hits: np.ndarray
     ceiling_hits: np.ndarray | None = None
+    # Channels the room outlines are corrected against after segmentation (geometry/refine.py).
+    # Upward-facing returns below the floor plane: floor that drops away, as over a stairwell.
+    drop_hits: np.ndarray | None = None
+    deep_drop_hits: np.ndarray | None = None
+    # Upward-facing returns above the floor: the tops of furniture, which stands inside a room.
+    surface_hits: np.ndarray | None = None
+    # Near-vertical returns at body height, whether or not they fit a wall plane.
+    wall_point_hits: np.ndarray | None = None
 
     @property
     def free_mask(self) -> np.ndarray:
@@ -247,6 +255,25 @@ def build_occupancy(
 
     np.clip(free_log_odds, -LOG_ODDS_CLAMP, LOG_ODDS_CLAMP, out=free_log_odds)
 
+    # Evidence the room outlines are corrected against once rooms exist (geometry/refine.py). Each
+    # is a count of returns per cell, so a single stray return cannot mark a cell.
+    upward = cloud.normals[:, 1] > 0.85
+    min_returns = 2
+
+    def _returns(mask: np.ndarray) -> np.ndarray:
+        counts = np.zeros(grid.shape, dtype=np.int32)
+        if mask.any():
+            cells = grid.to_cell(points_xz[mask])
+            keep = grid.inside(cells)
+            np.add.at(counts, (cells[keep, 0], cells[keep, 1]), 1)
+        return counts >= min_returns
+
+    # Below the floor by more than a tiled step or a shower tray, and by more than any of those.
+    drop_hits = _returns(upward & (height < -0.10))
+    deep_drop_hits = _returns(upward & (height < -0.30))
+    surface_hits = _returns(upward & (height > 0.07) & (height < 2.10))
+    wall_point_hits = _returns((np.abs(cloud.normals[:, 1]) < 0.30) & (height > 0.30) & (height < 2.00))
+
     return OccupancyMaps(
         grid=grid,
         free_log_odds=free_log_odds,
@@ -257,4 +284,8 @@ def build_occupancy(
         floor_hits=floor_hits,
         structural_hits=structural_hits,
         ceiling_hits=ceiling_hits,
+        drop_hits=drop_hits,
+        deep_drop_hits=deep_drop_hits,
+        surface_hits=surface_hits,
+        wall_point_hits=wall_point_hits,
     )

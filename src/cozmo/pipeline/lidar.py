@@ -49,6 +49,7 @@ from cozmo.geometry.fusion import FusedCloud, fuse, select_keyframes
 from cozmo.geometry.levels import LevelEstimate, detect_levels, refine_gravity
 from cozmo.geometry.occupancy import OccupancyMaps, build_occupancy
 from cozmo.geometry.openings import detect_all_openings
+from cozmo.geometry.refine import polygon_mask, refine_rooms
 from cozmo.geometry.walls import (
     WallCandidate,
     WallSegment,
@@ -413,6 +414,26 @@ def build_lidar_plan(
         min_inscribed_radius_m=config.min_inscribed_radius_m,
     )
     masks = room_masks(complex_)
+    refinements: dict[int, list[str]] = {}
+    if config.refine_rooms:
+        unrefined_area = {key: polygon.area for key, polygon in polygons.items()}
+        polygons, refinements = refine_rooms(
+            polygons,
+            occupancy,
+            walls,
+            min_room_area_m2=config.min_room_area_m2,
+            min_inscribed_radius_m=config.min_inscribed_radius_m,
+        )
+        # A room's mask selects the points its floor, ceiling and damage are measured from, so it
+        # must lose the floor its outline lost.
+        masks = {
+            key: mask & polygon_mask(polygons[key], occupancy.grid)
+            for key, mask in masks.items()
+            if key in polygons
+        }
+        for key, notes in refinements.items():
+            if key not in polygons and notes:
+                warnings.append(f"a {unrefined_area[key]:.2f} m2 room was removed: " + "; ".join(notes))
     timings["floorplan_s"] = time.perf_counter() - mark
 
     mark = time.perf_counter()
@@ -434,6 +455,7 @@ def build_lidar_plan(
     ordered = sorted(polygons.items(), key=lambda kv: -kv[1].area)
     for ordinal, (room_key, polygon) in enumerate(ordered, start=1):
         room_id = f"room_{ordinal:02d}"
+        warnings.extend(f"{room_id}: {text}" for text in refinements.get(room_key, []))
         mask = masks.get(
             room_key, np.zeros(occupancy.grid.shape, dtype=bool)
         )

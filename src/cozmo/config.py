@@ -32,6 +32,9 @@ class PipelineConfig:
     max_wall_lines: int = 44
     min_room_area_m2: float = 1.5
     min_inscribed_radius_m: float = 0.33
+    # Remove floor the scan says is not floor once rooms are segmented: a stairwell, the far end of
+    # a room seen from its doorway, a walled space nobody saw into (geometry/refine.py).
+    refine_rooms: bool = True
 
     calibration_path: Path | None = Path("calibration/intervals.json")
     weights_dir: Path = Path("weights")
