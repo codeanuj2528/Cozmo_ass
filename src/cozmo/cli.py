@@ -89,6 +89,12 @@ def run(
         "--snap-walls/--no-snap-walls",
         help="Rotate near-frame walls onto the dominant building frame.",
     ),
+    refine_rooms: bool = typer.Option(
+        True,
+        "--refine-rooms/--no-refine-rooms",
+        help="Remove floor the scan says is not there: a stairwell, the far end of a room seen "
+        "from its doorway, a walled space nobody saw into.",
+    ),
     voxel_size: Optional[float] = typer.Option(
         None,
         "--voxel-size",
@@ -113,7 +119,9 @@ def run(
     # voxel size of 0.05 while the configuration said 0.02, so the same capture gave
     # different answers through the command line and through the library -- which makes
     # every reported number ambiguous about which path produced it.
-    config = PipelineConfig(drift_correction=drift_correction, snap_walls_to_frame=snap_walls)
+    config = PipelineConfig(
+        drift_correction=drift_correction, snap_walls_to_frame=snap_walls, refine_rooms=refine_rooms
+    )
     if voxel_size is not None:
         config = config.with_overrides(voxel_m=voxel_size)
     if max_keyframes is not None:
