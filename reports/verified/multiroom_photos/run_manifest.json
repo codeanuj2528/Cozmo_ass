@@ -3,11 +3,11 @@
   "schema_version": "1.0",
   "capture_id": "ae3edc814d",
   "tier": "photo",
-  "generated_at": "2026-09-14T21:26:02.581389+00:00",
-  "git_commit": "8b53ef4",
-  "runtime_seconds": 138.606,
+  "generated_at": "2026-09-15T05:02:53.867563+00:00",
+  "git_commit": "a92927c",
+  "runtime_seconds": 154.31,
   "timings": {
-    "total_s": 138.606
+    "total_s": 154.3096
   },
   "keyframes_used": 0,
   "frames_available": 58,

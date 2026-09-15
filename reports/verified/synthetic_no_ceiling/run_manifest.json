@@ -1,24 +1,32 @@
 {
   "pipeline_version": "0.1.0",
   "schema_version": "1.0",
-  "capture_id": "photos_1x",
-  "tier": "photo",
-  "generated_at": "2026-09-15T05:03:36.604425+00:00",
+  "capture_id": "synthetic_no_ceiling",
+  "tier": "lidar",
+  "generated_at": "2026-09-15T04:55:26.019986+00:00",
   "git_commit": "a92927c",
-  "runtime_seconds": 40.946,
+  "runtime_seconds": 0.857,
   "timings": {
-    "total_s": 40.9459
+    "drift_s": 0.0943,
+    "fuse_s": 0.5171,
+    "gravity_s": 0.0043,
+    "walls_s": 0.0725,
+    "occupancy_s": 0.0186,
+    "floorplan_s": 0.0095,
+    "openings_s": 0.0508,
+    "damage_s": 0.0723
   },
-  "keyframes_used": 0,
-  "frames_available": 12,
-  "points_fused": 0,
+  "keyframes_used": 16,
+  "frames_available": 16,
+  "points_fused": 111981,
   "rooms_found": 1,
-  "total_floor_area_m2": 35.117,
+  "total_floor_area_m2": 10.083,
   "warnings": [
-    "hall: room scale 0.578 from 4 of 8 photographs that showed enough floor; applied to all",
-    "hall: 1 of 8 photographs did not register"
+    "no ceiling surface observed; ceiling height is unmeasured at this capture",
+    "snapped 6 wall runs onto the building frame, mean rotation 0.45 deg",
+    "damage detector: none, 6 frames examined, 0 regions"
   ],
-  "input_hash": "de8a6232ecb34f2a",
+  "input_hash": "1b99f712de6964c1",
   "config": {
     "voxel_m": 0.02,
     "grid_resolution_m": 0.03,

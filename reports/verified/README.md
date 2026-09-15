@@ -10,9 +10,11 @@ Regenerate with the commands at the end of `benchmark_report.md`. Room names per
 | `single_room` | `c00a170fe1`, assignment zip | LiDAR | 4 | 20.91 m² | unmeasured | 1 | not taped |
 | `bedroom_solo` | `5621ec5c54`, the bedroom alone | LiDAR | 2 | 10.88 m² | 2.625 m / unmeasured | 1 | bedroom 8.90 m² against 9.29 m², −4% |
 | `photos_1x` | the hall, 12 stills at 1× | photo | 1 | 35.12 m² | 2.743 m | 1 | 14.86 m², +136% |
-| `single_scan_floor_only` | `1a8384c3f6`, assignment zip | LiDAR | 8 | 38.86 m² | all unmeasured | 3 | not taped |
-| `single_scan_with_ceiling` | `c7d28f72c6`, assignment zip | LiDAR | 7 | 41.24 m² | 3.084 / 2.402 / 3.065 / 3.071 / 2.343 / 2.443 / 2.274 m | 6 | not taped |
+| `single_scan_floor_only` | `1a8384c3f6`, assignment zip | LiDAR | 8 | 38.91 m² | all unmeasured | 3 | not taped |
+| `single_scan_with_ceiling` | `c7d28f72c6`, assignment zip | LiDAR | 7 | 41.58 m² | 3.084 / 2.402 / 3.071 / 3.065 / 2.343 / 2.443 / 2.274 m | 5 | not taped |
 | `multiroom_photos` | home, 58 stills | photo | 3 | 97.19 m² | — | 1 | 28.75 m², +238% |
+| `synthetic_room` | ray-traced 3.60 × 2.80 m box, `tests/fixtures/raytrace_room.py` | LiDAR | 1 | 10.08 m² | 2.499 m | 2 | exact: 10.08 m², 2.50 m, door 0.85 m, window 1.10 m |
+| `synthetic_no_ceiling` | the same box without its upward lap | LiDAR | 1 | 10.08 m² | unmeasured | 2 | exact, as above |
 | `one_room/` | one capture at three tiers | all | see `one_room/RESULTS.md` | | | | |
 | `gates/` | the scored gate table for the folders above | | | | | | |
 

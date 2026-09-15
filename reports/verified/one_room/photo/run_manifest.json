@@ -3,11 +3,11 @@
   "schema_version": "1.0",
   "capture_id": "photos_bathroom",
   "tier": "photo",
-  "generated_at": "2026-09-14T21:28:22.349535+00:00",
-  "git_commit": "8b53ef4",
-  "runtime_seconds": 14.574,
+  "generated_at": "2026-09-15T05:06:00.583262+00:00",
+  "git_commit": "a92927c",
+  "runtime_seconds": 14.893,
   "timings": {
-    "total_s": 14.574
+    "total_s": 14.8929
   },
   "keyframes_used": 0,
   "frames_available": 7,

@@ -31,7 +31,7 @@ assignment's three samples have no tape and are checked against the scans themse
 The central finding is stated up front: **the LiDAR tier is the only one that
 delivers usable accuracy, and even it does not meet its repeatability gates.**
 Two walks of the same flat agree on the hall to 4 cm and its ceiling to 4 mm, but
-differ on the bedroom by up to 0.64 m. Twenty-one failure modes are documented with
+differ on the bedroom by up to 0.64 m. Twenty-two failure modes are documented with
 measurements in `known_failure_modes.md`, each observed on real data.
 
 ## Scope
@@ -61,9 +61,9 @@ intrinsics, metric depth and a pose. Everything after that is the same code.**
 
 ```
 Stray Scanner ─┐
-               ├─ Frame{K, depth, pose} ─→ fuse ─→ gravity ─→ walls ─→ cell complex
-walkthrough ───┤                                      ↓          ↓          ↓
-               │                                    levels    openings   rooms
+               ├─ Frame{K, depth, pose} ─→ fuse ─→ gravity ─→ walls ─→ cell complex ─→ refine
+walkthrough ───┤                                      ↓          ↓                       ↓
+               │                                    levels    openings                 rooms
 per-room stills┘                                                    ↓
                                             damage → concealed rules → scope → plan.json
 ```
@@ -275,7 +275,7 @@ same builder, the rules read monocular depth error as missing floor, cut the 1×
 
 ## 7. Known failure modes
 
-Twenty-one are documented with measurements in `known_failure_modes.md`. The four that matter:
+Twenty-two are documented with measurements in `known_failure_modes.md`. The four that matter:
 
 **The photo tier does not meet its gates.** §4 and §6 above. What would fix it, in order:
 capture at 1× rather than 0.5×, which the protocol now requires, though the hall re-shot at 1×
@@ -315,7 +315,8 @@ it drawn as a separate room; the first walk gives 7.58 m² and the bedroom walke
 ceiling lap, reads −11% overall with its bathroom within 2%.
 
 Against the tape the gates read 15 PASS, 18 FAIL, 33 SKIP. Ceiling and opening gates are SKIP
-because neither was taped. LiDAR intervals cover the tape on 3 of 37 measurements: they model
+because neither was taped. The ray-traced room, scored against the dimensions it was drawn with, adds
+11 PASS and 5 SKIP: walls within 0.6 cm, ceiling within 0.1 cm, both openings within 1.0 cm. LiDAR intervals cover the tape on 3 of 37 measurements: they model
 sensor and drift error, not a merged or a split room. The photo tier fails at +238%;
 photographed on the 1× lens, the hall reads 35.12 m² against 14.86 m². The video tier does not
 produce a metric plan.
@@ -323,7 +324,7 @@ produce a metric plan.
 The assignment's three samples have no tape, so they are checked against the scans themselves:
 each plan drawn over its own scan and over the other two scans registered onto it.
 `single_room.zip` is a living room, its bathroom and the lobby between them, plus the mouth of a
-corridor: 4 rooms, 20.91 m². Its two whole-flat scans give 38.86 m² over 8 rooms and 41.24 m² over
+corridor: 4 rooms, 20.91 m². Its two whole-flat scans give 38.91 m² over 8 rooms and 41.58 m² over
 7; aligned on their walls, 63% of one scan's wall points lie within 5 cm of the other's walls, and
 the room footprints overlap at an intersection-over-union of 0.61. Fix loop round 3 took out of
 these plans a corridor that ran through two walls, both stairwells and a walled space no scan saw
@@ -343,8 +344,11 @@ Some ideas here came from public work on the same brief: a ray-traced test room,
 ## 9. Experimental setup
 
 All captures are of a single property — the author's home flat — and one set of
-assignment-provided zips of a different property. The ray-traced rooms in
-`tests/fixtures/raytrace_room.py` exercise the pipeline but are not in the benchmark run.
+assignment-provided zips of a different property. The ray-traced room in
+`tests/fixtures/raytrace_room.py`, with and without its upward lap, is also scored in the benchmark,
+against the dimensions it was drawn with (`capture/ground_truth_synthetic.csv`). It is the only
+input whose ceiling and openings have exact truth, and it is noiseless, so a PASS on it shows the
+measurement is unbiased and says nothing about accuracy on a real scan.
 
 | Capture | Tier | Device | Frames | Duration | Ground truth |
 |---|---|---|---|---|---|
@@ -365,14 +369,17 @@ bathroom's walls. These are recorded as NOT MET or SKIP, not softened.
 
 ## 10. Results
 
-### Gate summary — 15 PASS / 18 FAIL / 33 SKIP
+### Gate summary — 26 PASS / 18 FAIL / 38 SKIP
+
+Against the tape, 15 PASS / 18 FAIL / 33 SKIP. The other 11 PASS and 5 SKIP are the ray-traced room with
+and without its upward lap, which is noiseless and has exact truth.
 
 | Gate | LiDAR (6 captures) | Photo (2 captures) | Video | Status |
 |---|---|---|---|---|
 | `wall_lengths` | 0/15 within 2 cm (long walk), 0/14 (first walk), 0/6 (bedroom) | 0/10 within 8% (0.5×), 0/4 (1×) | not scored | **FAIL** |
 | `footprint` | +1% (long walk), −11% (first walk), +17% (bedroom scan with its passage strip) | +238% (0.5×), +136% (1× hall) | not scored | **FAIL**, long walk PASS |
-| `ceiling_height` | 2.56–2.67 m per room | 2.74 m (1× hall) | — | **SKIP** (no tape) |
-| `opening_widths` | 7 found (long walk) | 1 found on each set | — | **SKIP** (no tape) |
+| `ceiling_height` | 2.56–2.67 m per room; ray-traced room 0.1 cm | 2.74 m (1× hall) | — | **SKIP** (no tape); ray-traced PASS |
+| `opening_widths` | 7 found (long walk); ray-traced room 2/2 within 1.0 cm | 1 found on each set | — | **SKIP** (no tape); ray-traced PASS |
 | `adjacency` | 2/5 (long), 3/4 (first) | 2/4 (folder names) | — | **FAIL** |
 | `room_overlap` | 0 overlaps, 6 captures | 0 overlaps | — | **PASS** |
 | `drift_accountability` | 6 PASS | not applicable | — | **PASS** |
@@ -393,9 +400,13 @@ same room give 5.64, 7.58 and 8.90 m².
 
 | Capture | Tier | Runtime, one run on an Apple laptop |
 |---|---|---|
-| Long walk (18,649 frames) | LiDAR | 60 s |
-| 58 photos (0.5×) | Photo | 139 s |
-| Assignment single room (1,715 frames) | LiDAR | 14 s |
+| Long walk (18,649 frames) | LiDAR | 102 s |
+| 58 photos (0.5×) | Photo | 154 s |
+| Assignment single room (1,715 frames) | LiDAR | 15 s |
+
+These are the runtimes in the manifests regenerated at `a92927c`. A macOS media-analysis process was
+using about three cores throughout, so they are slower than the same runs on 14 Sep: 60 s, 139 s and
+14 s. The geometry of those runs is unchanged.
 
 ---
 
@@ -412,7 +423,7 @@ tier's dominant error is the monocular depth model's scale, measured at 1.57–1
 photographs, a field-of-view mismatch between the model's training data and the 0.5× ultra-wide
 lens. The 1× lens halves the error but still fails. The video tier does not solve metric scale.
 
-Twenty-one failure modes are documented with measurements. Four of them — mirrors, glass, low light,
+Twenty-two failure modes are documented with measurements. Four of them — mirrors, glass, low light,
 and the upward lap — are named in the brief and each is addressed: geometric mirror rejection,
 two-view corroboration on the same patch of wall, luma-based low-light flagging, and
 ceiling-height abstention when no downward-facing returns exist.

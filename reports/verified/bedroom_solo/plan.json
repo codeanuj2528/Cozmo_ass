@@ -3,7 +3,7 @@
   "pipeline_version": "0.1.0",
   "capture_id": "5621ec5c54",
   "tier": "lidar",
-  "created_at": "2026-09-14T21:06:51.663719Z",
+  "created_at": "2026-09-15T05:18:42.062334Z",
   "rooms": [
     {
       "room_id": "room_01",
@@ -704,25 +704,25 @@
           "type": "door",
           "wall_id": "room_02_w01",
           "width": {
-            "value": 0.8999999999999999,
-            "lo": 0.8599999999999999,
-            "hi": 0.94,
+            "value": 0.94,
+            "lo": 0.8999999999999999,
+            "hi": 0.98,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "height": {
-            "value": 1.9400000000000002,
-            "lo": 1.8800000000000001,
-            "hi": 2.0,
+            "value": 1.9800000000000002,
+            "lo": 1.9200000000000002,
+            "hi": 2.04,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "sill_height": {
-            "value": 0.06999999999999999,
-            "lo": 0.009999999999999995,
-            "hi": 0.13,
+            "value": 0.05,
+            "lo": 0.0,
+            "hi": 0.11,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
@@ -812,5 +812,5 @@
     "coverage": 0.9,
     "method": "prior_only"
   },
-  "runtime_seconds": 39.88802383298753
+  "runtime_seconds": 60.50532487500459
 }

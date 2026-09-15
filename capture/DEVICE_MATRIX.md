@@ -32,6 +32,11 @@ were regenerated on 15 Sep, after fix loop round 3.
 Every cell comes from one of those two outputs. `not taped` means the ground truth that would score
 it does not exist, and `no repeat capture` means that tier was captured once.
 
+The only exact truth for ceilings and openings is the ray-traced room (`reports/verified/synthetic_room`,
+scored against `capture/ground_truth_synthetic.csv`): walls within 0.6 cm, ceiling within 0.1 cm, the
+door 1.0 cm narrow and the window exact. It is noiseless and has no furniture, so it shows the LiDAR
+measurement is unbiased, not what a phone delivers in a real room. It is kept out of the table above.
+
 ## What limits each tier
 
 **LiDAR.** Depth is 256x192 over the full field of view, so a wall at 3 m is sampled every

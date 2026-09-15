@@ -3,7 +3,7 @@
   "pipeline_version": "0.1.0",
   "capture_id": "ae3edc814d",
   "tier": "lidar",
-  "created_at": "2026-09-14T21:06:10.318944Z",
+  "created_at": "2026-09-15T05:17:39.791120Z",
   "rooms": [
     {
       "room_id": "room_01",
@@ -496,25 +496,25 @@
           "type": "window",
           "wall_id": "room_01_w00",
           "width": {
-            "value": 2.02,
-            "lo": 1.98,
-            "hi": 2.06,
+            "value": 2.06,
+            "lo": 2.02,
+            "hi": 2.1,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "height": {
-            "value": 1.6400000000000006,
-            "lo": 1.5800000000000005,
-            "hi": 1.7000000000000006,
+            "value": 1.6800000000000006,
+            "lo": 1.6200000000000006,
+            "hi": 1.7400000000000007,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "sill_height": {
-            "value": 0.57,
-            "lo": 0.51,
-            "hi": 0.6299999999999999,
+            "value": 0.5499999999999999,
+            "lo": 0.48999999999999994,
+            "hi": 0.6099999999999999,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
@@ -535,25 +535,25 @@
           "type": "door",
           "wall_id": "room_01_w04",
           "width": {
-            "value": 0.6800000000000002,
-            "lo": 0.6400000000000001,
-            "hi": 0.7200000000000002,
+            "value": 0.7200000000000002,
+            "lo": 0.6800000000000002,
+            "hi": 0.7600000000000002,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "height": {
-            "value": 1.9400000000000002,
-            "lo": 1.8800000000000001,
-            "hi": 2.0,
+            "value": 1.9800000000000002,
+            "lo": 1.9200000000000002,
+            "hi": 2.04,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "sill_height": {
-            "value": 0.06999999999999999,
-            "lo": 0.009999999999999995,
-            "hi": 0.13,
+            "value": 0.05,
+            "lo": 0.0,
+            "hi": 0.11,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
@@ -574,25 +574,25 @@
           "type": "window",
           "wall_id": "room_01_w06",
           "width": {
-            "value": 0.7,
-            "lo": 0.6599999999999999,
-            "hi": 0.74,
+            "value": 0.74,
+            "lo": 0.7,
+            "hi": 0.78,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "height": {
-            "value": 1.7600000000000002,
-            "lo": 1.7000000000000002,
-            "hi": 1.8200000000000003,
+            "value": 1.8000000000000003,
+            "lo": 1.7400000000000002,
+            "hi": 1.8600000000000003,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "sill_height": {
-            "value": 0.29000000000000004,
-            "lo": 0.23000000000000004,
-            "hi": 0.35000000000000003,
+            "value": 0.27,
+            "lo": 0.21000000000000002,
+            "hi": 0.33,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
@@ -940,25 +940,25 @@
           "type": "window",
           "wall_id": "room_02_w00",
           "width": {
-            "value": 1.9,
-            "lo": 1.8599999999999999,
-            "hi": 1.94,
+            "value": 1.94,
+            "lo": 1.9,
+            "hi": 1.98,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "height": {
-            "value": 1.3199999999999998,
-            "lo": 1.2599999999999998,
-            "hi": 1.38,
+            "value": 1.3599999999999999,
+            "lo": 1.2999999999999998,
+            "hi": 1.42,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "sill_height": {
-            "value": 0.63,
-            "lo": 0.5700000000000001,
-            "hi": 0.69,
+            "value": 0.61,
+            "lo": 0.55,
+            "hi": 0.6699999999999999,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
@@ -1368,25 +1368,25 @@
           "type": "door",
           "wall_id": "room_03_w00",
           "width": {
-            "value": 0.9599999999999999,
-            "lo": 0.9199999999999998,
-            "hi": 0.9999999999999999,
+            "value": 0.9999999999999999,
+            "lo": 0.9599999999999999,
+            "hi": 1.0399999999999998,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "height": {
-            "value": 1.8599999999999999,
-            "lo": 1.7999999999999998,
-            "hi": 1.92,
+            "value": 1.9,
+            "lo": 1.8399999999999999,
+            "hi": 1.96,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "sill_height": {
-            "value": 0.06999999999999999,
-            "lo": 0.009999999999999995,
-            "hi": 0.13,
+            "value": 0.05,
+            "lo": 0.0,
+            "hi": 0.11,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
@@ -1678,25 +1678,25 @@
           "type": "door",
           "wall_id": "room_04_w00",
           "width": {
-            "value": 0.6600000000000001,
-            "lo": 0.6200000000000001,
-            "hi": 0.7000000000000002,
+            "value": 0.7000000000000002,
+            "lo": 0.6600000000000001,
+            "hi": 0.7400000000000002,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "height": {
-            "value": 1.7,
-            "lo": 1.64,
-            "hi": 1.76,
+            "value": 1.74,
+            "lo": 1.68,
+            "hi": 1.8,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "sill_height": {
-            "value": 0.21000000000000002,
-            "lo": 0.15000000000000002,
-            "hi": 0.27,
+            "value": 0.19,
+            "lo": 0.13,
+            "hi": 0.25,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
@@ -1802,5 +1802,5 @@
     "coverage": 0.9,
     "method": "prior_only"
   },
-  "runtime_seconds": 32.51671879203059
+  "runtime_seconds": 49.1665126659791
 }

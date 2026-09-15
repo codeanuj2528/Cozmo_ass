@@ -1,13 +1,13 @@
 # One-capture run results
 
-15 Sep 2026, regenerated after fix loop round 3: LiDAR at `3dc8471`, video and photo at `8b53ef4`. The inputs, the reason for each and the three commands
+15 Sep 2026, every tier regenerated at `a92927c`, after fix loop round 3. The inputs, the reason for each and the three commands
 are in `SELECTION.md`.
 
 | Tier | Input | Rooms | Area, 90% interval | Openings | Ceiling | Runtime | Verdict |
 |---|---|---|---|---|---|---|---|
-| LiDAR | `c00a170fe1` | 4 | **20.91 m²** [19.66, 22.17] | 1 window, 0.50 m [0.46, 0.54] | unmeasured | 14 s | a living room, its bathroom and the lobby between them, plus 4.51 m² of a corridor the walk stood at the mouth of |
-| Video | the same walk's `rgb.mp4`, no poses or depth | 2 | **339.61 m²** [135.84, 543.38] | 0 | 4.00 / 4.41 m, on a wrong scale | 59 s | scale failed, about 16 times LiDAR |
-| Photo | bathroom, 7 stills | 0 | **0.00 m²** | 0 | n/a | 14 s | room rejected as `no_room` |
+| LiDAR | `c00a170fe1` | 4 | **20.91 m²** [19.66, 22.17] | 1 window, 0.54 m [0.50, 0.58] | unmeasured | 18 s | a living room, its bathroom and the lobby between them, plus 4.51 m² of a corridor the walk stood at the mouth of |
+| Video | the same walk's `rgb.mp4`, no poses or depth | 2 | **339.61 m²** [135.84, 543.38] | 0 | 4.00 / 4.41 m, on a wrong scale | 66 s | scale failed, about 16 times LiDAR |
+| Photo | bathroom, 7 stills | 0 | **0.00 m²** | 0 | n/a | 15 s | room rejected as `no_room` |
 
 LiDAR and video are the same walk. Photo is a different room, the home bathroom: there are no stills of
 `c00a170fe1`.

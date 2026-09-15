@@ -3,7 +3,7 @@
   "pipeline_version": "0.1.0",
   "capture_id": "photos_1x",
   "tier": "photo",
-  "created_at": "2026-09-14T21:26:41.820134Z",
+  "created_at": "2026-09-15T05:03:36.604425Z",
   "rooms": [
     {
       "room_id": "room_01",
@@ -310,25 +310,25 @@
           "type": "window",
           "wall_id": "room_01_w02",
           "width": {
-            "value": 2.46,
-            "lo": 0.984,
-            "hi": 3.936,
+            "value": 2.5,
+            "lo": 1.0,
+            "hi": 4.0,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "height": {
-            "value": 1.1199999999999999,
-            "lo": 0.44799999999999995,
-            "hi": 1.7919999999999998,
+            "value": 1.16,
+            "lo": 0.46399999999999997,
+            "hi": 1.8559999999999999,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
           },
           "sill_height": {
-            "value": 0.25,
+            "value": 0.23000000000000004,
             "lo": 0.0,
-            "hi": 0.85,
+            "hi": 0.8300000000000001,
             "unit": "m",
             "coverage": 0.9,
             "method": "prior_only"
@@ -416,5 +416,5 @@
     "coverage": 0.9,
     "method": "prior_only"
   },
-  "runtime_seconds": 37.625388249987736
+  "runtime_seconds": 40.945908583002165
 }

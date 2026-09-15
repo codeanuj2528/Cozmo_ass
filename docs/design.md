@@ -109,9 +109,14 @@ assignment's living room and bathroom, scanned about 40° off the world axes, be
 ### Room refinement (`cozmo/geometry/refine.py`)
 
 A face of the arrangement is kept whole, so a room is as large as the wall lines around it allow,
-and where no wall line crosses the place a space ends the room runs on past it. Three corrections
-run on every room once rooms exist, and each only removes floor:
+and where no wall line crosses the place a space ends the room runs on past it. Four corrections
+run on every room once rooms exist. The first only adds floor, and only a strip the scan saw floor
+in; the other three only remove it:
 
+- **A slit in the outline.** Two wall lines a few centimetres apart leave a strip the outline runs
+  round. A closing of the outline by 20 cm finds such strips, and one is filled where floor returns
+  cover at least 70% of its cells, wall returns at most 30%, and no other room lies. A strip with
+  wall returns in it is a partition the scan saw and stays (`known_failure_modes.md` §22).
 - **A stairwell.** A connected region of upward-facing returns below the floor, at least 0.25 m² of
   it and at least 0.10 m² deeper than 0.30 m, is a flight going down. It is removed as a rectangle on
   the room's own axis.

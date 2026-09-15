@@ -1,0 +1,457 @@
+{
+  "schema_version": "1.0.0",
+  "pipeline_version": "0.1.0",
+  "capture_id": "synthetic_room",
+  "tier": "lidar",
+  "created_at": "2026-09-15T04:55:24.162162Z",
+  "rooms": [
+    {
+      "room_id": "room_01",
+      "label": "room",
+      "polygon": [
+        [
+          -1.944862436276786,
+          2.037432829193342
+        ],
+        [
+          0.6619687888171826,
+          4.511223294798189
+        ],
+        [
+          2.5931669364211225,
+          2.4761651045364865
+        ],
+        [
+          -0.01366427339978705,
+          0.0023746211672507614
+        ]
+      ],
+      "walls": [
+        {
+          "wall_id": "room_01_w00",
+          "surface_id": "room_01_s00",
+          "start": [
+            -1.944862436276786,
+            2.037432829193342
+          ],
+          "end": [
+            0.6619687888171826,
+            4.511223294798189
+          ],
+          "length": {
+            "value": 3.593773546544407,
+            "lo": 3.5681496678802307,
+            "hi": 3.6193974252085837,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "propagated_covariance"
+          },
+          "height": {
+            "value": 2.4991801267028473,
+            "lo": 2.485749574443167,
+            "hi": 2.5126106789625275,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "propagated_covariance"
+          },
+          "plane": {
+            "normal": [
+              0.6940166304082304,
+              -8.945325431336513e-7,
+              -0.7199589687725304
+            ],
+            "offset": 2.7996494660352993
+          },
+          "point_support": 20481
+        },
+        {
+          "wall_id": "room_01_w01",
+          "surface_id": "room_01_s01",
+          "start": [
+            0.6619687888171826,
+            4.511223294798189
+          ],
+          "end": [
+            2.5931669364211225,
+            2.4761651045364865
+          ],
+          "length": {
+            "value": 2.8055281362089604,
+            "lo": 2.7845935754640885,
+            "hi": 2.8264626969538322,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "propagated_covariance"
+          },
+          "height": {
+            "value": 2.4991801267028473,
+            "lo": 2.485749574443167,
+            "hi": 2.5126106789625275,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "propagated_covariance"
+          },
+          "plane": {
+            "normal": [
+              -0.7199583916033127,
+              -4.592896690060169e-6,
+              -0.6940172291369116
+            ],
+            "offset": 3.5997266245681354
+          },
+          "point_support": 13855
+        },
+        {
+          "wall_id": "room_01_w02",
+          "surface_id": "room_01_s02",
+          "start": [
+            2.5931669364211225,
+            2.4761651045364865
+          ],
+          "end": [
+            -0.01366427339978705,
+            0.0023746211672507614
+          ],
+          "length": {
+            "value": 3.59377354769392,
+            "lo": 3.5681495721299883,
+            "hi": 3.619397523257852,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "propagated_covariance"
+          },
+          "height": {
+            "value": 2.4991801267028473,
+            "lo": 2.485749574443167,
+            "hi": 2.5126106789625275,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "propagated_covariance"
+          },
+          "plane": {
+            "normal": [
+              -0.6940227671823237,
+              -0.00005843182010986604,
+              0.7199530507042192
+            ],
+            "offset": -0.00021826917954059777
+          },
+          "point_support": 15668
+        },
+        {
+          "wall_id": "room_01_w03",
+          "surface_id": "room_01_s03",
+          "start": [
+            -0.01366427339978705,
+            0.0023746211672507614
+          ],
+          "end": [
+            -1.944862436276786,
+            2.037432829193342
+          ],
+          "length": {
+            "value": 2.8055281596080732,
+            "lo": 2.7845939206195673,
+            "hi": 2.826462398596579,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "propagated_covariance"
+          },
+          "height": {
+            "value": 2.4991801267028473,
+            "lo": 2.485749574443167,
+            "hi": 2.5126106789625275,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "propagated_covariance"
+          },
+          "plane": {
+            "normal": [
+              0.7199572115214516,
+              -0.000013364455566077639,
+              0.694018453212627
+            ],
+            "offset": -0.0003511526511668084
+          },
+          "point_support": 17998
+        }
+      ],
+      "surfaces": [
+        {
+          "surface_id": "room_01_s00",
+          "room_id": "room_01",
+          "type": "wall",
+          "area": {
+            "value": 8.981487427394192,
+            "lo": 8.532413056024483,
+            "hi": 9.430561798763902,
+            "unit": "m2",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "plane": {
+            "normal": [
+              0.6940166304082304,
+              -8.945325431336513e-7,
+              -0.7199589687725304
+            ],
+            "offset": 2.7996494660352993
+          }
+        },
+        {
+          "surface_id": "room_01_s01",
+          "room_id": "room_01",
+          "type": "wall",
+          "area": {
+            "value": 7.011520162919113,
+            "lo": 6.660944154773157,
+            "hi": 7.362096171065069,
+            "unit": "m2",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "plane": {
+            "normal": [
+              -0.7199583916033127,
+              -4.592896690060169e-6,
+              -0.6940172291369116
+            ],
+            "offset": 3.5997266245681354
+          }
+        },
+        {
+          "surface_id": "room_01_s02",
+          "room_id": "room_01",
+          "type": "wall",
+          "area": {
+            "value": 8.981487430267032,
+            "lo": 8.532413058753681,
+            "hi": 9.430561801780383,
+            "unit": "m2",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "plane": {
+            "normal": [
+              -0.6940227671823237,
+              -0.00005843182010986604,
+              0.7199530507042192
+            ],
+            "offset": -0.00021826917954059777
+          }
+        },
+        {
+          "surface_id": "room_01_s03",
+          "room_id": "room_01",
+          "type": "wall",
+          "area": {
+            "value": 7.011520221397711,
+            "lo": 6.660944210327825,
+            "hi": 7.3620962324675965,
+            "unit": "m2",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "plane": {
+            "normal": [
+              0.7199572115214516,
+              -0.000013364455566077639,
+              0.694018453212627
+            ],
+            "offset": -0.0003511526511668084
+          }
+        },
+        {
+          "surface_id": "room_01_floor",
+          "room_id": "room_01",
+          "type": "floor",
+          "area": {
+            "value": 10.082432843651846,
+            "lo": 9.477486873032735,
+            "hi": 10.687378814270957,
+            "unit": "m2",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "plane": {
+            "normal": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "offset": -0.00039230221504272687
+          }
+        },
+        {
+          "surface_id": "room_01_ceiling",
+          "room_id": "room_01",
+          "type": "ceiling",
+          "area": {
+            "value": 10.082432843651846,
+            "lo": 9.477486873032735,
+            "hi": 10.687378814270957,
+            "unit": "m2",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "plane": {
+            "normal": [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            "offset": 2.49957242891789
+          }
+        }
+      ],
+      "openings": [
+        {
+          "opening_id": "room_01_o00",
+          "type": "window",
+          "wall_id": "room_01_w01",
+          "width": {
+            "value": 1.0999999999999999,
+            "lo": 1.0599999999999998,
+            "hi": 1.14,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "height": {
+            "value": 1.2000000000000004,
+            "lo": 1.1400000000000003,
+            "hi": 1.2600000000000005,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "sill_height": {
+            "value": 0.9099999999999999,
+            "lo": 0.8499999999999999,
+            "hi": 0.97,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "offset_along_wall": {
+            "value": 1.3931350552592063,
+            "lo": 1.3331350552592063,
+            "hi": 1.4531350552592064,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "detection_confidence": 0.99,
+          "connects_to_room": null
+        },
+        {
+          "opening_id": "room_01_o01",
+          "type": "door",
+          "wall_id": "room_01_w02",
+          "width": {
+            "value": 0.8400000000000001,
+            "lo": 0.8,
+            "hi": 0.8800000000000001,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "height": {
+            "value": 1.9600000000000002,
+            "lo": 1.9000000000000001,
+            "hi": 2.02,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "sill_height": {
+            "value": 0.06999999999999999,
+            "lo": 0.009999999999999995,
+            "hi": 0.13,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "offset_along_wall": {
+            "value": 2.0609549290821687,
+            "lo": 2.0009549290821687,
+            "hi": 2.1209549290821688,
+            "unit": "m",
+            "coverage": 0.9,
+            "method": "prior_only"
+          },
+          "detection_confidence": 0.99,
+          "connects_to_room": null
+        }
+      ],
+      "ceiling_height": {
+        "value": 2.4991801267028473,
+        "lo": 2.485749574443167,
+        "hi": 2.5126106789625275,
+        "unit": "m",
+        "coverage": 0.9,
+        "method": "propagated_covariance"
+      },
+      "floor_area": {
+        "value": 10.082432843651846,
+        "lo": 9.477486873032735,
+        "hi": 10.687378814270957,
+        "unit": "m2",
+        "coverage": 0.9,
+        "method": "prior_only"
+      },
+      "perimeter": {
+        "value": 12.798603390055362,
+        "lo": 9.598952542541522,
+        "hi": 15.998254237569203,
+        "unit": "m",
+        "coverage": 0.9,
+        "method": "prior_only"
+      },
+      "observation_quality": 0.9894040609733284
+    }
+  ],
+  "adjacency": [],
+  "damage": [],
+  "concealed_flags": [],
+  "scope_items": [],
+  "drift": {
+    "method": "pose graph built; no loop closure passed ICP verification",
+    "loop_closures_found": 0,
+    "residual_before_m": 0.0,
+    "residual_after_m": 0.0,
+    "max_pose_correction_m": 0.0,
+    "footprint_area_before_m2": 10.082432843651846,
+    "footprint_area_after_m2": 10.082432843651846,
+    "applied": false
+  },
+  "calibration": {
+    "method": "propagated_covariance",
+    "nominal_coverage": 0.9,
+    "empirical_coverage": {},
+    "residual_quantiles": {},
+    "fitted_on": "uncalibrated"
+  },
+  "quality": {
+    "tier": "lidar",
+    "device_model": "unknown",
+    "frames_available": 16,
+    "frames_used": 16,
+    "median_depth_confidence": 0.008050000295042992,
+    "surface_coverage": 0.6433268736408135,
+    "low_light_fraction": 0.0,
+    "specular_fraction": null,
+    "warnings": [
+      "snapped 6 wall runs onto the building frame, mean rotation 0.45 deg"
+    ]
+  },
+  "total_floor_area": {
+    "value": 10.082432843651846,
+    "lo": 9.477486873032735,
+    "hi": 10.687378814270957,
+    "unit": "m2",
+    "coverage": 0.9,
+    "method": "prior_only"
+  },
+  "runtime_seconds": 0.8973442909773439
+}

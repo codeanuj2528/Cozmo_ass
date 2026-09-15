@@ -239,7 +239,7 @@ periods just inside the doorway.
 ## 20. The assignment's flat, scanned twice, disagrees with itself
 
 `single_scan_floor_only.zip` and `single_scan_with_ceiling.zip` cover the same space. They
-reconstruct as 8 rooms and 38.86 m² and as 7 rooms and 41.24 m², 6% apart; before the room
+reconstruct as 8 rooms and 38.91 m² and as 7 rooms and 41.58 m², 7% apart; before the room
 refinement of fix loop round 3 they read 42.26 and 47.31 m², 11% apart. Neither has tape, so
 neither can be called right. Aligned on their walls, 63% of the with-ceiling scan's wall points lie
 within 5 cm of the floor-only scan's walls and 81% within 10 cm. The two room footprints overlap at
@@ -280,3 +280,28 @@ depth error as absent floor: the 1× hall photos went from 35.12 to 2.11 m² whe
 cut 33.01 m², the 0.5× bedroom lost 99.88 m² the same way and 6.27 m² to "stairwells" below a floor
 that was never measured, and the 0.5× set gained a room overlap. A monocular depth map has partial
 walls and no trustworthy returns below the floor, so it cannot show that floor is absent.
+
+## 22. Slits in a room outline are filled only where the scan saw floor
+
+Two wall lines a few centimetres apart leave a strip of cells between them, and the room's outline
+runs round it. On the with-ceiling scan one such slit, 8 cm wide, reached 2.1 m into the 7.14 m²
+room; the floor-only living room had a wedge a few centimetres wide at a corner. `geometry/refine.py`
+closes each outline by 20 cm and fills a strip that closing adds only where floor returns cover at
+least 70% of its cells and wall returns at most 30%, and never where another room lies. It filled
+0.05 m² in the floor-only living room, 0.20 m² over two slits in the with-ceiling living room and
+0.15 m² in the 7.14 m² room.
+
+Three strips stay, because the scan saw wall in them: on the floor-only scan a 23 × 57 cm wedge in
+the living room with wall returns in 67% of it and a 31 × 45 cm notch in room_05 with 65%, and on the
+with-ceiling scan a 30 × 346 cm strip in the stair hall with 74%. Whether each is a real wall stub
+has not been checked against the camera frames, and so they remain in the outlines as drawn. An
+8 × 30 cm notch in the floor-only living room sits at the threshold and is not filled.
+
+Filling a slit removes its sides, and an opening is attached to the room edge its centre falls on.
+The with-ceiling living room had a window 0.68 m wide with a 1.69 m sill on a 0.70 m side of one
+slit; that side now lies 0.35 m inside the room, so the plan no longer carries the window. It is not
+known from the frames whether the window was real.
+
+An opening is measured on the whole wall run it was found in, so it can be wider than the room edge
+it is attached to when the room's outline stops short of its far jamb. The floor-only scan draws a
+2.78 m pass-through on a 1.59 m edge of room_05. The width is reported as measured, not clipped to the edge.

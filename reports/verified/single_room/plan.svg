@@ -12,9 +12,9 @@
 <polygon points="446.99,759.73 621.69,934.59 324.17,1231.82 149.50,1056.94" stroke="#22222a" stroke-width="16.71" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="418.87,492.23 665.84,245.50 846.77,426.60 611.91,661.24 504.96,599.61 470.12,564.73" stroke="#22222a" stroke-width="16.71" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="571.37,701.75 846.77,426.60 988.33,568.29 914.20,642.35 818.62,546.67 617.34,747.77" stroke="#22222a" stroke-width="16.71" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="769.15" y1="348.90" x2="822.81" y2="402.62" stroke="#ffffff" stroke-width="20.88" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="771.75" y1="346.30" x2="825.41" y2="400.02" stroke="#3d6fa8" stroke-width="3.34" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="766.55" y1="351.50" x2="820.21" y2="405.22" stroke="#3d6fa8" stroke-width="3.34" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="767.00" y1="346.75" x2="824.96" y2="404.77" stroke="#ffffff" stroke-width="20.88" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="769.60" y1="344.15" x2="827.56" y2="402.17" stroke="#3d6fa8" stroke-width="3.34" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="764.40" y1="349.35" x2="822.36" y2="407.37" stroke="#3d6fa8" stroke-width="3.34" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <text x="926.34" y="846.31" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 01</text>
 <text x="926.34" y="888.83" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">10.77 m2</text>
 <text x="926.34" y="931.36" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>

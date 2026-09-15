@@ -12,7 +12,8 @@ git clone <this repo> && cd cozmo
 ```
 
 `scripts/setup.sh` ray-traces a 3.60 × 2.80 m room with a 2.50 m ceiling and reconstructs it:
-10.08 m², every wall within 1 mm, ceiling 2.499 m. Its door and window are not detected. The LiDAR
+10.08 m², every wall within 6 mm, ceiling 2.499 m, the 0.85 m door at 0.84 m and the 1.10 m window at
+1.10 m. `reports/verified/synthetic_room` scores it against those exact dimensions. The LiDAR
 tier needs no model weights; photo and video also need `.[ml]` and the weights above. Nothing reaches
 the network at run time.
 
@@ -46,8 +47,8 @@ unzip single_room.zip -d samples/single_room
 | Zip | Walk | Rooms | Floor area, 90% interval | Ceilings | Openings | Damage | Loop closures kept |
 |---|---|---|---|---|---|---|---|
 | `single_room.zip` (`c00a170fe1`) | 37 s, no upward frames | 4 | 20.91 m² [19.66, 22.17] | unmeasured | 1 | none | 0 of 16 candidates |
-| `single_scan_floor_only.zip` (`1a8384c3f6`) | 115 s, no upward frames | 8 | 38.86 m² [36.53, 41.19] | unmeasured | 3 | none | 1 of 19 |
-| `single_scan_with_ceiling.zip` (`c7d28f72c6`) | 215 s, 16.6% of frames look up | 7 | 41.24 m² [38.76, 43.71] | 2.27–3.08 m, all 7 rooms | 6 | none | 21 of 41 |
+| `single_scan_floor_only.zip` (`1a8384c3f6`) | 115 s, no upward frames | 8 | 38.91 m² [36.57, 41.24] | unmeasured | 3 | none | 1 of 19 |
+| `single_scan_with_ceiling.zip` (`c7d28f72c6`) | 215 s, 16.6% of frames look up | 7 | 41.58 m² [39.08, 44.07] | 2.27–3.08 m, all 7 rooms | 5 | none | 21 of 41 |
 
 These are the plans in `reports/verified/`, and the same plans come out, room for room, from
 unzipping the three files afresh. That flat has no tape, so every accuracy gate on it
@@ -58,7 +59,7 @@ reports SKIP. What can be checked without tape:
   plan draws at 4.51 m². Before fix loop round 3 that corridor ran on across the passage beyond it
   and into a bathroom, 8.82 m², and the lobby held a walled space none of the three scans saw into.
 - The two whole-flat scans agree on their walls: aligned, 63% of one scan's wall points lie within
-  5 cm of the other's walls and 81% within 10 cm. Their areas are 6% apart and their room footprints
+  5 cm of the other's walls and 81% within 10 cm. Their areas are 7% apart and their room footprints
   overlap at an intersection-over-union of 0.61. Each scan's stair hall has its stairwell taken out,
   and some landing floor with it (`known_failure_modes.md` §21).
 - Rooms are drawn where they were measured. Where floor between two connected rooms was left out,
@@ -74,7 +75,9 @@ reports SKIP. What can be checked without tape:
 | `5621ec5c54`, the bedroom alone | 2 | 10.88 m² against the bedroom's 9.29 m² | bedroom 8.90 m², −4%, plus 1.98 m² of the passage it was entered from |
 
 Against the tape the gates read 15 PASS, 18 FAIL and 33 SKIP
-(`reports/verified/gates/gate_table.txt`). The photo tier reads +238% on 58 stills at 0.5× and +136%
+(`reports/verified/gates/gate_table.txt`). The same table scores the ray-traced room against its exact
+dimensions, 11 PASS and 5 SKIP, which shows the measurement is unbiased on a noiseless room and says
+nothing about accuracy on a real one. The photo tier reads +238% on 58 stills at 0.5× and +136%
 on the hall at 1×; the video tier does not produce a metric plan. `benchmark_report.md` has every
 gate and room.
 
@@ -133,7 +136,7 @@ three rounds are in `fixloop/`.
 .venv/bin/python -m pytest -q
 ```
 
-138 tests. They cover geometry primitives, the ray-traced box, drift and loop-closure gates, damage
+140 tests. They cover geometry primitives, the ray-traced box, drift and loop-closure gates, damage
 detection, the rule engine, the gates, intervals and the schema contract, including a check that every
 id in every verified plan resolves. Several exist because a defect got past review.
 

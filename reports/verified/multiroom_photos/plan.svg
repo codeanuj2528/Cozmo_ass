@@ -10,9 +10,9 @@
 <polygon points="1188.28,296.72 1373.03,296.72 1373.03,840.97 1246.78,840.97 1188.28,544.15" stroke="#22222a" stroke-width="7.56" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="82.97,840.97 82.97,653.20 566.65,477.16 831.31,450.17 831.31,840.97" stroke="#22222a" stroke-width="7.56" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <polygon points="831.31,178.97 908.63,268.06 1141.89,703.19 1188.28,840.97 831.31,840.97" stroke="#22222a" stroke-width="7.56" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="467.61" y1="513.20" x2="566.65" y2="477.16" stroke="#ffffff" stroke-width="9.45" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="467.04" y1="511.64" x2="566.08" y2="475.59" stroke="#3d6fa8" stroke-width="1.51" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="468.18" y1="514.76" x2="567.21" y2="478.72" stroke="#3d6fa8" stroke-width="1.51" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="466.32" y1="513.67" x2="566.65" y2="477.16" stroke="#ffffff" stroke-width="9.45" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="465.75" y1="512.11" x2="566.08" y2="475.59" stroke="#3d6fa8" stroke-width="1.51" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="466.89" y1="515.23" x2="567.21" y2="478.72" stroke="#3d6fa8" stroke-width="1.51" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
 <text x="1287.54" y="531.87" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Bathroom</text>
 <text x="1287.54" y="551.11" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">19.45 m2</text>
 <text x="1287.54" y="570.35" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>

@@ -1,7 +1,8 @@
 # Benchmark report
 
-15 Sep 2026, after fix loop round 3: the LiDAR plans at `3dc8471`, the photo and video plans at
-`8b53ef4`, which changes only those two tiers. Every number regenerates with
+15 Sep 2026, after fix loop round 3, every plan regenerated at `a92927c`: opening extents measured
+without the one-cell dilation margin, slits in room outlines filled where the scan saw floor, and the
+ray-traced room scored against its exact dimensions. Every number regenerates with
 `scripts/regenerate_verified.sh`.
 Ground truth is the operator's tape (`capture/ground_truth.csv`, `tool=tape`), recorded in whole or
 half feet. It covers wall lengths, floor areas and adjacency for the home flat. It does not cover
@@ -9,13 +10,18 @@ ceilings, doors or bathroom walls, or anything on the assignment's flat, so thos
 
 ## Gates
 
-| status | count |
-|---|---|
-| PASS | 15 |
-| FAIL | 18 |
-| SKIP | 33 |
+| status | against the tape | ray-traced room, exact truth | table total |
+|---|---|---|---|
+| PASS | 15 | 11 | 26 |
+| FAIL | 18 | 0 | 18 |
+| SKIP | 33 | 5 | 38 |
 
-Full table: `reports/verified/gates/gate_table.txt`.
+Full table: `reports/verified/gates/gate_table.txt`. The ray-traced room (`capture/ground_truth_synthetic.csv`)
+is the only input with exact ceiling and opening truth. On it walls are within 0.6 cm, the ceiling
+within 0.1 cm and both openings within 1.0 cm, with intervals covering all 6 values; without its
+upward lap the ceiling is reported unmeasured and stays SKIP. It is noiseless and unfurnished, so these
+rows show that the measurement is unbiased, not what a phone delivers in a real room. The rest of this
+section is about the tape.
 
 PASS: drift accountability on the six LiDAR runs; room overlap on the two home walks, the bedroom
 scan, the assignment's three scans and the 0.5× photo set; footprint on the long walk, inside ±5%
@@ -173,8 +179,8 @@ accuracy gate on them is SKIP. Drift accountability and room overlap pass on all
 | Zip | Capture | Walk | Rooms | Area | Ceilings | Openings | Loop closures kept |
 |---|---|---|---|---|---|---|---|
 | `single_room.zip` | `c00a170fe1` | 37 s, no upward frames | 4 | 20.91 m² (225 sq ft) | unmeasured | 1 | 0 of 16 |
-| `single_scan_floor_only.zip` | `1a8384c3f6` | 115 s, no upward frames | 8 | 38.86 m² (418 sq ft) | unmeasured | 3 | 1 of 19 |
-| `single_scan_with_ceiling.zip` | `c7d28f72c6` | 215 s, 16.6% of frames look up | 7 | 41.24 m² (444 sq ft) | 2.27–3.08 m in all 7 rooms | 6 | 21 of 41 |
+| `single_scan_floor_only.zip` | `1a8384c3f6` | 115 s, no upward frames | 8 | 38.91 m² (419 sq ft) | unmeasured | 3 | 1 of 19 |
+| `single_scan_with_ceiling.zip` | `c7d28f72c6` | 215 s, 16.6% of frames look up | 7 | 41.58 m² (448 sq ft) | 2.27–3.08 m in all 7 rooms | 5 | 21 of 41 |
 
 `single_room.zip` covers a living room (10.77 m²), its bathroom (3.93 m²) and the lobby between them
 (1.71 m²), named here from its video frames, and stands at the mouth of a corridor the plan draws at
@@ -184,7 +190,7 @@ walking, which moved keyframes by up to 58 cm. Until fix loop round 3 it read 26
 ran on across the passage beyond it and into a bathroom, 8.82 m², and the lobby held 1.67 m² of a
 walled space none of the three scans saw into.
 
-The two whole-flat scans cover the same space. Their areas are 6% apart and they differ by one room.
+The two whole-flat scans cover the same space. Their areas are 7% apart and they differ by one room.
 Aligned on their walls, 63% of the with-ceiling scan's wall points lie within 5 cm of the floor-only
 scan's walls and 81% within 10 cm, and their room footprints overlap at an intersection-over-union of
 0.61. Round 3 took the stairwell out of both stair halls, 3.39 and 4.57 m², and 0.75 and 1.05 m² of
