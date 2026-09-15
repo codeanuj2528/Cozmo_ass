@@ -15,7 +15,13 @@ the camera frames taken inside the room:
     floor, furniture or ceiling return in any of the three scans, and two of them drew it as
     part of a room.
 
-None of the corrections moves a wall or grows a room. They are not exact. The stairwell and the
+A fourth error is in the outline itself. Two wall lines a few centimetres apart leave a strip of
+cells between them, and the room's outline runs round it: a slit 8 cm wide reaching 2.1 m into
+the room in the with-ceiling scan, and wedges a few centimetres wide at two corners. Where the scan
+saw floor in such a strip and few wall returns, it is part of the room and is filled. Where it
+holds wall returns, it is a partition the scan saw, and it stays.
+
+Apart from those strips, none of the corrections moves a wall or grows a room. They are not exact. The stairwell and the
 walled space are taken out as rectangles on the room's own axis, and a strip left narrower than a
 person between a removed region and a wall, or cut off from the rest of the room, goes with them,
 so some floor that was seen is removed too: on the assignment's scans 0.75 and 1.05 m2 of it in
@@ -34,6 +40,7 @@ import cv2
 import numpy as np
 from shapely import affinity
 from shapely.geometry import LineString, Polygon, box
+from shapely.ops import unary_union
 
 from cozmo.geometry.cellcomplex import MAX_DOOR_WIDTH_M, WALL_PROXIMITY_M
 from cozmo.geometry.grid import Grid2D
@@ -59,6 +66,13 @@ MIN_CLOSED_AREA_M2 = 0.60
 CLOSED_WALL_SHARE = 0.60
 MIN_PIECE_M2 = 0.30
 SLICE_M = 0.05
+# A strip narrower than this reaching into a room from its outline is two wall lines that nearly
+# coincide, unless the scan saw a partition there: then it holds wall returns and no floor. It is
+# filled only when floor was seen in most of it and wall returns in little of it.
+MAX_SLIT_WIDTH_M = 0.20
+MIN_SLIT_FLOOR_SHARE = 0.70
+MAX_SLIT_WALL_SHARE = 0.30
+MIN_SLIT_AREA_M2 = 0.01
 
 
 def _disc(radius_m: float, resolution: float) -> np.ndarray:
@@ -241,6 +255,38 @@ def closed_unobserved(polygon: Polygon, occ: OccupancyMaps, evidence: np.ndarray
     return found
 
 
+def fill_slits(polygon: Polygon, occ: OccupancyMaps, others=None) -> tuple[Polygon, float]:
+    """Fill strips narrower than MAX_SLIT_WIDTH_M cut into a room's outline where the scan saw floor and no partition.
+
+    A strip is what a closing of the outline adds. It is filled when floor returns cover most of
+    its cells and wall returns few of them, and never where it lies in another room.
+    """
+    if polygon.is_empty or polygon.geom_type != "Polygon":
+        return polygon, 0.0
+    r = MAX_SLIT_WIDTH_M / 2
+    closed = polygon.buffer(r, join_style=2, mitre_limit=10.0).buffer(-r, join_style=2, mitre_limit=10.0)
+    added = closed.difference(polygon)
+    if others is not None and not others.is_empty:
+        added = added.difference(others)
+    room, filled = polygon, 0.0
+    for part in getattr(added, "geoms", [added]):
+        if part.geom_type != "Polygon" or part.area < MIN_SLIT_AREA_M2:
+            continue
+        cells = polygon_mask(part, occ.grid)
+        count = int(cells.sum())
+        if count == 0:
+            continue
+        floor_share = (cells & occ.floor_hits).sum() / count
+        wall_share = (cells & occ.wall_point_hits).sum() / count if occ.wall_point_hits is not None else 0.0
+        if floor_share >= MIN_SLIT_FLOOR_SHARE and wall_share <= MAX_SLIT_WALL_SHARE:
+            room = room.union(part)
+            filled += part.area
+    if filled == 0.0:
+        return polygon, 0.0
+    merged = _largest(room)
+    return (merged, filled) if not merged.is_empty else (polygon, 0.0)
+
+
 def refine_rooms(
     polygons: dict[int, Polygon],
     occ: OccupancyMaps,
@@ -248,7 +294,7 @@ def refine_rooms(
     min_room_area_m2: float,
     min_inscribed_radius_m: float,
 ) -> tuple[dict[int, Polygon], dict[int, list[str]]]:
-    """Apply the three corrections to every room. Returns the rooms kept and what was done to each."""
+    """Apply the corrections to every room. Returns the rooms kept and what was done to each."""
     grid = occ.grid
     drops = stairwell_drops(occ)
     evidence = interior_evidence(occ)
@@ -261,6 +307,11 @@ def refine_rooms(
     for key, polygon in polygons.items():
         room = polygon
         done: list[str] = []
+        others = unary_union([p for k, p in polygons.items() if k != key and not p.is_empty])
+        room, filled = fill_slits(room, occ, others)
+        if filled > 0.0:
+            done.append(f"filled {filled:.2f} m2 of slits narrower than {MAX_SLIT_WIDTH_M * 100:.0f} cm in the outline: "
+                        "floor was seen in them and no partition")
         for drop in drops:
             hole = _aligned_rectangle(drop, grid, room_axis(room), REMOVAL_MARGIN_M)
             if room.is_empty or hole.intersection(room).area < 0.05:

@@ -109,6 +109,37 @@ def test_a_walled_box_nobody_saw_into_is_removed_but_an_unseen_open_patch_is_not
             assert abs(refined.area - room.area) < 0.02 and notes == []
 
 
+def test_a_slit_with_floor_in_it_is_filled_and_a_partition_is_not():
+    for partition in (False, True):
+        occ = _maps()
+        _fill(occ.floor_hits, 0.0, 0.0, 4.0, 3.0)
+        # An 8 cm slit reaching 1.5 m into the room from its top wall, as two nearly coincident
+        # wall lines leave it.
+        room = box(0.0, 0.0, 4.0, 3.0).difference(box(1.96, 1.5, 2.04, 3.0))
+        if partition:
+            _fill(occ.floor_hits, 1.93, 1.5, 2.07, 3.0, False)
+            _fill(occ.wall_point_hits, 1.93, 1.5, 2.07, 3.0)
+        refined, notes = _refine(room, occ)
+        assert refined is not None
+        if partition:
+            assert abs(refined.area - room.area) < 0.01, "a partition the scan saw must stay in the outline"
+        else:
+            assert abs(refined.area - 12.0) < 0.02
+            assert any("slit" in n for n in notes)
+
+
+def test_a_filled_slit_never_overlaps_the_next_room():
+    occ = _maps()
+    _fill(occ.floor_hits, 0.0, 0.0, 6.0, 4.0)
+    tongue = box(1.46, 2.0, 1.54, 3.0)
+    room = box(0.0, 0.0, 3.0, 3.0).difference(tongue)
+    # The neighbour above reaches down into the slit, so the slit is its floor and not this room's.
+    neighbour = box(0.0, 3.0, 6.0, 4.0).union(tongue)
+    kept, notes = refine_rooms({0: room, 1: neighbour}, occ, [], min_room_area_m2=0.5, min_inscribed_radius_m=0.2)
+    assert kept[0].intersection(kept[1]).area < 1e-3, "the fill must not reach into the neighbouring room"
+    assert not any("slit" in n for n in notes[0])
+
+
 def test_the_refinement_runs_on_lidar_and_not_on_monocular_depth(tmp_path, monkeypatch):
     """A monocular depth map cannot show that floor is absent, so photo and video rooms stay as segmented.
 

@@ -260,12 +260,7 @@ def detect_openings(
     labels, n = ndimage.label(candidate, structure=np.ones((3, 3)))
     openings: list[DetectedOpening] = []
     for label in range(1, n + 1):
-        core = labels == label
-        # Material was dilated by one cell to close pinholes before the opening was found, and
-        # that same cell comes off every edge the opening is measured by: on the ray-traced room
-        # a 0.85 m door measured 0.80 m and a 1.10 m window 1.06 m. Growing the region back into
-        # neighbouring cells that hold no raw material returns what the dilation took.
-        mask = core | (ndimage.binary_dilation(core, np.ones((3, 3), bool)) & ~has_material)
+        mask = labels == label
         rows, cols = np.nonzero(mask)
         u_min = cols.min() * res + elevation.u_origin
         u_max = (cols.max() + 1) * res + elevation.u_origin
@@ -312,6 +307,21 @@ def detect_openings(
         confidence = float(
             np.clip(0.45 * beyond_fraction + 0.35 * fill + 0.20 * (1.0 - mirror / MIRROR_FRACTION_THRESHOLD), 0.05, 0.99)
         )
+
+        # Material was dilated by one cell to close pinholes before the opening was found, and
+        # that same cell comes off every edge the opening is measured by: on the ray-traced room
+        # a 0.85 m door measured 0.80 m and a 1.10 m window 1.06 m. The extents are measured on
+        # the region grown back into neighbouring cells that hold no raw material. Which regions
+        # are openings, and of what type, is still decided on the region as found, so the fix
+        # changes what an opening measures and not whether it is one.
+        grown = mask | (ndimage.binary_dilation(mask, np.ones((3, 3), bool)) & ~has_material)
+        rows, cols = np.nonzero(grown)
+        u_min = cols.min() * res + elevation.u_origin
+        u_max = (cols.max() + 1) * res + elevation.u_origin
+        v_min = rows.min() * res + elevation.v_origin
+        v_max = (rows.max() + 1) * res + elevation.v_origin
+        width = u_max - u_min
+        height = v_max - v_min
         openings.append(
             DetectedOpening(
                 wall=wall,
