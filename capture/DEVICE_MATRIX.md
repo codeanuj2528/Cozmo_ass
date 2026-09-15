@@ -46,8 +46,9 @@ no recovery. What the tape exposes is segmentation, not sensor noise: a bedroom 
 bathroom that holds part of the passage.
 
 **Video.** No depth and no poses. Both are estimated, so scale is the binding constraint,
-not geometry. Errors are dominated by scale drift over the length of the walk rather than
-by any single measurement.
+not geometry. On video inputs made from the assignment's walks the single-room footprint reads +68.6%
+against its LiDAR plan after fix loop round 5, and the floor-only walk −11.7% after round 4: VGGT-1B reconstructs runs of keyframes and MoGe-2
+puts each run in metres, and consecutive runs still disagree in scale by up to 1.7×.
 
 **Photo.** No depth, no poses, and no continuity between frames. The table above is the home
 flat before fix loop round 4, whose photographs have not been rebuilt since: the hall shot on the

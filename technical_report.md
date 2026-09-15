@@ -27,13 +27,13 @@ the bathroom 48% long, and two rooms outside the tape, so the footprint passes o
 offset. Per-room ceilings read 2.56–2.67 m and 7 openings are found.
 Before fix loop round 4 the photo tier failed at +238% on the home flat; after it, on photo
 inputs made from the assignment's walks, the photo footprint reads +4.3%, +8.8% and +120.1%
-against their LiDAR plans. The video tier does not produce a metric plan. The assignment's three
+against their LiDAR plans, and after round 5 the single-room video footprint reads +68.6%. The assignment's three
 samples have no tape and are checked against the scans themselves.
 
 The central finding is stated up front: **the LiDAR tier is the only one that
 delivers usable accuracy, and even it does not meet its repeatability gates.**
 Two walks of the same flat agree on the hall to 4 cm and its ceiling to 4 mm, but
-differ on the bedroom by up to 0.64 m. Twenty-two failure modes are documented with
+differ on the bedroom by up to 0.64 m. Twenty-five failure modes are documented with
 measurements in `known_failure_modes.md`, each observed on real data.
 
 ## Scope
@@ -116,8 +116,9 @@ sensor.
 **Video.** No depth, no poses; both estimated. It keeps the one thing the photo tier lacks —
 continuity. The sharpest frame of each second is kept; runs of eight keyframes sharing three are
 reconstructed together by VGGT-1B, and each run is joined to the one before by a similarity fitted to
-the depth of the frames they share. MoGe-2, given the field of view VGGT-1B estimated, sets the scale,
-and drift correction applies as at LiDAR.
+the depth of the frames they share. Since fix loop round 5 MoGe-2, given the field of view VGGT-1B
+estimated, puts each run in metres before the runs are joined rigidly, and drift correction applies as
+at LiDAR.
 
 **Photo.** No depth, no poses, no continuity. Since fix loop round 4 a room's stills are reconstructed
 together by VGGT-1B, which returns depth, pose and intrinsics for each in one frame. MoGe-2 ViT-L, given
@@ -287,11 +288,21 @@ dominating. Run on LiDAR depth and ARKit poses of exactly the still frames, the 
 oversized rooms: a handful of stills sees floor through every doorway, and nothing in them says where
 a room stops.
 
+**Round 5, video, the same walks.** Declared before the fix (`1f134bb`): the video footprint on
+`single_room` was +196.3% after round 4, the largest error of any gate. The core was not the cause: on
+LiDAR depth and ARKit poses of one keyframe per second it gives −1.7% and −3.2%. Hypothesis: the scale of
+the similarities joining runs of keyframes compounds along the walk. The fix (`21c9c8d`) puts every run
+in metres by MoGe-2 before joining the runs rigidly, and publishes a length a hair below zero as zero,
+which had stopped the core on the floor-only walk. **Result: +68.6% on `single_room`, from +196.3%;
+the other walks were not rerun before submission.** The error fell by two thirds but the gate still fails: once each run is
+metric, consecutive runs still disagree in scale by up to 1.7×, the declaration's own test for a
+second cause.
+
 ---
 
 ## 7. Known failure modes
 
-Twenty-two are documented with measurements in `known_failure_modes.md`. The four that matter:
+Twenty-five are documented with measurements in `known_failure_modes.md`. The four that matter:
 
 **The photo tier does not meet its gates.** §6 above. After round 4 the models are no longer the
 limit: scale is within −8% to +2% of LiDAR depth, and the core run on LiDAR depth and ARKit poses of
@@ -410,7 +421,8 @@ Best results: the bedroom walked alone, 8.90 m² against 9.29 m² (−4%), and t
 bathroom, 2.08 m² against 2.04 m² (+2%). Whole-flat LiDAR footprints: +1% on the long walk, −11%
 on the first. Worst: the photo tier before fix loop round 4, 97.19 m² against 28.75 m² (+238%).
 After round 4, on photo inputs made from the assignment's walks and scored against their LiDAR
-plans, it reads +4.3%, +8.8% and +120.1%, with walls within 8% at 4/23, 4/31 and 4/30.
+plans, it reads +4.3%, +8.8% and +120.1%, with walls within 8% at 4/23, 4/31 and 4/30. The video tier,
+after round 5, reads +68.6% on the single-room walk.
 
 Per-room LiDAR errors on the long walk range from −8% (hall) to +48% (bathroom, which holds part
 of the passage). The bedroom error is a reconstruction defect, not tape error: three walks of the
@@ -443,7 +455,9 @@ loop round 4 the photo tier's dominant error was the monocular depth model's sca
 the home flat's photographs. Round 4 replaced it with VGGT-1B's joint reconstruction and MoGe-2's
 scale, which are now within a few percent of LiDAR, and the dominant error moved to the room
 outline: the assignment's walks read +4.3%, +8.8% and +120.1%. The next fix is an outline taken from
-wall planes, not from the floor the stills saw.
+wall planes, not from the floor the stills saw. Round 5 cut the video tier's single-room footprint from
++196.3% to +68.6% by putting each run of keyframes in metres on its own; consecutive runs still disagree
+in scale by up to 1.7×, and more metric keyframes per run is the next step.
 
 Twenty-two failure modes are documented with measurements. Four of them — mirrors, glass, low light,
 and the upward lap — are named in the brief and each is addressed: geometric mirror rejection,

@@ -1,0 +1,56 @@
+Loading capture: data/tier_inputs/single_room/video
+Detected Tier: VIDEO (1715 frames/images)
+Running 3D reconstruction and semantic extraction...
+/Users/anujmishra/Desktop/cozmoo/Cozmo_ass/.venv/lib/python3.11/site-packages/vggt/models/vggt.py:65: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=False):
+/Users/anujmishra/Desktop/cozmoo/Cozmo_ass/.venv/lib/python3.11/site-packages/moge/model/modules/conv_stack.py:170: UserWarning: In MPS autocast, but the target dtype is not supported. Disabling autocast.
+MPS Autocast only supports dtypes of torch.bfloat16, torch.float16 currently.
+  torch.autocast(device_type=x.device.type, dtype=torch.float32, enabled=True)
+/Users/anujmishra/Desktop/cozmoo/Cozmo_ass/.venv/lib/python3.11/site-packages/moge/model/v2.py:284: UserWarning: In MPS autocast, but the target dtype is not supported. Disabling autocast.
+MPS Autocast only supports dtypes of torch.bfloat16, torch.float16 currently.
+  with torch.autocast(device_type=self.device.type, dtype=torch.float32):
+/Users/anujmishra/Desktop/cozmoo/Cozmo_ass/.venv/lib/python3.11/site-packages/moge/model/modules/conv_stack.py:170: UserWarning: In MPS autocast, but the target dtype is not supported. Disabling autocast.
+MPS Autocast only supports dtypes of torch.bfloat16, torch.float16 currently.
+  torch.autocast(device_type=x.device.type, dtype=torch.float32, enabled=True)
+/Users/anujmishra/Desktop/cozmoo/Cozmo_ass/.venv/lib/python3.11/site-packages/moge/model/v2.py:284: UserWarning: In MPS autocast, but the target dtype is not supported. Disabling autocast.
+MPS Autocast only supports dtypes of torch.bfloat16, torch.float16 currently.
+  with torch.autocast(device_type=self.device.type, dtype=torch.float32):
+Saved plan JSON: fixloop/round5/after/single_room_video/plan.json
+Saved run manifest: fixloop/round5/after/single_room_video/run_manifest.json
+Rendered 2D floor plan: fixloop/round5/after/single_room_video/plan.png
+Plan over its scan: fixloop/round5/after/single_room_video/plan_on_scan.png
+               Property Plan Summary (single_room_video)                
+┏━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┓
+┃ Property Area ┃ Rooms ┃ Damage Regions ┃ Scope Line Items ┃ Runtime  ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━┩
+│ 39.56 m²      │ 2     │ 0              │ 0                │ 263.05 s │
+└───────────────┴───────┴────────────────┴──────────────────┴──────────┘
+GATE                        SCOPE              TIER   MEASURED                  
+THRESHOLD                                 STATUS
+--------------------------  -----------------  -----  
+----------------------------------------------------------------  
+----------------------------------------  ------
+footprint vs LiDAR          single_room video  video  39.56 m2 vs 23.47 m2 
+(+68.6%)                                     within +-5%                        
+FAIL  
+wall_lengths vs LiDAR       single_room video  video  registration failed: 27% 
+of wall cells within 10 cm               <= 3% on >= 85%                        
+SKIP  
+room_overlap                single_room video  video  largest overlap 0.000 m2 
+(0.0% of smallest room), total 0.000 m2  no overlap above 2% of the smallest 
+room  PASS  
+interval_coverage vs LiDAR  single_room video  video  1/1 intervals contain the 
+LiDAR value (100%)                      >= 90%                                  
+PASS  
+--------------------------  -----------------  -----  
+----------------------------------------------------------------  
+----------------------------------------  ------
+2 pass, 1 fail, 1 not evaluated
+
+A gate is SKIP only when the ground truth needed to judge it does not exist. It 
+is
+never reported as passed on that basis, and it costs its marks either way.
+  registered on walls: 27% of video wall cells within 10 cm of LiDAR, 24% within
+5 cm
+
+Written to fixloop/round5/after/single_room_video/tiers.json

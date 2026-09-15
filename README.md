@@ -88,7 +88,9 @@ at 0.5× and +136% on the hall at 1×, and the video tier did not produce a metr
 photo inputs made from the assignment's three walks and scored against each walk's LiDAR plan, the
 photo footprint reads +4.3% (a pass, by room errors that cancel), +8.8% and +120.1%; single rooms
 still miss by −40% to +355%, because the outline is taken from the floor the stills saw
-(`fixloop/round4/POSTMORTEM.md`). `benchmark_report.md` has every gate and room.
+(`fixloop/round4/POSTMORTEM.md`). The video footprint on `single_room` reads +68.6% after fix loop round 5, from +196.3%, and
+`single_scan_floor_only` −11.7% after round 4 (`fixloop/round5/POSTMORTEM.md`):
+choose LiDAR at a walk-in. `benchmark_report.md` has every gate and room.
 
 ## What runs underneath
 

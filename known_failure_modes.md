@@ -344,3 +344,28 @@ Defects of the evidence layout seen on the assignment's scans:
 - A doorway whose head is not seen in the returns is given a 2.05 m height with a ±0.15 m interval.
 - Dimension labels overlap on strips narrower than about 0.4 m, and a notch between rooms narrower
   than 0.4 m is drawn as solid wall.
+
+## 24. Video: runs of keyframes disagree in scale
+
+**Status: fails, and is reported as failing.**
+
+The video tier reconstructs a walk in runs of eight keyframes with VGGT-1B, which returns each run in
+units of its own. Since fix loop round 5 each run is put in metres by MoGe-2 on its own before the runs
+are joined. On video inputs made from the assignment's walks that took the single-room footprint from
++196.3% to +68.6% against its LiDAR plan, and the floor-only walk, −11.7% after round 4, was not rerun. But once every run is
+metric, the scale a similarity would still apply between consecutive runs lies between 0.872 and 1.705
+on the single-room walk: two runs disagree by up to 70% about the size of the frames they share. The
+core is not the cause: on LiDAR depth and ARKit poses of one keyframe per second it gives −1.7% to −3.9%
+(`fixloop/round5/evidence/video_oracle_after.txt`).
+
+**What would fix it** is in `fixloop/round5/POSTMORTEM.md` §4: MoGe-2 on every keyframe rather than
+every third, and longer overlaps between runs.
+
+## 25. A length computed a hair below zero lost the whole plan
+
+**Status: fixed in fix loop round 5.**
+
+An interval is clamped at zero, and the output contract refuses a value outside its own interval, so a
+length computed at −0.01 m made the plan unwritable: the video tier's core raised on the floor-only walk.
+`IntervalBook.measure` now publishes a value within its own half-width below zero as zero; one further
+below zero is still refused, because it is a defect (`tests/test_negative_lengths.py`).

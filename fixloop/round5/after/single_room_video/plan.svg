@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1119" height="1552" viewBox="0 0 1119 1552">
+<rect width="1119" height="1552" fill="#ffffff"/>
+<g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<text x="28" y="38" font-size="22" font-weight="600" fill="#22222a">Floor Plan - Capture single_room_video</text>
+<text x="28" y="62" font-size="12" fill="#7a7a86">Tier: VIDEO | Total Floor Area: 39.56 m²</text>
+<line x1="28" y1="82" x2="1091" y2="82" stroke="#dedcd4" stroke-width="1"/>
+<polygon points="442.80,1432.87 442.80,1432.87 119.13,1432.87 119.13,215.13 313.09,215.13 442.80,497.39 442.80,215.13 1000.08,215.13 1000.08,257.51 670.67,1062.85 649.06,1015.81 618.53,1190.32 519.32,1432.87 442.80,1432.87" stroke="none" fill="#22222a"/>
+<polygon points="457.33,1418.34 457.33,229.66 985.55,229.66 985.55,254.65 669.89,1026.37 642.78,967.37 604.49,1186.27 509.57,1418.34" stroke="none" fill="#f4f1ea"/>
+<polygon points="133.66,1418.34 133.66,229.66 303.77,229.66 439.26,524.49 439.26,1418.34" stroke="none" fill="#eceadf"/>
+<text x="638.21" y="616.75" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 01</text>
+<text x="638.21" y="653.73" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">19.88 m2</text>
+<text x="638.21" y="690.71" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="483.74" y="824.00" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 483.74 824.00)">9.00 ±540.0cm</text>
+<text x="721.44" y="256.08" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">4.00 ±240.0cm</text>
+<text x="803.27" y="630.51" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-67.75 803.27 630.51)">6.31 ±378.8cm</text>
+<text x="597.61" y="1072.27" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-80.08 597.61 1072.27)">1.68 ±101.0cm</text>
+<text x="532.58" y="1292.31" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-67.75 532.58 1292.31)">1.90 ±113.9cm</text>
+<text x="280.20" y="813.24" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 02</text>
+<text x="280.20" y="850.22" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">19.68 m2</text>
+<text x="280.20" y="887.20" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="160.08" y="824.00" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 160.08 824.00)">9.00 ±540.0cm</text>
+<text x="218.72" y="256.08" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">1.29 ±77.3cm</text>
+<text x="347.51" y="388.10" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(65.32 347.51 388.10)">2.46 ±147.4cm</text>
+<text x="412.84" y="971.41" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(90.00 412.84 971.41)">6.77 ±406.1cm</text>
+<text x="286.46" y="1391.92" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">2.31 ±138.8cm</text>
+<line x1="638.21" y1="656.37" x2="280.20" y2="852.86" stroke="#7a7a86" stroke-width="1.06" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="13.21,13.21" opacity="0.50"/>
+<g><line x1="28" y1="1532" x2="688.4" y2="1532" stroke="#22222a" stroke-width="2"/><line x1="28" y1="1528" x2="28" y2="1536" stroke="#22222a" stroke-width="2"/><line x1="688.4" y1="1528" x2="688.4" y2="1536" stroke="#22222a" stroke-width="2"/><text x="696.4" y="1536" font-size="11" fill="#7a7a86">5 m</text></g>
+</g></svg>

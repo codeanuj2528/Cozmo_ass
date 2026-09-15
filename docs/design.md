@@ -218,11 +218,15 @@ Frame selection is critical. A phone swung through a doorway produces frames who
 blur destroys both depth prediction and registration. Frames are scored on sharpness
 (Laplacian variance) before anything else, and blurred frames are dropped.
 
-Frames are sampled at uniform stride first and blur-filtered second, so coverage is not
-biased toward the rooms the operator moved slowly through.
+The sharpest frame of each second of the clip is kept, so the whole walk stays covered and a
+phone swung through a doorway leaves its blur out (`cozmo/recon/sequence.py`). Runs of eight
+keyframes sharing three are reconstructed together by VGGT-1B; MoGe-2 puts each run in metres on
+its own, and the runs are joined by a rigid fit to the frames they share (fix loop rounds 4 and 5).
+Drift correction applies as at LiDAR.
 
-The video tier does not currently produce a usable metric plan. This is disclosed as NOT
-MET, not hidden.
+The video tier produces a metric plan but not an accurate one: on the assignment's walks the
+single-room footprint reads +68.6% against its LiDAR plan (the floor-only walk −11.7% after round 4), because consecutive runs still disagree
+in scale by up to 1.7× once each is metric (`fixloop/round5/POSTMORTEM.md`).
 
 ## 6. Multi-room stitching
 

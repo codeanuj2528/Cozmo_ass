@@ -184,9 +184,20 @@ large (`fixloop/round4/POSTMORTEM.md` §3). `scripts/run_tier_benchmark.sh OUT_D
 
 ## Video tier
 
-Metric scale is not solved. The whole-flat walkthrough produces one room of about 371 m², and the
-assignment zip's own `rgb.mp4` without its poses gives 339.61 m² for a walk LiDAR puts at 20.91 m².
-Do not choose this tier at a walk-in.
+On the assignment's walks, video inputs made from each walk's colour stream and scored against its LiDAR plan
+(`fixloop/round4/after/`, `fixloop/round5/after/`):
+
+| Walk | Before round 4 | After round 4 | After round 5 | Walls registered on LiDAR, after round 5 |
+|---|---|---|---|---|
+| `single_room` | +194.6% | +196.3% | **+68.6%** | no: 27% of wall cells within 10 cm |
+| `single_scan_floor_only` | +197.3% | −11.7% | not rerun | |
+| `single_scan_with_ceiling` | +108.9% | not run to the end | not run | |
+
+Round 4 reconstructs runs of keyframes with VGGT-1B; round 5 puts each run in metres by MoGe-2 before joining the
+runs. The ±5% gate fails on every walk measured. The core is not what fails: on LiDAR depth and ARKit poses of one
+keyframe per second it gives −1.7%, −3.9% and −3.2% (`fixloop/round5/evidence/video_oracle_after.txt`). What
+remains is the video geometry: consecutive runs still disagree in scale by up to 1.7× once each is metric
+(`fixloop/round5/POSTMORTEM.md`). Do not choose this tier at a walk-in; choose LiDAR.
 
 ## The assignment's three samples
 
