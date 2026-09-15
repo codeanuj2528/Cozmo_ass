@@ -1,0 +1,51 @@
+{
+  "pipeline_version": "0.1.0",
+  "schema_version": "1.0",
+  "capture_id": "single_room_photo",
+  "tier": "photo",
+  "generated_at": "2026-09-15T11:01:08.104445+00:00",
+  "git_commit": "e52ca4d",
+  "runtime_seconds": 140.726,
+  "timings": {
+    "total_s": 140.726
+  },
+  "keyframes_used": 0,
+  "frames_available": 22,
+  "points_fused": 0,
+  "rooms_found": 3,
+  "total_floor_area_m2": 21.219,
+  "warnings": [
+    "room_01: 8 of 8 stills reconstructed together by vggt-1b; metric scale 2.003 +-5.5% from moge-2-vitl given the field of view over 8 stills; focal length: exif_sub_ifd_35mm_equivalent",
+    "room_02: 8 of 8 stills reconstructed together by vggt-1b; metric scale 1.178 +-5.1% from moge-2-vitl given the field of view over 8 stills; focal length: exif_sub_ifd_35mm_equivalent",
+    "room_03: 6 of 6 stills reconstructed together by vggt-1b; metric scale 1.912 +-5.4% from moge-2-vitl given the field of view over 6 stills; focal length: exif_sub_ifd_35mm_equivalent",
+    "3 room(s) have no connecting opening detected and cannot be stitched by doorway: room_01, room_02, room_03",
+    "room_02 joined to room_01 from folder names only; the doorway itself was not measured",
+    "room_03 joined to room_02 from folder names only; the doorway itself was not measured"
+  ],
+  "input_hash": "1f2c90db2966474e",
+  "config": {
+    "voxel_m": 0.02,
+    "grid_resolution_m": 0.03,
+    "min_depth_confidence": 1,
+    "max_depth_range_m": 5.0,
+    "max_keyframes": 600,
+    "keyframe_translation_m": 0.08,
+    "keyframe_rotation_deg": 6.0,
+    "canonical_rotation": true,
+    "drift_correction": true,
+    "snap_walls_to_frame": true,
+    "snap_tolerance_deg": 6.0,
+    "detect_damage": true,
+    "build_scope": true,
+    "max_wall_lines": 44,
+    "min_room_area_m2": 1.5,
+    "min_inscribed_radius_m": 0.33,
+    "refine_rooms": true,
+    "layout": "evidence",
+    "multiview": true,
+    "calibration_path": "calibration/intervals.json",
+    "weights_dir": "weights",
+    "seed": 0,
+    "labels": {}
+  }
+}

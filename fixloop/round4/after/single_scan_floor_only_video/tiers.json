@@ -1,0 +1,56 @@
+{
+  "tier": "video",
+  "scope": "single_scan_floor_only video",
+  "gates": [
+    {
+      "gate": "footprint vs LiDAR",
+      "scope": "single_scan_floor_only video",
+      "tier": "video",
+      "measured": "44.88 m2 vs 50.82 m2 (-11.7%)",
+      "threshold": "within +-5%",
+      "status": "FAIL",
+      "detail": {
+        "reported_m2": 44.88031252276539,
+        "reference_m2": 50.8233510335272,
+        "relative_error": -0.11693519592679566
+      }
+    },
+    {
+      "gate": "wall_lengths vs LiDAR",
+      "scope": "single_scan_floor_only video",
+      "tier": "video",
+      "measured": "registration failed: 35% of wall cells within 10 cm",
+      "threshold": "<= 3% on >= 85%",
+      "status": "SKIP",
+      "detail": {}
+    },
+    {
+      "gate": "room_overlap",
+      "scope": "single_scan_floor_only video",
+      "tier": "video",
+      "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+      "threshold": "no overlap above 2% of the smallest room",
+      "status": "PASS",
+      "detail": {
+        "worst_m2": 2.1615042539516183e-07,
+        "fraction": 9.482573025651156e-08
+      }
+    },
+    {
+      "gate": "interval_coverage vs LiDAR",
+      "scope": "single_scan_floor_only video",
+      "tier": "video",
+      "measured": "1/1 intervals contain the LiDAR value (100%)",
+      "threshold": ">= 90%",
+      "status": "PASS",
+      "detail": {
+        "covered": 1,
+        "total": 1
+      }
+    }
+  ],
+  "rooms": [],
+  "notes": [
+    "registered on walls: 35% of video wall cells within 10 cm of LiDAR, 23% within 5 cm"
+  ]
+}

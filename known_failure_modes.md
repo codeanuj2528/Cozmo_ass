@@ -7,30 +7,29 @@ measured on the benchmark captures and can be reproduced with the command given.
 
 **Status: fails, and is reported as failing.**
 
-On the benchmark property the photo tier reports three rooms of four at 97.19 m² against a taped
-28.75 m² (+238%), the hall rejected at 71.8 m². Photographed on the 1× lens, the hall alone reads
-35.12 m² against 14.86 m² (+136%). Neither reaches the ±8% gate.
+On the home flat, before fix loop round 4, the photo tier reported three rooms of four at 97.19 m²
+against a taped 28.75 m² (+238%), and the hall alone on the 1× lens at 35.12 m² against 14.86 m²
+(+136%). Those plans were built with Depth Anything V2 Metric Indoor on each still alone, which
+over-predicted depth on those photographs by 1.57× against LiDAR. The photographs are not on the
+machine round 4 was done on, so those plans have not been rebuilt.
 
-The cause is measured, not guessed. Depth Anything V2 Metric Indoor over-predicts depth on
-these photographs by a factor established two independent ways:
+Fix loop round 4 (`fixloop/round4/`) reconstructs each room's stills together with VGGT-1B and sets
+the scale with MoGe-2. On photo inputs made from the assignment's three walks and scored against the
+LiDAR plan of each walk, the whole-property footprint moved from +148.4%, +52.5% and +84.8% to
+**+4.3% (a pass, by room errors that cancel), +8.8% and +120.1%**. Room scales are now within −8% to
++2% of LiDAR depth and no room overlaps another, but walls within 8% are 4/23, 4/31 and 4/30 and
+single rooms miss by −40% to +355%.
 
-| method | factor |
-|---|---|
-| Camera height implied by the detected floor, against a true ~1.45 m | 1.76 |
-| Median ratio of LiDAR depth to predicted depth, 8 frames, same property | 1.57 |
+**The cause is now the room outline, not the depth.** The same reconstruction core, run on LiDAR depth
+and ARKit poses of exactly the still frames, makes rooms +17% to +694% too large
+(`fixloop/round4/evidence/oracle_core.txt`): four to eight stills see floor through every doorway, and
+the photo path takes a room to be the floor its stills saw.
 
-The photographs are 0.5x ultra-wide (14 mm equivalent, 88° horizontal). The model is trained
-on normal-field-of-view indoor imagery. A metric monocular model infers depth from apparent
-size, which needs an assumed focal length, so an out-of-distribution field of view shifts its
-metric scale proportionally.
+**What we do about it.** A plausibility guard drops any reconstruction outside 1–60 m² or 1.8–4.2 m of
+ceiling and records why, so the tier reports fewer rooms rather than absurd ones. Intervals stay wide.
 
-**What we do about it.** A plausibility guard drops any reconstruction outside 1–60 m² or
-1.8–4.2 m of ceiling and records why, so the tier reports fewer rooms rather than absurd
-ones. The capture protocol now specifies the 1x lens.
-
-**What would fix it** is in `fixloop/POSTMORTEM.md`: capture at 1x, and fit the
-focal-to-scale correction against the LiDAR tier, which supplies depth ground truth on the
-same property for free.
+**What would fix it** is in `fixloop/round4/POSTMORTEM.md` §4: take a photo room's outline from wall
+planes fitted in each still and merged across stills, so floor seen through a doorway cannot extend it.
 
 ## 2. Opening detection barely works at the photo tier
 

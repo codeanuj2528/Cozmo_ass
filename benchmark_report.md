@@ -164,6 +164,24 @@ bound, but it still fails. The ceiling is within 6% of LiDAR while the floor is 
 which points at the room's extent rather than its scale. Scale came from 4 of 8 photographs that
 showed enough floor. Interval coverage passes 5/5 only because the intervals are about 7 m wide.
 
+### On the assignment's three walks, after fix loop round 4
+
+The walks have no tape, so the photo tier is scored on photo inputs made from each walk's own colour
+stream (`scripts/make_tier_inputs.py`: 2–8 stills per room, upright, tagged with their focal length)
+against the LiDAR plan of the same walk (`cozmo tiers`). Round 4 reconstructs a room's stills together
+with VGGT-1B and scales them with MoGe-2; before it, each still was built on its own.
+
+| Walk | Photo rooms | Footprint before | Footprint after | Walls within 8%, before → after | Overlap, before → after | Seconds |
+|---|---|---|---|---|---|---|
+| `single_room` | 3 | +148.4% | **+4.3%, PASS** | 1/24 → 4/23 | 0% → 0% | 143 |
+| `single_scan_floor_only` | 6 | +52.5% | +8.8%, FAIL | 1/41 → 4/31 | 3.0% → 0% | 260 |
+| `single_scan_with_ceiling` | 6 | +84.8% | +120.1%, FAIL | 4/23 → 4/30 | 12.4% → 0% | 303 |
+
+Scale is now right to within −8% to +2% and no room overlaps another, but single rooms miss by −40%
+to +355%, and the `single_room` pass is those errors cancelling. The cause is the outline, not the
+models: on LiDAR depth and ARKit poses of the same still frames the core makes rooms +17% to +694% too
+large (`fixloop/round4/POSTMORTEM.md` §3). `scripts/run_tier_benchmark.sh OUT_DIR` regenerates the table.
+
 ## Video tier
 
 Metric scale is not solved. The whole-flat walkthrough produces one room of about 371 m², and the

@@ -1,0 +1,33 @@
+GATE                        SCOPE                           TIER   MEASURED                                                          THRESHOLD                                 STATUS
+--------------------------  ------------------------------  -----  ----------------------------------------------------------------  ----------------------------------------  ------
+footprint vs LiDAR          single_room photo               photo  21.22 m2 vs 20.34 m2 (+4.3%)                                      within +-8%                               PASS  
+rooms reconstructed         single_room photo               photo  3/3 folders give a room                                           every folder                              PASS  
+wall_lengths vs LiDAR       single_room photo               photo  4/23 within (17%), median error 27.5%                             <= 8% on >= 85%                           FAIL  
+room_overlap                single_room photo               photo  largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2  no overlap above 2% of the smallest room  PASS  
+adjacency vs LiDAR          single_room photo               photo  no connection among the scored rooms                              every connection found, none invented     SKIP  
+interval_coverage vs LiDAR  single_room photo               photo  3/4 intervals contain the LiDAR value (75%)                       >= 90%                                    FAIL  
+footprint vs LiDAR          single_room video               video  69.55 m2 vs 23.47 m2 (+196.3%)                                    within +-5%                               FAIL  
+wall_lengths vs LiDAR       single_room video               video  registration failed: 17% of wall cells within 10 cm               <= 3% on >= 85%                           SKIP  
+room_overlap                single_room video               video  largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2  no overlap above 2% of the smallest room  PASS  
+interval_coverage vs LiDAR  single_room video               video  0/1 intervals contain the LiDAR value (0%)                        >= 90%                                    FAIL  
+footprint vs LiDAR          single_scan_floor_only photo    photo  55.30 m2 vs 50.82 m2 (+8.8%)                                      within +-8%                               FAIL  
+rooms reconstructed         single_scan_floor_only photo    photo  5/6 folders give a room                                           every folder                              FAIL  
+wall_lengths vs LiDAR       single_scan_floor_only photo    photo  4/31 within (13%), median error 35.0%                             <= 8% on >= 85%                           FAIL  
+room_overlap                single_scan_floor_only photo    photo  largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2  no overlap above 2% of the smallest room  PASS  
+adjacency vs LiDAR          single_scan_floor_only photo    photo  1/5 correct; 4 missed, 3 phantom                                  every connection found, none invented     FAIL  
+interval_coverage vs LiDAR  single_scan_floor_only photo    photo  5/6 intervals contain the LiDAR value (83%)                       >= 90%                                    FAIL  
+footprint vs LiDAR          single_scan_floor_only video    video  44.88 m2 vs 50.82 m2 (-11.7%)                                     within +-5%                               FAIL  
+wall_lengths vs LiDAR       single_scan_floor_only video    video  registration failed: 35% of wall cells within 10 cm               <= 3% on >= 85%                           SKIP  
+room_overlap                single_scan_floor_only video    video  largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2  no overlap above 2% of the smallest room  PASS  
+interval_coverage vs LiDAR  single_scan_floor_only video    video  1/1 intervals contain the LiDAR value (100%)                      >= 90%                                    PASS  
+footprint vs LiDAR          single_scan_with_ceiling photo  photo  98.01 m2 vs 44.53 m2 (+120.1%)                                    within +-8%                               FAIL  
+rooms reconstructed         single_scan_with_ceiling photo  photo  6/6 folders give a room                                           every folder                              PASS  
+wall_lengths vs LiDAR       single_scan_with_ceiling photo  photo  4/30 within (13%), median error 48.7%                             <= 8% on >= 85%                           FAIL  
+room_overlap                single_scan_with_ceiling photo  photo  largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2  no overlap above 2% of the smallest room  PASS  
+adjacency vs LiDAR          single_scan_with_ceiling photo  photo  no connection among the scored rooms                              every connection found, none invented     SKIP  
+interval_coverage vs LiDAR  single_scan_with_ceiling photo  photo  5/7 intervals contain the LiDAR value (71%)                       >= 90%                                    FAIL  
+--------------------------  ------------------------------  -----  ----------------------------------------------------------------  ----------------------------------------  ------
+9 pass, 13 fail, 4 not evaluated
+
+A gate is SKIP only when the ground truth needed to judge it does not exist. It is
+never reported as passed on that basis, and it costs its marks either way.

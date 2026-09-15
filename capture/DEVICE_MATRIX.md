@@ -49,7 +49,10 @@ bathroom that holds part of the passage.
 not geometry. Errors are dominated by scale drift over the length of the walk rather than
 by any single measurement.
 
-**Photo.** No depth, no poses, and no continuity between frames. Scale must be recovered
-per room from the room itself. Intervals widen accordingly. On the benchmark flat it does not yet
-deliver usable size: the hall shot on the 1× lens comes out 136% too large, and the whole flat on
-0.5× 238% too large.
+**Photo.** No depth, no poses, and no continuity between frames. The table above is the home
+flat before fix loop round 4, whose photographs have not been rebuilt since: the hall shot on the
+1× lens came out 136% too large, and the whole flat on 0.5× 238% too large. Since round 4, VGGT-1B
+reconstructs a room's stills together and MoGe-2 sets the scale, within −8% to +2% of LiDAR depth
+on the assignment's walks. On photo inputs made from those walks the whole-property footprint reads
++4.3%, +8.8% and +120.1% against their LiDAR plans: the room outline, taken from the floor the
+stills saw, is now the limit.

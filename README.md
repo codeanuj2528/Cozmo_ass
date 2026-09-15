@@ -7,15 +7,16 @@ tiers — photos, video, LiDAR — and one output contract.
 
 ```bash
 git clone <this repo> && cd cozmo
-./scripts/setup.sh            # Python 3.11–3.12 venv, installs .[dev], reconstructs a ray-traced box
-./scripts/fetch_weights.sh    # photo and video tiers only: Depth Anything V2 Metric Indoor, about 95 MB
+./scripts/setup.sh            # Python 3.11–3.12 venv, installs .[dev,ml], VGGT and MoGe at pinned commits, reconstructs a ray-traced box
+./scripts/fetch_weights.sh    # photo and video tiers only: VGGT-1B, MoGe-2 ViT-L, Depth Anything V2 small; about 6 GB, each checked by sha256
 ```
 
 `scripts/setup.sh` ray-traces a 3.60 × 2.80 m room with a 2.50 m ceiling and reconstructs it:
 10.08 m², every wall within 6 mm, ceiling 2.499 m, the 0.85 m door at 0.84 m and the 1.10 m window at
 1.10 m. `reports/verified/synthetic_room` scores it against those exact dimensions. The LiDAR
-tier needs no model weights; photo and video also need `.[ml]` and the weights above. Nothing reaches
-the network at run time.
+tier needs no model weights, and `./scripts/setup.sh --lidar-only` skips the models. The photo and
+video tiers reconstruct eight images at a time, which took 12.4 GB on a 16 GB Mac. Nothing reaches the
+network at run time.
 
 ## One command per capture
 
@@ -82,9 +83,12 @@ changes were made on (`known_failure_modes.md` §23). `scripts/regenerate_verifi
 Against the tape the gates read 15 PASS, 18 FAIL and 33 SKIP
 (`reports/verified/gates/gate_table.txt`). The same table scores the ray-traced room against its exact
 dimensions, 11 PASS and 5 SKIP, which shows the measurement is unbiased on a noiseless room and says
-nothing about accuracy on a real one. The photo tier reads +238% on 58 stills at 0.5× and +136%
-on the hall at 1×; the video tier does not produce a metric plan. `benchmark_report.md` has every
-gate and room.
+nothing about accuracy on a real one. Before fix loop round 4 the photo tier read +238% on 58 stills
+at 0.5× and +136% on the hall at 1×, and the video tier did not produce a metric plan. After it, on
+photo inputs made from the assignment's three walks and scored against each walk's LiDAR plan, the
+photo footprint reads +4.3% (a pass, by room errors that cancel), +8.8% and +120.1%; single rooms
+still miss by −40% to +355%, because the outline is taken from the floor the stills saw
+(`fixloop/round4/POSTMORTEM.md`). `benchmark_report.md` has every gate and room.
 
 ## What runs underneath
 
@@ -92,13 +96,18 @@ gate and room.
   normals, rooms built from wall barriers, doorways and the floor the scan saw (`geometry/layout.py`;
   `--layout cellcomplex` gives the earlier cell complex), and a keyframe pose graph over heading and
   horizontal position with ICP-verified loop closures. No learned model.
-- **Photo and video:** Depth Anything V2 Metric Indoor (small) for depth, then the same
-  reconstruction as LiDAR.
+- **Photo and video:** VGGT-1B reconstructs a room's stills, or overlapping runs of a clip's
+  keyframes, together: depth, pose and intrinsics in one frame (`recon/multiview.py`,
+  `recon/sequence.py`). MoGe-2 ViT-L, given the field of view, puts that frame in metres
+  (`recon/metric_scale.py`); up is the direction every camera's x axis is perpendicular to. Then the
+  same reconstruction as LiDAR. `--no-multiview` runs the earlier path, Depth Anything V2 Metric
+  Indoor (small) on each frame alone, which is also what runs when the two models are not installed.
+  VGGT-1B's weights are CC BY-NC 4.0 (research use); MoGe-2's are MIT.
 - **Damage:** classical colour-anomaly and ridge detectors. A finding must be seen from two frames
   on the same patch of a reconstructed wall, and a ruler-straight edge is not a crack. A YAML rule
   engine raises concealed-damage flags naming the rule and every value it tested.
-- **Not used:** VGGT, Depth Anything 3, SAM, Grounding DINO or any other learned detector or
-  segmenter. `docs/design.md` §12 lists what is not here yet.
+- **Not used:** Depth Anything 3, SAM, Grounding DINO or any other learned detector or segmenter.
+  `docs/design.md` §12 lists what is not here yet.
 
 ## Docker
 

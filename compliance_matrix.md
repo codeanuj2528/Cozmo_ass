@@ -16,7 +16,8 @@ met the gap is named rather than softened.
 
 Generated against `HEAD`, benchmark run `reports/verified/` (8 captures against the tape,
 15 PASS / 18 FAIL / 33 SKIP, plus the ray-traced room against its exact dimensions, 11 PASS / 5 SKIP — see
-[benchmark_report.md](benchmark_report.md) for what the FAILs and SKIPs are).
+[benchmark_report.md](benchmark_report.md) for what the FAILs and SKIPs are), and, for the photo and video
+tiers, `fixloop/round4/after/` scored against the LiDAR plans of the assignment's three walks.
 
 ---
 
@@ -26,7 +27,7 @@ Generated against `HEAD`, benchmark run `reports/verified/` (8 captures against 
 |---|---|---|---|---|
 | 1.1 | Choose a capture route: own iOS app **or** stock capture protocol | `capture/PROTOCOL.md`, `capture_protocol.md` | One-page Route 2 protocol: Stray Scanner named as the tool, native Camera app for photo/video, install table, walk script, failure table, hand-off command. Every instruction is verified against the ingest code. | **MET** — Route 2 taken. The protocol is written for a non-engineer and names the three failure modes that actually broke real captures (no upward sweep, no parallax between photos, EXIF stripped by messaging apps). |
 | 1.2 | Route 2: name the off-the-shelf tool | `capture/PROTOCOL.md`, `cozmo/io/stray.py` | **Stray Scanner** (App Store, free) named with the exact export format it produces. Native Camera app for photo/video tiers. | **MET** — tool named, install-to-hand-off written, with three capture failure modes called out. |
-| 1.3 | Tier 1 — **Photos**, 2–8 stills per room, no depth/poses, one folder per room | `cozmo/io/photo.py`, `cozmo/pipeline/photo.py`, `cozmo/recon/` | `cozmo run` on `DROP_CAPTURES_HERE/03_multiroom_photos` → `reports/verified/multiroom_photos/plan.json` (3 rooms, 97.19 m² against 28.75 m² tape, +238%) | **PARTIAL** — runs end to end on 58 real stills at 0.5× and 12 at 1×. Accuracy is honestly reported: +238% at 0.5×, +136% at 1×. The dominant error is the monocular depth model's scale (1.57–1.76×), a field-of-view mismatch, not a tuning problem. The ±8% gate does not pass. |
+| 1.3 | Tier 1 — **Photos**, 2–8 stills per room, no depth/poses, one folder per room | `cozmo/io/photo.py`, `cozmo/pipeline/photo.py`, `cozmo/recon/multiview.py`, `cozmo/recon/metric_scale.py` | Home flat, before fix loop round 4: 3 rooms, 97.19 m² against 28.75 m² tape (+238%). The assignment's three walks, photo inputs made from each walk and scored against its LiDAR plan (`fixloop/round4/after/`): whole-property footprint +4.3%, +8.8% and +120.1%, from +148.4%, +52.5% and +84.8%. | **PARTIAL** — runs end to end. VGGT-1B reconstructs a room's stills together and MoGe-2 sets the scale, now within −8% to +2% of LiDAR depth. The ±8% gate passes on one walk of three, by room errors that cancel; the room outline is the dominant error (`fixloop/round4/POSTMORTEM.md`). The home flat's photographs were not on the machine round 4 ran on and have not been rebuilt. |
 | 1.4 | Photo folders must produce the **same stitched whole-property plan** | `cozmo/pipeline/photo.py`, `cozmo/stitch/rooms.py` | `reports/verified/multiroom_photos/plan.json` — 3 rooms stitched into one property, the hall rejected as implausible, adjacency 2/4 from folder names | **PARTIAL** — per-room folders stitch into one property with adjacency. Doorway matching fails (opening detection finds 0–1 openings at the photo tier), so adjacency comes from folder naming convention. The stitch is structurally correct but not solved from geometry. |
 | 1.5 | Tier 2 — **Video**, handheld walkthrough clip | `cozmo/pipeline/video.py`, `cozmo/io/video.py` | Runs on the walkthrough clip; whole-flat clip gives one room of about 371 m², the assignment's single-room walk, which LiDAR puts at 20.91 m², gives 339.61 m² | **NOT MET** as a metric product — the video tier runs end-to-end but does not produce a usable metric plan. Metric scale is not solved. |
 | 1.6 | Tier 3 — **LiDAR**, depth + poses + intrinsics | `cozmo/pipeline/lidar.py`, `cozmo/io/stray.py`, `cozmo/geometry/` | Long walk: 6 rooms, 29.13 m² (+1%), 7 openings, adjacency 2/5, per-room ceilings 2.56–2.67 m. Assignment's two flat scans give 8 and 7 rooms, 38.91 and 41.58 m², and the same plans from freshly unzipped copies. | **MET** — the strongest tier. Validated against operator's tape on a real flat. Drift correction keeps 77 of 110 candidate loop closures on the long walk and cuts the pose residual from 0.389 to 0.262. |
@@ -59,7 +60,7 @@ Generated against `HEAD`, benchmark run `reports/verified/` (8 captures against 
 | 2.19 | Gate: repeat ceiling spread ≤1 cm, and say which failure | `cozmo/bench/gates.py::gate_repeatability`, `benchmark_report.md` | Walks: hall 0.4 cm, bedroom 0.8 cm, bathroom 13.1 cm; the bedroom alone against the long walk, under 0.05 cm. The bathroom fails because the long walk's bathroom room also holds part of the passage. | **FAIL** — ceiling height repeats to 8 mm or better where rooms are segmented the same way (hall, bedroom). Fails in the bathroom, where they are not. |
 | 2.20 | Gate: repeatability 1 cm or 0.5% per wall | `cozmo/bench/gates.py::gate_repeatability` | 0/27 walls agree, worst 267.3 cm. The same bedroom differs by 0.15–0.64 m between the two walks. | **FAIL** — walls are unrepeatable rather than repeatable-but-biased. This is a reconstruction defect in room segmentation, not a tape error. |
 | 2.21 | Gate: drift accountability with an on/off ablation | `cozmo/geometry/drift.py`, `known_failure_modes.md` §5 | Pose graph over heading and horizontal position with ICP-verified closures; ablation of drift on/off × snap on/off plus the room refinement off, regenerated. With snapping on, the walk without correction loses the passage. | **MET** — the brief makes "poses used as-is" an automatic fail, and the ablation is reported as it came out: this walk drifted little (largest correction 8.5 cm), and the published plan is closest per taped room (26.6% mean error) and level with snapping off on footprint (+1%), since fix loop round 3 removed a room never walked into; it still carries two rooms outside the tape. |
-| 2.22 | Gate: photo-tier whole-property stitch, ±8% | `cozmo/stitch/rooms.py` | 3 rooms, 97.19 m² against 28.75 m² (+238%), adjacency 2/4 from folder names. | **FAIL** — the photo tier is dominated by the monocular depth scale error (1.57–1.76×). The ±8% gate does not pass. |
+| 2.22 | Gate: photo-tier whole-property stitch, ±8% | `cozmo/stitch/rooms.py`, `cozmo/bench/tiers.py` | The assignment's walks against their LiDAR plans: +4.3% PASS, +8.8% FAIL, +120.1% FAIL, no room overlapping another. Home flat, before round 4: +238% against the tape. | **PARTIAL** — one pass in three, by room errors that cancel (−40% and +98% in the plan that passes). Walls within 8%: 4/23, 4/31, 4/30. |
 | 2.23 | Gate: interval coverage at every tier | `cozmo/uncertainty/calibration.py`, `cozmo/bench/gates.py::gate_interval_coverage` | LiDAR: 0/16, 2/16, 1/5 covered. Photo: 7/11 and 5/5 (intervals about 7 m wide). No quantiles fitted in-sample. | **FAIL** — LiDAR intervals model sensor noise, not segmentation. Photo intervals cover by being uninformatively wide. |
 
 ## Part 3 — Head-to-head
@@ -93,14 +94,20 @@ Generated against `HEAD`, benchmark run `reports/verified/` (8 captures against 
 | 4.17 | Round 3: before and after, regenerable | `fixloop/round3/{before,after,gates}` | Plans, run manifests and gate tables for six captures, produced by `dd95678` and `02be79e`. | **MET** |
 | 4.18 | Round 3: gate moves | `fixloop/round3/gates/` | Long-walk footprint +8.7% FAIL to +1.3% PASS; adjacency 2/6 to 2/5; bedroom walk footprint +46.1% to +17.2%. | **MET**, qualified — the gate passes because an untaped, never-walked room left the plan. No taped room changed. |
 | 4.19 | Round 3: post-mortem | `fixloop/round3/POSTMORTEM.md` | Every predicted number inside its range; the seen floor removed and two rejected alternatives measured; the changes nobody predicted listed. | **MET** |
+| 4.20 | Round 4: worst gate with its failing number | `fixloop/round4/FIX_DECLARATION.md` | Photo-tier footprint against the LiDAR plan of each assignment walk: +148.4%, +52.5%, +84.8%. Committed `5c55395` before `e52ca4d`. | **MET** — auditable in git; the declaration lists everything measured before it was written. |
+| 4.21 | Round 4: root cause with evidence | `fixloop/round4/FIX_DECLARATION.md`, `fixloop/round4/evidence/` | Each still built on its own: Depth Anything V2 over-predicts upright iPhone depth 1.28–1.33× against LiDAR; VGGT-1B's joint depth is within 2–7% absolute relative error; MoGe-2 given the field of view sets room scale within −7% to +3%; gravity from the cameras' x axes is within 0.8–4.9° of ARKit. | **MET** — measured on 117 LiDAR frames and 15 photo rooms before the fix. |
+| 4.22 | Round 4: fix shipped | `cozmo/recon/{multiview,metric_scale,sequence}.py`, `cozmo/pipeline/{photo,video}.py`, `tests/test_{multiview,sequence,joint_pipeline,joint_video}.py` | VGGT-1B reconstructs each room's stills and each run of keyframes together, MoGe-2 sets the scale, gravity comes from the cameras' x axes; `--no-multiview` keeps the earlier path; the weights are pinned and hashed by `scripts/fetch_weights.sh`. | **MET** |
+| 4.23 | Round 4: before and after, regenerable | `fixloop/round4/{before,after}`, `scripts/run_tier_benchmark.sh` | Plans, run manifests and tier tables for three walks at two tiers, from `f7d043f` and `597400a` before and `e52ca4d` after. | **MET** |
+| 4.24 | Round 4: gate moves | `fixloop/round4/after/tier_table.txt` | Photo footprint +148.4% FAIL to +4.3% PASS, +52.5% to +8.8%, +84.8% to +120.1%; no plan has overlapping rooms, where two did. | **PARTIAL** — one pass, by room errors that cancel; one plan got worse. |
+| 4.25 | Round 4: post-mortem | `fixloop/round4/POSTMORTEM.md` | Each prediction scored. The declaration's own test says the room outline dominates, and the core run on LiDAR depth and ARKit poses of the same still frames confirms it. | **MET** |
 
 ## Part 5 — Process evidence
 
 | # | Requirement | File path | Artifact | Status |
 |---|---|---|---|---|
-| 5.1 | Commit as you work | `git log` | Incremental commits naming the defect and the number it moved. Fix declarations committed before their fixes, three times. | **MET** |
+| 5.1 | Commit as you work | `git log` | Incremental commits naming the defect and the number it moved. Fix declarations committed before their fixes, four times. | **MET** |
 | 5.2 | Not a single-commit dump | `git log` | Multiple commits across several days, each with a specific purpose. | **MET** |
-| 5.3 | Tests exist and pass | `tests/` | 140 tests across 19 test files, all passing. Tests cover schema validation, geometry algorithms, pipeline stages, damage detection, benchmarking, and fixtures. | **MET** |
+| 5.3 | Tests exist and pass | `tests/` | 210 tests across 29 test files, all passing. Tests cover schema validation, geometry algorithms, pipeline stages, the photo and video tiers end to end with stand-ins for their models, damage detection, benchmarking, and fixtures. | **MET** |
 
 ## Deliverables
 
@@ -111,11 +118,11 @@ Generated against `HEAD`, benchmark run `reports/verified/` (8 captures against 
 | D3 | README to running in 15 minutes, one command per capture | `README.md`, `scripts/setup.sh` | **MET** — two setup commands and one command per capture. Synthetic ray-traced room runs without any real data. A Dockerfile is included; it has not been built in this repository's checks. |
 | D4 | Reproduction bundle | `run_manifest.json` per run: commit, input hash, config, timings; `scripts/regenerate_verified.sh` rebuilds every verified plan and the gate table | **MET** |
 | D5 | Benchmark report across three tiers | `benchmark_report.md`, `reports/verified/gates/` | **PARTIAL** — 15 PASS, 18 FAIL, 33 SKIP against the tape; the ray-traced room adds 11 PASS and 5 SKIP, and shows only that the measurement is unbiased on a noiseless room. The honest headline is that 33 gates are SKIP because the tape doesn't cover ceilings, doors or the assignment property. |
-| D6 | Fix loop bundle | `fixloop/`, `fixloop/diff.md`, `fixloop/README.md` | **MET** — three rounds, each with declaration, before/after and post-mortem; rounds 1 and 2 also in the human-readable `fixloop/diff.md`, round 3 in `git diff 949d24b..02be79e`. |
+| D6 | Fix loop bundle | `fixloop/`, `fixloop/diff.md`, `fixloop/README.md` | **MET** — four rounds, each with declaration, before/after and post-mortem; rounds 1 and 2 also in the human-readable `fixloop/diff.md`, round 3 in `git diff 949d24b..02be79e`, round 4 in `git diff 5c55395..e52ca4d`. |
 | D7 | Technical report, at most 6 pages | `technical_report.md`, rendered as `technical_report.pdf` | **MET** — 11 sections including Abstract, Scope, Experimental Setup, Results, Conclusion, and Appendix. |
 | D8 | Architecture / design document | `docs/design.md` | **MET** — 12-section architecture document covering captures, output contract, all three tiers, stitching, damage, calibration, benchmark scoring, fixtures, and layout. |
 | D9 | Raw benchmark data: sensor logs, ground truth, app exports | `DROP_CAPTURES_HERE/`, `capture/` | **PARTIAL** — no app export, partial tape (no ceilings or doors). |
-| D10 | Weights fetched by script | `scripts/fetch_weights.sh` | **MET** |
+| D10 | Weights fetched by script | `scripts/fetch_weights.sh` | **MET** — VGGT-1B, MoGe-2 ViT-L and Depth Anything V2 small, each pinned to a revision and checked by sha256. |
 | D11 | Runs without calling our infrastructure | no network at run time | **MET** |
 | D12 | Mirrors, glass, wet-look surfaces, low light | `known_failure_modes.md` §4, §7 | **MET** — geometric mirror test, multi-view corroboration for specular highlights, luma-based low-light flagging. 22 failure modes documented total. |
 
@@ -133,13 +140,12 @@ Generated against `HEAD`, benchmark run `reports/verified/` (8 captures against 
 
 | Status | Count |
 |---|---|
-| MET | 41 |
-| PARTIAL | 12 |
-| FAIL | 6 |
+| MET | 46 |
+| PARTIAL | 14 |
+| FAIL | 5 |
 | UNVERIFIED | 2 |
 | NOT MET | 5 |
 
 Of the 5 `NOT MET`, three are the head-to-head rows (no consumer app export captured), one is
 the staged-damage room (not captured) and one is the video tier as a metric product, which runs but does not
-solve scale. The 6 `FAIL` are measured shortfalls against the operator's tape, each explained in
-`benchmark_report.md` or a post-mortem.
+solve scale. The 5 `FAIL` are measured shortfalls, each explained in `benchmark_report.md` or a post-mortem.

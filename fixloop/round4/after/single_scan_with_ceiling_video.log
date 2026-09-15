@@ -1,0 +1,5 @@
+Loading capture: data/tier_inputs/single_scan_with_ceiling/video
+Detected Tier: VIDEO (9745 frames/images)
+Running 3D reconstruction and semantic extraction...
+/Users/anujmishra/Desktop/cozmoo/Cozmo_ass/.venv/lib/python3.11/site-packages/vggt/models/vggt.py:65: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=False):

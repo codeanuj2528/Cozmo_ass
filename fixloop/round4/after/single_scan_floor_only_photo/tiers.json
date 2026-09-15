@@ -1,0 +1,183 @@
+{
+  "tier": "photo",
+  "scope": "single_scan_floor_only photo",
+  "gates": [
+    {
+      "gate": "footprint vs LiDAR",
+      "scope": "single_scan_floor_only photo",
+      "tier": "photo",
+      "measured": "55.30 m2 vs 50.82 m2 (+8.8%)",
+      "threshold": "within +-8%",
+      "status": "FAIL",
+      "detail": {
+        "reported_m2": 55.29564307073782,
+        "reference_m2": 50.8233510335272,
+        "relative_error": 0.087996795690633
+      }
+    },
+    {
+      "gate": "rooms reconstructed",
+      "scope": "single_scan_floor_only photo",
+      "tier": "photo",
+      "measured": "5/6 folders give a room",
+      "threshold": "every folder",
+      "status": "FAIL",
+      "detail": {}
+    },
+    {
+      "gate": "wall_lengths vs LiDAR",
+      "scope": "single_scan_floor_only photo",
+      "tier": "photo",
+      "measured": "4/31 within (13%), median error 35.0%",
+      "threshold": "<= 8% on >= 85%",
+      "status": "FAIL",
+      "detail": {
+        "within": 4,
+        "total": 31
+      }
+    },
+    {
+      "gate": "room_overlap",
+      "scope": "single_scan_floor_only photo",
+      "tier": "photo",
+      "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+      "threshold": "no overlap above 2% of the smallest room",
+      "status": "PASS",
+      "detail": {
+        "worst_m2": 0.0,
+        "fraction": 0.0
+      }
+    },
+    {
+      "gate": "adjacency vs LiDAR",
+      "scope": "single_scan_floor_only photo",
+      "tier": "photo",
+      "measured": "1/5 correct; 4 missed, 3 phantom",
+      "threshold": "every connection found, none invented",
+      "status": "FAIL",
+      "detail": {
+        "missed": [
+          "room_01-room_02",
+          "room_01-room_03",
+          "room_01-room_05",
+          "room_01-room_06"
+        ],
+        "phantom": [
+          "room_02-room_03",
+          "room_03-room_04",
+          "room_05-room_06"
+        ]
+      }
+    },
+    {
+      "gate": "interval_coverage vs LiDAR",
+      "scope": "single_scan_floor_only photo",
+      "tier": "photo",
+      "measured": "5/6 intervals contain the LiDAR value (83%)",
+      "threshold": ">= 90%",
+      "status": "FAIL",
+      "detail": {
+        "covered": 5,
+        "total": 6
+      }
+    }
+  ],
+  "rooms": [
+    {
+      "reference_room": "room_01",
+      "plan_room": null,
+      "reference_area_m2": 14.765441511037306,
+      "plan_area_m2": null,
+      "area_error": null,
+      "area_interval_covers": null,
+      "walls_within": 0,
+      "walls_total": 0,
+      "wall_errors": []
+    },
+    {
+      "reference_room": "room_02",
+      "plan_room": "room_02",
+      "reference_area_m2": 10.552884989929222,
+      "plan_area_m2": 18.089666715067015,
+      "area_error": 0.7141915914302353,
+      "area_interval_covers": true,
+      "walls_within": 0,
+      "walls_total": 7,
+      "wall_errors": [
+        1.6284970493462316,
+        0.4700717576108865,
+        0.2632613797508253,
+        2.401775873130869,
+        0.44735833898955263,
+        1.4422599105557439
+      ]
+    },
+    {
+      "reference_room": "room_03",
+      "plan_room": "room_03",
+      "reference_area_m2": 9.020581023789115,
+      "plan_area_m2": 7.707509777179343,
+      "area_error": -0.14556393242818114,
+      "area_interval_covers": true,
+      "walls_within": 2,
+      "walls_total": 4,
+      "wall_errors": [
+        0.04613055283129449,
+        0.002194986498347064,
+        0.15920294447922925,
+        0.09184330441234989
+      ]
+    },
+    {
+      "reference_room": "room_04",
+      "plan_room": "room_04",
+      "reference_area_m2": 7.364379390328832,
+      "plan_area_m2": 11.99286440648411,
+      "area_error": 0.6284962752236217,
+      "area_interval_covers": true,
+      "walls_within": 0,
+      "walls_total": 6,
+      "wall_errors": [
+        0.7926810224618136,
+        0.6464952995660554,
+        0.37332722953017167,
+        0.09246438595267249
+      ]
+    },
+    {
+      "reference_room": "room_05",
+      "plan_room": "room_05",
+      "reference_area_m2": 5.677892102998813,
+      "plan_area_m2": 14.342215846257576,
+      "area_error": 1.5259754123687288,
+      "area_interval_covers": false,
+      "walls_within": 0,
+      "walls_total": 9,
+      "wall_errors": [
+        10.918143167456703,
+        0.3846587841420953,
+        2.5921125770281135,
+        0.326943347914854,
+        0.598816884506362,
+        0.09337318072472994
+      ]
+    },
+    {
+      "reference_room": "room_06",
+      "plan_room": "room_06",
+      "reference_area_m2": 3.442172015443914,
+      "plan_area_m2": 3.1633863257497743,
+      "area_error": -0.08099121381596222,
+      "area_interval_covers": true,
+      "walls_within": 2,
+      "walls_total": 5,
+      "wall_errors": [
+        0.051662368309537694,
+        0.31645213992719334,
+        0.13168813655302894,
+        0.0779662411854819
+      ]
+    }
+  ],
+  "notes": []
+}

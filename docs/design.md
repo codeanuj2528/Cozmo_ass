@@ -179,12 +179,22 @@ core. Everything after that is literally the same code: same wall extraction, sa
 complex, same opening detection, same ceiling measurement.
 
 Per room the sequence is:
-1. **Predict depth** — Depth Anything V2 Metric Indoor, via `cozmo/recon/monocular.py`
-2. **Level** — fit a floor plane, estimate camera height, compute gravity
-3. **Scale** — camera-height scale correction from the floor distance
-4. **Register** — yaw from wall-normal histograms, translation by occupancy
-   cross-correlation, then ICP. That order matters: ICP has a small basin of convergence
-5. **Fuse** — same as LiDAR tier from here on
+1. **Reconstruct together** — VGGT-1B takes the room's stills at once and returns depth, pose
+   and intrinsics for each in one frame (`cozmo/recon/multiview.py`). A portrait and a landscape
+   still both go in whole, padded to a 518 px square
+2. **Scale** — MoGe-2 ViT-L, given each still's field of view from EXIF, predicts metric depth;
+   the room's scale is the median over stills of each still's median ratio to VGGT's depth
+   (`cozmo/recon/metric_scale.py`)
+3. **Level** — up is the direction every camera's x axis is perpendicular to, since a phone keeps
+   its image's horizontal level however far it is tipped. The mean of the down axes was 2–29° off
+   ARKit's gravity per room on the assignment's walks; this is 0.8–4.9° off. The core's floor fit
+   refines it within 6°
+4. **Fuse** — same as LiDAR tier from here on
+
+`--no-multiview` runs the sequence used before fix loop round 4, which is also what runs when the
+two models are not installed: Depth Anything V2 on each still alone (`cozmo/recon/monocular.py`),
+level and scale each against the floor, then register by wall-normal histograms, occupancy
+cross-correlation and ICP.
 
 ### EXIF intrinsics
 
@@ -348,7 +358,10 @@ src/cozmo/
 │   ├── assemble.py     Room assembly
 │   └── planes.py       Plane fitting
 ├── recon/
-│   ├── monocular.py    Depth Anything V2 inference
+│   ├── multiview.py    VGGT-1B joint reconstruction, gravity from camera axes
+│   ├── metric_scale.py MoGe-2 metric scale
+│   ├── sequence.py     Keyframes, overlapping runs, chaining
+│   ├── monocular.py    Depth Anything V2 inference (--no-multiview)
 │   ├── backbone.py     Model loading
 │   ├── register.py     Multi-frame registration
 │   └── frames.py       Frame selection
@@ -381,11 +394,14 @@ src/cozmo/
 
 ## 12. Deliberately not here yet
 
-- **VGGT / learned stereo**: would give the photo tier actual geometry instead of
-  monocular depth. Needs a separate Python environment with PyTorch3D.
+- **A photo room outline from walls**: VGGT-1B gives the photo tier joint geometry since fix loop
+  round 4, but the core still takes a room to be the floor its stills saw, and stills see floor
+  through doorways (`fixloop/round4/POSTMORTEM.md`). Wall planes fitted per still and merged across
+  stills would bound it.
 - **Appearance-based door detection**: the photo tier cannot find openings from geometry
   alone. A learned detector is the fix.
 - **In-sample calibration**: conformal quantiles fitted and applied to different captures
   of the same property. Needs more properties.
 - **Multi-floor plans**: the level estimation assumes a single floor.
-- **GPU acceleration**: the pipeline runs CPU-only. Depth inference is the bottleneck.
+- **GPU geometry**: the models run on Apple's MPS or on CUDA when present; fusion, walls and rooms
+  run on the CPU.
