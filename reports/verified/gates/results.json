@@ -513,12 +513,12 @@
     "gate": "room_overlap",
     "scope": "single_room",
     "tier": "lidar",
-    "measured": "largest overlap 0.000 m2 (0.0% of smallest room), total 0.000 m2",
+    "measured": "largest overlap 0.001 m2 (0.1% of smallest room), total 0.001 m2",
     "threshold": "no overlap above 2% of the smallest room",
     "status": "PASS",
     "detail": {
-      "worst_m2": 8.493265471476441e-08,
-      "fraction": 4.960098037812987e-08
+      "worst_m2": 0.0009120011004148586,
+      "fraction": 0.000609057699984672
     }
   },
   {
@@ -702,11 +702,11 @@
     "gate": "wall_lengths",
     "scope": "synthetic_no_ceiling",
     "tier": "lidar",
-    "measured": "4/4 within tolerance (100%), worst 0.6 cm",
+    "measured": "4/4 within tolerance (100%), worst 0.1 cm",
     "threshold": "<= 2 cm on >= 85%",
     "status": "PASS",
     "detail": {
-      "worst_cm": 0.6288373314157436,
+      "worst_cm": 0.130704056241715,
       "fraction": 1.0,
       "unpaired": 0
     }
@@ -741,9 +741,9 @@
     "threshold": "within +-5%",
     "status": "PASS",
     "detail": {
-      "reported": 10.08251113976164,
+      "reported": 10.076620693773075,
       "truth": 10.08,
-      "relative_error": 0.00024912100809926935
+      "relative_error": 0.00033524863362355094
     }
   },
   {
@@ -793,11 +793,11 @@
     "gate": "wall_lengths",
     "scope": "synthetic_room",
     "tier": "lidar",
-    "measured": "4/4 within tolerance (100%), worst 0.6 cm",
+    "measured": "4/4 within tolerance (100%), worst 0.1 cm",
     "threshold": "<= 2 cm on >= 85%",
     "status": "PASS",
     "detail": {
-      "worst_cm": 0.6226453455592917,
+      "worst_cm": 0.12970537208669697,
       "fraction": 1.0,
       "unpaired": 0
     }
@@ -810,7 +810,7 @@
     "threshold": "<= 1.5 cm every room",
     "status": "PASS",
     "detail": {
-      "worst_cm": 0.08198732971527178,
+      "worst_cm": 0.08225435612829735,
       "rooms": 1
     }
   },
@@ -835,9 +835,9 @@
     "threshold": "within +-5%",
     "status": "PASS",
     "detail": {
-      "reported": 10.082432843651846,
+      "reported": 10.076626679794987,
       "truth": 10.08,
-      "relative_error": 0.00024135353688947703
+      "relative_error": 0.00033465478224331107
     }
   },
   {

@@ -1,24 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1456" height="1545" viewBox="0 0 1456 1545">
-<rect width="1456" height="1545" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1551" viewBox="0 0 1240 1551">
+<rect width="1240" height="1551" fill="#ffffff"/>
 <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
 <text x="28" y="38" font-size="22" font-weight="600" fill="#22222a">Floor Plan - Capture synthetic_room</text>
 <text x="28" y="62" font-size="12" fill="#7a7a86">Tier: LIDAR | Total Floor Area: 10.08 m²</text>
-<line x1="28" y1="82" x2="1428" y2="82" stroke="#dedcd4" stroke-width="1"/>
-<polygon points="210.47,870.71 805.05,306.47 1245.53,770.64 650.95,1334.88" stroke="none" fill="#f4f1ea"/>
-<polygon points="210.47,870.71 805.05,306.47 1245.53,770.64 650.95,1334.88" stroke="#22222a" stroke-width="25.09" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="937.43" y1="445.96" x2="1110.13" y2="627.96" stroke="#ffffff" stroke-width="31.36" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="941.43" y1="442.16" x2="1114.14" y2="624.16" stroke="#3d6fa8" stroke-width="5.02" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="933.42" y1="449.76" x2="1106.13" y2="631.76" stroke="#3d6fa8" stroke-width="5.02" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="974.04" y1="1028.27" x2="835.06" y2="1160.16" stroke="#ffffff" stroke-width="31.36" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="974.04" y1="1028.27" x2="835.06" y2="1160.16" stroke="#22222a" stroke-width="4.11" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<line x1="974.04" y1="1028.27" x2="842.15" y2="889.30" stroke="#8a8a96" stroke-width="2.74" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
-<path d="M 835.06 1160.16 A 191.59 191.59 0 1 0 842.15 889.30" stroke="#8a8a96" stroke-width="2.28" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="13.69,11.40"/>
-<text x="728.00" y="752.25" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 01</text>
-<text x="728.00" y="816.11" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">10.08 m2</text>
-<text x="728.00" y="879.97" font-size="9.0" fill="#7a7a86" text-anchor="middle" font-weight="normal">h 2.499 m  [2.486, 2.513]</text>
-<text x="539.16" y="621.68" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-43.50 539.16 621.68)">3.59 ±2.6cm</text>
-<text x="992.20" y="569.95" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(46.50 992.20 569.95)">2.81 ±2.1cm</text>
-<text x="916.84" y="1019.67" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-43.50 916.84 1019.67)">3.59 ±2.6cm</text>
-<text x="463.80" y="1071.39" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-313.50 463.80 1071.39)">2.81 ±2.1cm</text>
-<g><line x1="28" y1="1525" x2="256.1" y2="1525" stroke="#22222a" stroke-width="2"/><line x1="28" y1="1521" x2="28" y2="1529" stroke="#22222a" stroke-width="2"/><line x1="256.1" y1="1521" x2="256.1" y2="1529" stroke="#22222a" stroke-width="2"/><text x="264.1" y="1529" font-size="11" fill="#7a7a86">1 m</text></g>
+<line x1="28" y1="82" x2="1212" y2="82" stroke="#dedcd4" stroke-width="1"/>
+<polygon points="1027.11,1338.18 213.82,1338.18 213.82,309.82 1027.11,309.82 1027.11,1338.18" stroke="none" fill="#22222a"/>
+<polygon points="997.49,1308.56 997.49,339.44 243.44,339.44 243.44,1308.56" stroke="none" fill="#f4f1ea"/>
+<polygon points="243.44,863.29 213.82,863.29 213.82,637.08 243.44,637.08 243.44,863.29" stroke="none" fill="#ffffff"/>
+<line x1="243.44" y1="637.08" x2="469.65" y2="637.08" stroke="#8a8a96" stroke-width="3.23" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<path d="M 243.44 863.29 A 226.21 226.21 0 0 0 469.65 637.08" stroke="#8a8a96" stroke-width="2.69" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="16.16,13.46"/>
+<polygon points="767.79,1308.56 767.79,1338.18 471.56,1338.18 471.56,1308.56 767.79,1308.56" stroke="none" fill="#ffffff"/>
+<line x1="471.56" y1="1318.93" x2="767.79" y2="1318.93" stroke="#3d6fa8" stroke-width="5.92" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<line x1="471.56" y1="1327.82" x2="767.79" y2="1327.82" stroke="#3d6fa8" stroke-width="5.92" stroke-linejoin="round" stroke-linecap="round" fill="none"/>
+<text x="620.47" y="743.21" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 01</text>
+<text x="620.47" y="818.61" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">10.08 m2</text>
+<text x="620.47" y="894.02" font-size="9.0" fill="#7a7a86" text-anchor="middle" font-weight="normal">h 2.499 m  [2.486, 2.513]</text>
+<text x="943.63" y="824.00" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-90.00 943.63 824.00)">3.60 ±2.6cm</text>
+<text x="620.47" y="393.30" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-360.00 620.47 393.30)">2.80 ±2.1cm</text>
+<text x="297.30" y="824.00" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(90.00 297.30 824.00)">3.60 ±2.6cm</text>
+<text x="620.47" y="1254.70" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">2.80 ±2.1cm</text>
+<g><line x1="28" y1="1531" x2="297.3" y2="1531" stroke="#22222a" stroke-width="2"/><line x1="28" y1="1527" x2="28" y2="1535" stroke="#22222a" stroke-width="2"/><line x1="297.3" y1="1527" x2="297.3" y2="1535" stroke="#22222a" stroke-width="2"/><text x="305.3" y="1535" font-size="11" fill="#7a7a86">1 m</text></g>
 </g></svg>

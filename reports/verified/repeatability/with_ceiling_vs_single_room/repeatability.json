@@ -1,0 +1,443 @@
+{
+  "gate": {
+    "gate": "repeatability (registered)",
+    "scope": "single_scan_with_ceiling vs single_room",
+    "tier": "lidar",
+    "measured": "1/52 walls agree (2%), median length difference 22.8 cm; 3/9 rooms matched; ceiling spread not measurable (one capture has no ceiling)",
+    "threshold": "1 cm or 0.5% per wall; ceiling spread <= 1 cm",
+    "status": "FAIL",
+    "detail": {
+      "walls_agree": 1,
+      "walls": 52,
+      "ceiling_spreads_cm": []
+    }
+  },
+  "registration": {
+    "quarter_turns": 0,
+    "angle_deg": -0.12176974578171323,
+    "translation_m": [
+      6.43264305464123,
+      1.2488539261979212
+    ],
+    "wall_cells_within_5cm": 0.9708108108108108,
+    "wall_cells_within_10cm": 1.0
+  },
+  "footprint": {
+    "area_a_m2": 49.88454110715037,
+    "area_b_m2": 23.468634970795556,
+    "iou": 0.38848723160741555
+  },
+  "rooms": [
+    {
+      "room_a": "room_01",
+      "room_b": null,
+      "area_a": 12.364252550976374,
+      "area_b": null,
+      "iou": 0.0,
+      "ceiling_a": 3.064471027544882,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 0.16390537173282327,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.5034155564818441,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.16390537173282327,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.9265844435181556,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.16390537173282327,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.2742386844805367,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 4.284992114981185,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 2.2008231279986923,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.30620788501881435,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.8634155564818435,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.1787824166437009,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.20181153277694452,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 3.248512211623476,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.1581884672230549,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        }
+      ]
+    },
+    {
+      "room_a": "room_02",
+      "room_b": "room_01",
+      "area_a": 10.158745873507543,
+      "area_b": 9.115216605902074,
+      "iou": 0.8729175719286746,
+      "ceiling_a": 3.081712791700891,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 3.441578932063173,
+          "length_b": 2.317782968383602,
+          "offset_m": 0.012673515064093005,
+          "agrees": false
+        },
+        {
+          "length_a": 2.951768962456291,
+          "length_b": 2.9625259590196578,
+          "offset_m": 0.005394631906220582,
+          "agrees": true
+        },
+        {
+          "length_a": 3.441578932063173,
+          "length_b": 3.187782968383602,
+          "offset_m": 0.02434831842624119,
+          "agrees": false
+        },
+        {
+          "length_a": 2.951768962456291,
+          "length_b": 0.8728751475004283,
+          "offset_m": 0.10889595842929278,
+          "agrees": false
+        }
+      ]
+    },
+    {
+      "room_a": "room_03",
+      "room_b": null,
+      "area_a": 8.328106519587145,
+      "area_b": null,
+      "iou": 0.0,
+      "ceiling_a": 3.0652057064479408,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 2.886255623624115,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 2.8954231518978224,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 2.724483547104598,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.17818177258747836,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.16177207651951686,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 2.7172413793103445,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        }
+      ]
+    },
+    {
+      "room_a": "room_04",
+      "room_b": "room_03",
+      "area_a": 5.189315520126155,
+      "area_b": 4.199921782640044,
+      "iou": 0.7087017870217649,
+      "ceiling_a": 2.3433354176883836,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 2.102286418272338,
+          "length_b": 1.6827163943939887,
+          "offset_m": 0.11205937452524317,
+          "agrees": false
+        },
+        {
+          "length_a": 2.427199234274731,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 2.1424010180266757,
+          "length_b": 0.2942289744069848,
+          "offset_m": 0.00411333736207542,
+          "agrees": false
+        },
+        {
+          "length_a": 2.16,
+          "length_b": 2.317782968383602,
+          "offset_m": 0.02858398449597299,
+          "agrees": false
+        },
+        {
+          "length_a": 0.2671992342747309,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        }
+      ]
+    },
+    {
+      "room_a": "room_05",
+      "room_b": null,
+      "area_a": 4.848631707367108,
+      "area_b": null,
+      "iou": 0.0,
+      "ceiling_a": 2.4060417380720196,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 1.69605103984172,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 2.8587770022649766,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.69605103984172,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 2.8587770022649766,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        }
+      ]
+    },
+    {
+      "room_a": "room_06",
+      "room_b": null,
+      "area_a": 3.644892657946965,
+      "area_b": null,
+      "iou": 0.0,
+      "ceiling_a": 2.2752965635306555,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 1.677983040578277,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.4655195916087824,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.3714918365120793,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.6881005062693362,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.22062809205515155,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.2998271252155529,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 2.37424818993327,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        }
+      ]
+    },
+    {
+      "room_a": "room_07",
+      "room_b": null,
+      "area_a": 2.0649966314307386,
+      "area_b": null,
+      "iou": 0.0,
+      "ceiling_a": 2.4607556366684333,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 1.7866002844950213,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.1558246404367978,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.7866002844950213,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.1558246404367978,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        }
+      ]
+    },
+    {
+      "room_a": "room_08",
+      "room_b": "room_04",
+      "area_a": 1.7888050963685618,
+      "area_b": 1.636727454044907,
+      "iou": 0.8959845504078858,
+      "ceiling_a": 2.462289149621326,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 1.039207684963075,
+          "length_b": 1.015678115016622,
+          "offset_m": 0.009471882466701498,
+          "agrees": false
+        },
+        {
+          "length_a": 1.7213162703200386,
+          "length_b": 1.633858691549594,
+          "offset_m": 0.02927233742380775,
+          "agrees": false
+        },
+        {
+          "length_a": 1.039207684963075,
+          "length_b": 0.8541926215082816,
+          "offset_m": 0.09676155010762333,
+          "agrees": false
+        },
+        {
+          "length_a": 1.7213162703200386,
+          "length_b": 1.4929973578315012,
+          "offset_m": 0.00559078867085816,
+          "agrees": false
+        }
+      ]
+    },
+    {
+      "room_a": "room_09",
+      "room_b": null,
+      "area_a": 1.4967945498397732,
+      "area_b": null,
+      "iou": 0.0,
+      "ceiling_a": 2.4029834556407432,
+      "ceiling_b": null,
+      "walls": [
+        {
+          "length_a": 1.5,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.9978630332265155,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 1.5,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        },
+        {
+          "length_a": 0.9978630332265155,
+          "length_b": null,
+          "offset_m": null,
+          "agrees": false
+        }
+      ]
+    }
+  ]
+}
