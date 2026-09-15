@@ -305,3 +305,43 @@ known from the frames whether the window was real.
 An opening is measured on the whole wall run it was found in, so it can be wider than the room edge
 it is attached to when the room's outline stops short of its far jamb. The floor-only scan draws a
 2.78 m pass-through on a 1.59 m edge of room_05. The width is reported as measured, not clipped to the edge.
+
+## 23. The 15 Sep changes: the canonical frame, and rooms from evidence
+
+Two changes on 15 Sep move every LiDAR plan.
+
+The rotation meant to put the walls on the grid axes doubled their angle instead of removing it, so
+the assignment's three scans reached the occupancy grid with their walls at 44.5°, 80.0° and 55.0°,
+and every raster staircased them. `walls.canonical_rotation` fixes it, leaving 0.46°, 0.03° and 0.24°.
+
+LiDAR rooms are now built by `geometry/layout.py` from wall barriers, doorways and the floor the scan
+saw, instead of by labelling the faces of the wall-line arrangement. `--layout cellcomplex` keeps the
+cell complex for the ablation, and the room refinement of fix loop round 3 (§21, §22) runs only with it.
+On the two whole-flat scans, registered on their walls, the footprints are 49.88 and 50.82 m², 1.9%
+apart, overlapping at an intersection-over-union of 0.735. The cell complex on the same corrected frame
+gave 43.76 and 38.72 m², 11.5% apart, at 0.648; that was measured during development and is not kept
+in `reports/verified/`. Wall by wall the two scans still do not repeat: 0 of 52 walls agree within
+1 cm or 0.5%, with a median difference of 24.7 cm, and 5 of 9 rooms find a counterpart at an
+intersection-over-union of at least 0.5 (`reports/verified/repeatability/`). They are not a controlled
+repeat, since one never looks up and walks for 115 s against 215 s, so this shows the segmentation is
+not stable to the centimetre without showing why.
+
+None of this has been checked against tape. The home flat's raw captures were not on the machine where
+these changes were made, so `multiroom_long`, `multiroom_home`, `bedroom_solo` and the photo runs in
+`reports/verified/` are still the plans of `a92927c`, and every tape-scored number in this file,
+`benchmark_report.md` and the technical report describes that code. Re-scored together with the new
+assignment plans, the table still reads 15 PASS, 18 FAIL and 33 SKIP against the tape, and 11 PASS and
+5 SKIP on the ray-traced rooms, which reconstruct to 3.599 × 2.800 m with a 2.499 m ceiling, the
+0.85 m door at 0.84 m and the 1.10 m window at 1.10 m.
+
+Defects of the evidence layout seen on the assignment's scans:
+
+- A space seen but never walked into is left out and named in `quality.warnings`: 2.37 m² on the
+  floor-only scan and 4.92 m² on the with-ceiling scan.
+- Floor seen far along a corridor from its mouth stays in the room the walk reached: the single-room
+  scan's corridor is 7.02 m², drawn from returns up to 5 m away.
+- One doorway can be proposed on two wall faces a partition apart and reported twice: the floor-only
+  scan joins room_01 and room_06 through two doorways side by side.
+- A doorway whose head is not seen in the returns is given a 2.05 m height with a ±0.15 m interval.
+- Dimension labels overlap on strips narrower than about 0.4 m, and a notch between rooms narrower
+  than 0.4 m is drawn as solid wall.
