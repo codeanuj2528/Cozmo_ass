@@ -502,6 +502,109 @@ def _nearest_opening(
     return None if best is None else best[1]
 
 
+DEFAULT_DOOR_HEAD_M = 2.05
+DOORWAY_EDGE_DISTANCE_M = 0.45
+DOORWAY_SAME_OPENING_M = 0.35
+
+
+def _doorway_edge(room: Room, centre: np.ndarray, direction: np.ndarray) -> tuple[Wall | None, float]:
+    """The room edge that runs along a doorway, and where along it the doorway's centre falls."""
+    best: tuple[float, Wall, float] | None = None
+    for wall in room.walls:
+        start, end = np.asarray(wall.start, float), np.asarray(wall.end, float)
+        length = float(np.linalg.norm(end - start))
+        if length < 0.30:
+            continue
+        along = (end - start) / length
+        if abs(float(along @ direction)) < np.cos(np.deg2rad(10.0)):
+            continue
+        t = float((centre - start) @ along)
+        if t < -0.15 or t > length + 0.15:
+            continue
+        distance = abs(float((centre - start) @ np.array([-along[1], along[0]])))
+        if distance <= DOORWAY_EDGE_DISTANCE_M and (best is None or distance < best[0]):
+            best = (distance, wall, float(np.clip(t, 0.0, length)))
+    return (None, 0.0) if best is None else (best[1], best[2])
+
+
+def attach_doorways(
+    rooms: list[Room],
+    room_keys: dict[str, int],
+    doorways: list,
+    book: IntervalBook,
+    tier: Tier,
+) -> tuple[list[Adjacency], list[str]]:
+    """Put each doorway the layout found into the rooms either side of it, and connect those rooms.
+
+    A doorway is attached to the edge of each room that runs along it. Where the wall-elevation
+    detector already reported a door on that edge at the same place, that opening is kept, since its
+    width was measured on the wall itself, and it is linked to the other room rather than reported twice.
+    """
+    from cozmo.geometry.openings import DOOR_MAX_WIDTH_M
+
+    by_key = {room_keys[room.room_id]: room for room in rooms if room.room_id in room_keys}
+    links: list[Adjacency] = []
+    notes: list[str] = []
+    for doorway in doorways:
+        attached: list[tuple[Room, Opening]] = []
+        for key in (doorway.room_a, doorway.room_b):
+            room = by_key.get(key) if key is not None else None
+            if room is None:
+                continue
+            wall, t = _doorway_edge(room, doorway.centre, doorway.direction)
+            if wall is None:
+                notes.append(
+                    f"{room.room_id}: a {doorway.width_m:.2f} m doorway at ({doorway.centre[0]:.2f}, "
+                    f"{doorway.centre[1]:.2f}) has no edge of the room running along it, so it is not in the plan"
+                )
+                continue
+            same = [
+                o for o in room.openings
+                if o.wall_id == wall.wall_id and o.type in (OpeningType.DOOR, OpeningType.PASS_THROUGH)
+                and abs(o.offset_along_wall.value - t) <= DOORWAY_SAME_OPENING_M
+            ]
+            if same:
+                attached.append((room, same[0]))
+                continue
+            head = doorway.head_height_m
+            height = (
+                book.measure("opening_height", head, tier, "m", propagated_sigma=0.02)
+                if head is not None
+                else book.measure("opening_height", DEFAULT_DOOR_HEAD_M, tier, "m", floor_half_width=0.15)
+            )
+            confidence = 0.55 + 0.10 * min(doorway.crossings, 3) + (0.10 if doorway.room_b is not None else 0.0)
+            opening = Opening(
+                opening_id=f"{room.room_id}_o{len(room.openings):02d}",
+                type=OpeningType.DOOR if doorway.width_m <= DOOR_MAX_WIDTH_M else OpeningType.PASS_THROUGH,
+                wall_id=wall.wall_id,
+                width=book.measure("opening_width", doorway.width_m, tier, "m", propagated_sigma=doorway.width_sigma_m),
+                height=height,
+                sill_height=book.measure("sill_height", 0.0, tier, "m", propagated_sigma=0.01),
+                offset_along_wall=book.measure("sill_height", t, tier, "m", propagated_sigma=0.02),
+                detection_confidence=float(np.clip(confidence, 0.0, 0.95)),
+            )
+            room.openings.append(opening)
+            attached.append((room, opening))
+        if len(attached) == 2:
+            (room_a, opening_a), (room_b, opening_b) = attached
+            opening_a.connects_to_room = room_b.room_id
+            opening_b.connects_to_room = room_a.room_id
+            links.append(
+                Adjacency(
+                    room_a=room_a.room_id,
+                    room_b=room_b.room_id,
+                    opening_a=opening_a.opening_id,
+                    opening_b=opening_b.opening_id,
+                    confidence=float(np.clip(0.75 + 0.07 * min(doorway.crossings, 3), 0.0, 0.98)),
+                    evidence=(
+                        f"a {doorway.width_m:.2f} m doorway between the two rooms' walls "
+                        f"({doorway.width_source}); walked through {doorway.crossings} time(s)"
+                    ),
+                )
+            )
+    return links, notes
+
+
 # A partition is 0.1-0.25 m thick, so rooms drawn that far apart can still share one wall.
 UNMET_ADJACENCY_TOLERANCE_M = 0.30
 

@@ -35,6 +35,12 @@ class PipelineConfig:
     # Remove floor the scan says is not floor once rooms are segmented: a stairwell, the far end of
     # a room seen from its doorway, a walled space nobody saw into (geometry/refine.py).
     refine_rooms: bool = True
+    # How LiDAR rooms are found. "evidence" (geometry/layout.py) builds them from wall barriers,
+    # doorways and interior evidence; "cellcomplex" labels the faces of the wall-line arrangement,
+    # as every plan before 15 Sep did, and is kept for the ablation. The refinement above belongs to
+    # the cell complex. Photo and video use the cell complex whatever this says: a monocular depth
+    # map shows neither barriers nor doorways.
+    layout: str = "evidence"
 
     calibration_path: Path | None = Path("calibration/intervals.json")
     weights_dir: Path = Path("weights")

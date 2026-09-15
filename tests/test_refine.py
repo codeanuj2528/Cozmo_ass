@@ -159,7 +159,8 @@ def test_the_refinement_runs_on_lidar_and_not_on_monocular_depth(tmp_path, monke
         return real(*args, **kwargs)
 
     monkeypatch.setattr(lidar, "refine_rooms", recording)
-    config = PipelineConfig(detect_damage=False, build_scope=False, max_keyframes=16)
+    # The refinement belongs to the cell complex, which the evidence layout replaces on LiDAR.
+    config = PipelineConfig(detect_damage=False, build_scope=False, max_keyframes=16, layout="cellcomplex")
     root = write_capture(tmp_path / "room", drop_ceiling=False)
 
     lidar.build_lidar_plan(load_capture(root), config)

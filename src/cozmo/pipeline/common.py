@@ -12,6 +12,7 @@ import numpy as np
 
 from cozmo.geometry.cellcomplex import CellComplex
 from cozmo.geometry.fusion import FusedCloud
+from cozmo.geometry.layout import Layout
 from cozmo.geometry.levels import LevelEstimate
 from cozmo.geometry.occupancy import OccupancyMaps
 from cozmo.geometry.walls import WallSegment
@@ -31,13 +32,15 @@ class PipelineArtifacts:
     cloud: FusedCloud
     cameras: np.ndarray
     occupancy: OccupancyMaps
-    complex: CellComplex
+    complex: CellComplex | None
     walls: list[WallSegment]
     levels: LevelEstimate
     world_rotation: np.ndarray
     keyframes: list[int] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     timings: dict[str, float] = field(default_factory=dict)
+    # The evidence layout, when it built the rooms: barriers, bridges and doorways, for drawing.
+    layout: Layout | None = None
 
 
 @dataclass

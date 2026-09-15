@@ -32,6 +32,7 @@ from cozmo.geometry.assemble import (
     DEFAULT_POSE_SIGMA_M,
     adjacency_from_trajectory,
     RoomGeometry,
+    attach_doorways,
     build_room,
     unmet_adjacency_warnings,
     match_adjacency,
@@ -46,6 +47,7 @@ from cozmo.geometry.cellcomplex import (
 )
 from cozmo.geometry.drift import PoseOverride, correct_drift
 from cozmo.geometry.fusion import FusedCloud, fuse, select_keyframes
+from cozmo.geometry.layout import build_layout
 from cozmo.geometry.levels import LevelEstimate, detect_levels, refine_gravity
 from cozmo.geometry.occupancy import OccupancyMaps, build_occupancy
 from cozmo.geometry.openings import detect_all_openings
@@ -404,23 +406,39 @@ def build_lidar_plan(
     timings["occupancy_s"] = time.perf_counter() - mark
 
     mark = time.perf_counter()
-    complex_ = build_cell_complex(
-        occupancy, candidates, walls, max_lines=config.max_wall_lines
-    )
-    polygons = room_polygons(
-        complex_,
-        min_room_area_m2=config.min_room_area_m2,
-        min_inscribed_radius_m=config.min_inscribed_radius_m,
-    )
-    masks = room_masks(complex_)
+    complex_ = None
+    layout = None
     refinements: dict[int, list[str]] = {}
+    if config.layout not in ("evidence", "cellcomplex"):
+        raise ValueError(f"unknown layout {config.layout!r}; use 'evidence' or 'cellcomplex'")
+    # The evidence layout reads wall barriers and doorways off the depth sensor's own returns. A
+    # monocular depth map has partial walls and no doorways to read, so photo and video, which reach
+    # this function too, keep the cell complex.
+    if config.layout == "evidence" and source.meta.tier is Tier.LIDAR:
+        layout = build_layout(occupancy, cloud, walls, levels.floor_height)
+        polygons = layout.polygons
+        # Levels and damage are read over the whole outline; how much of it was seen is the layout's mask.
+        masks = {key: polygon_mask(polygon, occupancy.grid) for key, polygon in polygons.items()}
+        seen_masks = dict(layout.masks)
+        warnings.extend(layout.notes)
+    else:
+        complex_ = build_cell_complex(
+            occupancy, candidates, walls, max_lines=config.max_wall_lines
+        )
+        polygons = room_polygons(
+            complex_,
+            min_room_area_m2=config.min_room_area_m2,
+            min_inscribed_radius_m=config.min_inscribed_radius_m,
+        )
+        masks = room_masks(complex_)
+        seen_masks = masks
     # The corrections read the scan's returns as evidence that floor is absent: returns below the
     # floor, no wall on either side, nothing seen. LiDAR measures those. A monocular depth map does
     # not: its returns below the floor are scale and depth error and its walls are partial, so on
     # the photo and video tiers, which reach this function too, the same rules removed floor that
     # is there. The 1x hall photos went from 35.12 to 2.11 m2 and the 0.5x set gained a room
     # overlap. They run on the LiDAR tier only.
-    if config.refine_rooms and source.meta.tier is Tier.LIDAR:
+    if complex_ is not None and config.refine_rooms and source.meta.tier is Tier.LIDAR:
         unrefined_area = {key: polygon.area for key, polygon in polygons.items()}
         polygons, refinements = refine_rooms(
             polygons,
@@ -436,6 +454,7 @@ def build_lidar_plan(
             for key, mask in masks.items()
             if key in polygons
         }
+        seen_masks = masks
         for key, notes in refinements.items():
             if key not in polygons and notes:
                 warnings.append(f"a {unrefined_area[key]:.2f} m2 room was removed: " + "; ".join(notes))
@@ -473,8 +492,9 @@ def build_lidar_plan(
             mask=mask,
             label=config.labels.get(room_id, "room"),
         )
+        seen = seen_masks.get(room_key, mask)
         observed = float(
-            mask.sum() * occupancy.grid.cell_area / max(polygon.area, 1e-6)
+            seen.sum() * occupancy.grid.cell_area / max(polygon.area, 1e-6)
         )
         room, lookup = build_room(
             geometry, runs, openings_by_wall, per_room, book, tier, observed,
@@ -495,6 +515,14 @@ def build_lidar_plan(
     )
     if not adjacency:
         adjacency = match_adjacency(rooms, lookups)
+    if layout is not None:
+        # A doorway the layout found joins its two rooms through an opening in each. Where the walk
+        # also crossed between them, the doorway replaces the walk-only connection.
+        room_keys = {room.room_id: key for room, (key, _) in zip(rooms, ordered)}
+        door_links, door_notes = attach_doorways(rooms, room_keys, layout.doorways, book, tier)
+        warnings.extend(door_notes)
+        linked = {frozenset((link.room_a, link.room_b)) for link in door_links}
+        adjacency = door_links + [a for a in adjacency if frozenset((a.room_a, a.room_b)) not in linked]
     # Rooms stay where the scan measured them. They share one world frame, so a gap between two
     # connected rooms is floor the segmentation left out, not a misplaced room, and moving rooms
     # to close it moved them by up to 1.7 m on the assignment's scans.
@@ -582,5 +610,6 @@ def build_lidar_plan(
         keyframes=keyframes,
         warnings=warnings,
         timings=timings,
+        layout=layout,
     )
     return PipelineResult(plan=plan, artifacts=artifacts)
