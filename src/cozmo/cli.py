@@ -109,6 +109,12 @@ def run(
     max_keyframes: Optional[int] = typer.Option(
         None, "--max-keyframes", help="Maximum keyframes to subsample from large sequence."
     ),
+    multiview: bool = typer.Option(
+        True,
+        "--multiview/--no-multiview",
+        help="Photo and video: reconstruct frames together with VGGT-1B and scale them with MoGe-2. "
+        "Off, each frame is built on its own from a monocular depth model (the ablation).",
+    ),
     verbose: bool = typer.Option(False, "--verbose", help="Enable verbose log output."),
 ) -> None:
     """Run full reconstruction pipeline on one capture directory."""

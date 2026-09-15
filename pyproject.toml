@@ -30,6 +30,8 @@ ml = [
     "timm>=1.0",
     "huggingface-hub>=0.24",
     "safetensors>=0.4",
+    # VGGT's model code imports it; VGGT itself is installed --no-deps by scripts/setup.sh.
+    "einops>=0.7",
 ]
 dev = [
     "pytest>=8.0",

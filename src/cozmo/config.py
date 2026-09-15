@@ -41,6 +41,11 @@ class PipelineConfig:
     # the cell complex. Photo and video use the cell complex whatever this says: a monocular depth
     # map shows neither barriers nor doorways.
     layout: str = "evidence"
+    # Photo and video: reconstruct the frames together with VGGT-1B and scale them with MoGe-2
+    # (recon/multiview.py, recon/sequence.py). Off, each frame is built on its own from a monocular depth
+    # model and registered to the others, as every photo and video plan before fix loop round 4 was; kept for
+    # the ablation, and used when the models are not installed.
+    multiview: bool = True
 
     calibration_path: Path | None = Path("calibration/intervals.json")
     weights_dir: Path = Path("weights")

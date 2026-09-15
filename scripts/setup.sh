@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # One-command setup: interpreter, venv, install, ray-traced smoke test.
 #
-#     scripts/setup.sh && source .venv/bin/activate
+#     scripts/setup.sh && scripts/fetch_weights.sh && source .venv/bin/activate
 #
-# LiDAR needs no model weights. Photo/video do:
-#
-#     scripts/fetch_weights.sh
+# All three tiers are installed: the photo and video tiers need torch, VGGT and MoGe-2, and their weights come from
+# scripts/fetch_weights.sh. `scripts/setup.sh --lidar-only` skips the models for a machine that will only run the
+# LiDAR tier, which needs none. VGGT and MoGe are installed from pinned upstream commits without their own
+# dependency pins (VGGT's asks for numpy<2); the versions this was run with are the ones pyproject.toml allows.
 #
 # Python 3.11-3.12 only: the project pin is >=3.11,<3.13. On a Mac where
 # `python3` is 3.13, this script searches for a supported interpreter instead
@@ -55,8 +56,19 @@ echo "==> creating $VENV with $PYTHON ($($PYTHON --version 2>&1))"
 echo "==> upgrading pip"
 "$VENV/bin/python" -m pip install --quiet --upgrade pip setuptools wheel
 
-echo "==> installing cozmo [dev]"
-"$VENV/bin/python" -m pip install --quiet -e ".[dev]"
+if [ "${1:-}" = "--lidar-only" ]; then
+  echo "==> installing cozmo [dev], LiDAR tier only"
+  "$VENV/bin/python" -m pip install --quiet -e ".[dev]"
+else
+  echo "==> installing cozmo [dev,ml]"
+  "$VENV/bin/python" -m pip install --quiet -e ".[dev,ml]"
+  echo "==> installing VGGT and MoGe-2 at pinned commits"
+  "$VENV/bin/python" -m pip install --quiet --no-deps \
+    "vggt @ https://github.com/facebookresearch/vggt/archive/a288dd0f14786c93483e45524328726ab7b1b4ce.zip" \
+    "moge @ https://github.com/microsoft/MoGe/archive/74fbce054ebed49800de42d0ad0e83495065719a.zip" \
+    "utils3d_moge @ https://github.com/EasternJournalist/utils3d-moge/archive/62f09d58509485564e24d5d9f6aac9ee9ebc0c37.zip" \
+    "pipeline @ https://github.com/EasternJournalist/pipeline/archive/1c511390d90226c00c101f34b84df26a0f8789b4.zip"
+fi
 
 echo "==> ray-traced box (3.60 x 2.80 x 2.50 m)"
 "$VENV/bin/python" - <<'PY'
@@ -90,6 +102,6 @@ Setup complete.
     source .venv/bin/activate
     python -m cozmo.cli run -i <capture-dir> -o runs/my_capture
 
-Photo and video tiers also need:
+Photo and video tiers also need the model weights, about 6 GB:
     scripts/fetch_weights.sh
 EOF

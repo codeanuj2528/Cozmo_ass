@@ -7,18 +7,24 @@ wall extraction, the same cell complex, the same opening detection, the same cei
 measurement. That is deliberate, and it is the only way the three tiers stay comparable
 instead of quietly becoming three different products that happen to share a repository.
 
-Per room the sequence is: predict depth, level and scale each image against the floor,
-register the images to each other in the three degrees of freedom that survive levelling,
-fuse, then reconstruct. Rooms arrive in separate folders with nothing in common, so the
-whole-property plan is assembled afterwards by matching the doorways that two rooms both
-saw -- which is the gate the brief adds specifically because a photo path that handles
-single rooms only fails.
+Per room the stills are reconstructed together by VGGT-1B, which gives each one a depth map
+and a pose in one frame; MoGe-2, told each still's field of view, puts that frame in metres;
+up is the direction every camera's x axis is perpendicular to (`recon/multiview.py`,
+`recon/metric_scale.py`). Until fix loop round 4 each still was built on its own instead:
+predict depth, level and scale each image against the floor, then register the images to
+each other in the three degrees of freedom that survive levelling. On the assignment's walks
+that gave whole-property footprints of +52% to +148%. It is kept behind `--no-multiview`, for
+the ablation and for a machine without the models. Rooms arrive in separate folders with
+nothing in common, so the whole-property plan is assembled afterwards by matching the
+doorways that two rooms both saw -- which is the gate the brief adds specifically because a
+photo path that handles single rooms only fails.
 
-What this tier cannot do is pretend to LiDAR accuracy. Measured against LiDAR on the sample
-capture, the depth model's mean absolute relative error is 0.28 and its per-frame scale
-varies by a third. The intervals reported here are wide because that is what the
-measurement says, and a narrow interval on this input would be exactly the confident
-garbage the brief penalises.
+What this tier cannot do is pretend to LiDAR accuracy. Measured against LiDAR on the
+assignment's walks, VGGT-1B's depth is within 2-7% absolute relative error once scaled,
+MoGe-2's room scale within -7% to +3%, and in 5 rooms of 15 some stills came back posed tens
+of degrees wrong. The intervals reported here are wide because that is what the measurement
+says, and a narrow interval on this input would be exactly the confident garbage the brief
+penalises.
 """
 
 from __future__ import annotations
@@ -258,6 +264,66 @@ def build_room_frames(
     return frames, images, scale_sources, warnings, room_scale
 
 
+# Stills go to the multi-view model at twice its input size, so its own resize to 518 px still averages over the
+# photograph's pixels, and eight 12 MP stills are not held in memory at full size.
+MULTIVIEW_LONG_SIDE = 1036
+
+
+def build_room_frames_multiview(
+    image_paths: list[Path], backbone, metric_model
+) -> tuple[list[Frame], dict[int, np.ndarray], list[str], list[str]]:
+    """One room's stills reconstructed together (`recon/multiview.py`) into metric, posed frames.
+
+    Returns the frames, each frame's colour, the scale source of each frame and the warnings. MoGe-2 is given a
+    still's field of view only when EXIF gave its focal length: an assumed focal length is a scale error of its
+    own, and the model's estimate of the field of view is the better guess (`fixloop/round4/evidence/`).
+    """
+    from cozmo.recon.metric_scale import horizontal_fov_deg
+    from cozmo.recon.multiview import reconstruct_stills
+
+    loaded: list[tuple[Path, np.ndarray, float | None, str]] = []
+    for path in image_paths[: MAX_IMAGES_PER_ROOM * 2]:
+        try:
+            rgb = read_image(path)
+        except Exception as exc:
+            log.warning("could not read %s: %s", path.name, exc)
+            continue
+        factor = MULTIVIEW_LONG_SIDE / max(rgb.shape[:2])
+        if factor < 1.0:
+            size = (int(round(rgb.shape[1] * factor)), int(round(rgb.shape[0] * factor)))
+            rgb = cv2.resize(rgb, size, interpolation=cv2.INTER_AREA)
+        height, width = rgb.shape[:2]
+        k, focal_source = intrinsics_from_exif(path, width, height)
+        fov = horizontal_fov_deg(k, width) if focal_source.startswith("exif") else None
+        loaded.append((path, rgb, fov, focal_source))
+    if len(loaded) < 2:
+        return [], {}, [], [f"{len(loaded)} readable still(s); a joint reconstruction needs two"]
+
+    if len(loaded) > MAX_IMAGES_PER_ROOM:
+        smalls = [
+            cv2.resize(rgb, (WORKING_WIDTH, max(int(round(WORKING_WIDTH * rgb.shape[0] / rgb.shape[1])), 8)),
+                       interpolation=cv2.INTER_AREA)
+            for _, rgb, _, _ in loaded
+        ]
+        keep = select_diverse_frames(smalls, MAX_IMAGES_PER_ROOM)
+        loaded = [loaded[i] for i in sorted(keep)]
+
+    result, notes = reconstruct_stills(
+        [rgb for _, rgb, _, _ in loaded], [fov for _, _, fov, _ in loaded], backbone, metric_model
+    )
+    if result is None:
+        return [], {}, [], notes
+    frames = [replace(frame, rgb_path=loaded[still][0]) for frame, still in zip(result.frames, result.kept)]
+    focal = ", ".join(sorted({source for *_, source in loaded}))
+    scale = result.scale
+    warnings = notes + [
+        f"{len(result.kept)} of {len(loaded)} stills reconstructed together by {backbone.name}; metric scale "
+        f"{scale.factor:.3f} +-{100 * scale.relative_uncertainty:.1f}% from {scale.source} over "
+        f"{scale.views_used} stills; focal length: {focal}"
+    ]
+    return frames, result.images, [scale.source] * len(frames), warnings
+
+
 def _cloud_from_depth(
     depth: np.ndarray, k: np.ndarray, gravity: np.ndarray, stride: int = 2
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -344,12 +410,23 @@ def build_photo_plan(
     if not folders:
         raise ValueError("photo tier needs a capture exposing room_folders")
 
-    backbone = get_backbone(Path(config.weights_dir))
-    if not backbone.is_metric():
-        warnings.append(
-            f"depth backbone '{backbone.name}' is not metric; photo-tier scale rests "
-            "entirely on the camera-height prior and intervals widen accordingly"
-        )
+    from cozmo.recon.multiview import get_joint_models
+
+    joint = get_joint_models(Path(config.weights_dir)) if config.multiview else None
+    backbone = None if joint else get_backbone(Path(config.weights_dir))
+    if joint is None:
+        if config.multiview:
+            warnings.append(
+                "VGGT-1B or MoGe-2 is not installed (scripts/setup.sh, scripts/fetch_weights.sh); each "
+                "photograph is built on its own from a monocular depth model instead, which fix loop round 4 "
+                "measured at +52% to +148% on the whole-property footprint"
+            )
+        if not backbone.is_metric():
+            warnings.append(
+                f"depth backbone '{backbone.name}' is not metric; photo-tier scale rests "
+                "entirely on the camera-height prior and intervals widen accordingly"
+            )
+    depth_source = f"{joint[0].name} with {joint[1].name} scale" if joint else backbone.name
 
     # Loop closure needs a revisit after going elsewhere, which a handful of stills of one
     # room does not contain. Running it here would find nothing and cost a minute.
@@ -362,9 +439,15 @@ def build_photo_plan(
     room_data = []
     for ordinal, (name, paths) in enumerate(sorted(folders.items()), start=1):
         room_id = f"room_{ordinal:02d}"
-        frames, images, scale_sources, room_warnings, room_scale = build_room_frames(
-            paths, backbone, config
-        )
+        if joint is not None:
+            frames, images, scale_sources, room_warnings = build_room_frames_multiview(paths, *joint)
+            # A joint reconstruction's scale is metres per unit of that reconstruction, so it says nothing
+            # about another room's, and there is no property scale for a failed room to borrow.
+            room_scale = None
+        else:
+            frames, images, scale_sources, room_warnings, room_scale = build_room_frames(
+                paths, backbone, config
+            )
         all_scale_sources.extend(scale_sources)
         room_data.append(
             (room_id, name, paths, frames, images, scale_sources, room_warnings, room_scale)
@@ -490,7 +573,7 @@ def build_photo_plan(
             low_light_fraction=low_light_fraction(
                 [image for entry in room_data for image in entry[4].values()]
             ),
-            warnings=warnings + [f"depth backbone: {backbone.name}"],
+            warnings=warnings + [f"depth backbone: {depth_source}"],
         ),
         total_floor_area=total_area(stitched, book, Tier.PHOTO),
         runtime_seconds=time.perf_counter() - started,

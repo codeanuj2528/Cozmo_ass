@@ -13,6 +13,12 @@ registration and a strictly worse answer when the trajectory is right there in t
 So the video tier registers frames in sequence into one property-wide cloud and then runs
 the same core as the LiDAR tier, drift correction included.
 
+Since fix loop round 4 the registering is done by a multi-view model, not by ICP between
+monocular clouds: runs of keyframes are reconstructed together by VGGT-1B, joined by the
+frames consecutive runs share, and scaled by MoGe-2 (`recon/sequence.py`). The monocular path
+is kept behind `--no-multiview`; on the assignment's walks it gave footprints of +109% to
++197%.
+
 Frame selection matters more here than anywhere else. A walkthrough is mostly redundant and
 partly unusable: a phone swung through a doorway produces frames whose motion blur destroys
 both the depth prediction and the registration that depends on it. Frames are therefore
@@ -115,6 +121,62 @@ def extract_keyframes(
     return [indices[i] for i in keep], [images[i] for i in keep], stats
 
 
+def _build_video_plan_multiview(
+    source: CaptureSource,
+    config: PipelineConfig,
+    book: IntervalBook,
+    video_path: Path,
+    backbone,
+    metric_model,
+    started: float,
+) -> PipelineResult:
+    """The walk's keyframes reconstructed in overlapping runs (`recon/sequence.py`), then the LiDAR core."""
+    from cozmo.pipeline.lidar import build_lidar_plan
+    from cozmo.recon.sequence import RUN_LENGTH, RUN_OVERLAP, reconstruct_sequence, sample_keyframes
+
+    numbers, images, stats = sample_keyframes(video_path)
+    if len(images) < 2:
+        raise ValueError(f"no usable frames extracted from {video_path}")
+    warnings = [
+        f"video: {int(stats['frames'])} frames at {stats['fps']:.0f} fps; the sharpest of every "
+        f"{int(stats['window_frames'])} kept, {len(images)} keyframes"
+    ]
+    reconstruction, notes = reconstruct_sequence(images, backbone, metric_model)
+    warnings.extend(notes)
+    if reconstruction is None or len(reconstruction.frames) < 4:
+        raise ValueError("the walk could not be reconstructed: " + "; ".join(notes or ["too few keyframes"]))
+    fps = stats["fps"] or 30.0
+    for frame, keyframe in zip(reconstruction.frames, reconstruction.keyframes_used):
+        frame.timestamp = numbers[keyframe] / fps
+    scale = reconstruction.scale
+    warnings.append(
+        f"video: {len(reconstruction.frames)} of {len(images)} keyframes reconstructed by {backbone.name} in runs "
+        f"of {RUN_LENGTH} sharing {RUN_OVERLAP}; metric scale {scale.factor:.3f} "
+        f"+-{100 * scale.relative_uncertainty:.1f}% from {scale.source} over {scale.views_used} keyframes, "
+        f"given the field of view {backbone.name} estimated"
+    )
+
+    posed = PosedFrameSource(
+        frames=reconstruction.frames,
+        capture_id=source.meta.capture_id,
+        tier=Tier.VIDEO,
+        device_model=source.meta.device_model,
+        root=Path(source.meta.root),
+        images=reconstruction.images,
+        notes={"video": str(video_path), "focal_source": f"{backbone.name} intrinsics"},
+    )
+    # Drift correction stays on: chained runs accumulate error as any sequential registration does, and a walk
+    # that comes back past a place gives loop closure something to close.
+    result = build_lidar_plan(posed, config, book)
+    result.plan.tier = Tier.VIDEO
+    result.plan.created_at = datetime.now(timezone.utc)
+    result.plan.quality.tier = Tier.VIDEO
+    result.plan.quality.warnings = list(result.plan.quality.warnings) + warnings
+    result.plan.runtime_seconds = time.perf_counter() - started
+    result.artifacts.warnings.extend(warnings)
+    return result
+
+
 def build_video_plan(
     source: CaptureSource,
     config: PipelineConfig | None = None,
@@ -135,6 +197,18 @@ def build_video_plan(
         if not candidates:
             raise ValueError("video tier needs a .mp4 or .mov in the capture directory")
         video_path = candidates[0]
+
+    from cozmo.recon.multiview import get_joint_models
+
+    joint = get_joint_models(Path(config.weights_dir)) if config.multiview else None
+    if joint is not None:
+        return _build_video_plan_multiview(source, config, book, Path(video_path), *joint, started)
+    if config.multiview:
+        warnings.append(
+            "VGGT-1B or MoGe-2 is not installed (scripts/setup.sh, scripts/fetch_weights.sh); keyframes are "
+            "built one at a time from a monocular depth model instead, which fix loop round 4 measured at "
+            "+109% to +197% on the footprint"
+        )
 
     numbers, images, stats = extract_keyframes(Path(video_path))
     if not images:

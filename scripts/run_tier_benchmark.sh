@@ -36,7 +36,8 @@ for pair in c00a170fe1:single_room 1a8384c3f6:single_scan_floor_only c7d28f72c6:
     run="$OUT/${name}_$tier"
     rm -rf "$run"
     start=$(date +%s)
-    "$PY" -m cozmo.cli run --input "$inputs/$tier" --out "$run" > "$OUT/${name}_$tier.log" 2>&1
+    # shellcheck disable=SC2086  # COZMO_RUN_ARGS is a list of flags, e.g. "--no-multiview" for the ablation
+    "$PY" -m cozmo.cli run --input "$inputs/$tier" --out "$run" ${COZMO_RUN_ARGS:-} > "$OUT/${name}_$tier.log" 2>&1
     code=$?
     seconds=$(( $(date +%s) - start ))
     grep -v "^$name,$tier," "$OUT/timing.csv" > "$OUT/timing.csv.tmp" && mv "$OUT/timing.csv.tmp" "$OUT/timing.csv"
