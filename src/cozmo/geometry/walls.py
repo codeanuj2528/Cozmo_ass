@@ -24,6 +24,7 @@ from scipy.ndimage import gaussian_filter, maximum_filter, uniform_filter
 
 from cozmo.geometry.fusion import FusedCloud
 from cozmo.geometry.planes import PlaneFit, fit_plane
+from cozmo.util.polygons import rotation_about_up
 
 AZIMUTH_BIN_DEG = 1.0
 OFFSET_BIN_M = 0.02
@@ -457,3 +458,15 @@ def dominant_directions(segments: list[WallSegment], bin_deg: float = 0.5) -> fl
     w = acc[idxs]
     centre = (peak + float((offsets * w).sum() / max(w.sum(), 1e-9))) * bin_deg
     return float(np.deg2rad(centre % 90.0))
+
+
+def canonical_rotation(segments: list[WallSegment]) -> np.ndarray:
+    """Rotation about the vertical that puts the dominant wall direction on the x axis.
+
+    `dominant_directions` returns the angle phi of the dominant wall run, and a direction at phi
+    rotated by `rotation_about_up(theta)` ends at phi - theta, so the rotation that removes the
+    angle is `rotation_about_up(+phi)`. The pipeline applied `-phi`, which doubles it: the
+    assignment's three scans came out with their walls at 44.5, 80.0 and 55.0 degrees in the frame
+    that was meant to be axis-aligned, and every raster downstream staircased them.
+    """
+    return rotation_about_up(dominant_directions(segments))

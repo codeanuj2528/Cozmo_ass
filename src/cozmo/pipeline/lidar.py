@@ -53,6 +53,7 @@ from cozmo.geometry.refine import polygon_mask, refine_rooms
 from cozmo.geometry.walls import (
     WallCandidate,
     WallSegment,
+    canonical_rotation,
     dominant_directions,
     extract_wall_segments,
     merge_runs,
@@ -71,7 +72,6 @@ from cozmo.schema import (
     Tier,
 )
 from cozmo.uncertainty.calibration import IntervalBook
-from cozmo.util.polygons import rotation_about_up
 
 log = logging.getLogger("cozmo.pipeline.lidar")
 
@@ -355,8 +355,7 @@ def build_lidar_plan(
     )
 
     if config.canonical_rotation and walls:
-        angle = dominant_directions(walls)
-        canonical = rotation_about_up(-angle)
+        canonical = canonical_rotation(walls)
         cloud = cloud.rotated(canonical)
         cameras = cameras @ canonical.T
         world_rotation = canonical @ world_rotation
