@@ -1,0 +1,10 @@
+single_room: LiDAR plan 23.47 m2, 38 keyframes at 1 per second
+   LiDAR depth + ARKit poses, as video (cellcomplex): 2 rooms,  23.07 m2 (-1.7%)
+   LiDAR depth + ARKit poses, as lidar (evidence   ): 4 rooms,  21.26 m2 (-9.4%)
+single_scan_floor_only: LiDAR plan 50.82 m2, 115 keyframes at 1 per second
+   as video: failed: ValidationError: 1 validation error for Measure
+   LiDAR depth + ARKit poses, as lidar (evidence   ): 6 rooms,  53.58 m2 (+5.4%)
+single_scan_with_ceiling: LiDAR plan 49.88 m2, 215 keyframes at 1 per second
+   LiDAR depth + ARKit poses, as video (cellcomplex): 6 rooms,  48.28 m2 (-3.2%)
+   LiDAR depth + ARKit poses, as lidar (evidence   ): 9 rooms,  53.01 m2 (+6.3%)
+
