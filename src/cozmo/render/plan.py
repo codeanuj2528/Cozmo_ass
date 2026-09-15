@@ -51,15 +51,22 @@ def build_plan_drawing(plan: PropertyPlan, show_intervals: bool = True) -> Drawi
         float(all_points[:, 0].max()), float(all_points[:, 1].max()),
     )
 
+    # Walls are drawn as the solid between rooms, the way a scanning app draws them: one mass around
+    # every room, closed across partitions, with the rooms laid over it. A stroke round each room on
+    # its own leaves a white seam down the middle of every shared wall.
+    mass, rooms_union = _wall_mass(plan)
+    for part in _polygons(mass):
+        drawing.add(Polygon([tuple(p) for p in part.exterior.coords], Style(fill=PALETTE["wall"], stroke=None)))
+        for hole in part.interiors:
+            drawing.add(Polygon([tuple(p) for p in hole.coords], Style(fill=PALETTE["paper"], stroke=None)))
+
     for i, room in enumerate(plan.rooms):
         fill = PALETTE["room_fill"] if i % 2 == 0 else PALETTE["room_fill_alt"]
         drawing.add(Polygon(list(room.polygon), Style(fill=fill, stroke=None)))
 
+    walls_only = mass.difference(rooms_union) if mass is not None else None
     for room in plan.rooms:
-        _draw_walls(drawing, room)
-
-    for room in plan.rooms:
-        _draw_openings(drawing, room)
+        _draw_openings(drawing, room, walls_only)
 
     for room in plan.rooms:
         _draw_room_label(drawing, room, show_intervals)
@@ -70,13 +77,35 @@ def build_plan_drawing(plan: PropertyPlan, show_intervals: bool = True) -> Drawi
     return drawing
 
 
-def _draw_walls(drawing: Drawing, room) -> None:
-    ring = list(room.polygon)
-    if len(ring) < 3:
-        return
-    drawing.add(
-        Polygon(ring, Style(stroke=PALETTE["wall"], fill=None, width=WALL_THICKNESS_M))
-    )
+# Gaps between rooms up to twice this are drawn as wall: a 23 cm brick partition and the few
+# centimetres either side of it that no return reached.
+WALL_CLOSE_M = 0.20
+OPENING_DEPTH_M = 0.45
+
+
+def _polygons(geometry) -> list:
+    if geometry is None or geometry.is_empty:
+        return []
+    return [g for g in getattr(geometry, "geoms", [geometry]) if g.geom_type == "Polygon" and not g.is_empty]
+
+
+def _wall_mass(plan: PropertyPlan):
+    from shapely.geometry import Polygon as ShapelyPolygon
+    from shapely.ops import unary_union
+
+    shapes = []
+    for room in plan.rooms:
+        if len(room.polygon) < 3:
+            continue
+        shape = ShapelyPolygon(room.polygon)
+        shape = shape if shape.is_valid else shape.buffer(0)
+        if not shape.is_empty:
+            shapes.append(shape)
+    if not shapes:
+        return None, None
+    mass = unary_union([s.buffer(WALL_THICKNESS_M, join_style=2) for s in shapes])
+    mass = mass.buffer(WALL_CLOSE_M, join_style=2).buffer(-WALL_CLOSE_M, join_style=2)
+    return mass, unary_union(shapes)
 
 
 def _opening_span(wall, opening) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -91,37 +120,47 @@ def _opening_span(wall, opening) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return a, b, direction
 
 
-def _draw_openings(drawing: Drawing, room) -> None:
+def _draw_openings(drawing: Drawing, room, walls_only=None) -> None:
+    from shapely.geometry import Polygon as ShapelyPolygon
+
     walls = {w.wall_id: w for w in room.walls}
+    anchor = _label_anchor(np.array(room.polygon))
     for opening in room.openings:
         wall = walls.get(opening.wall_id)
         if wall is None:
             continue
         a, b, direction = _opening_span(wall, opening)
         normal = np.array([-direction[1], direction[0]])
+        if (anchor - 0.5 * (a + b)) @ normal < 0:
+            normal = -normal
 
-        # Punch the opening out of the wall by overdrawing it in the paper colour, which is
-        # how a wall break reads on a real plan.
-        drawing.add(
-            Line(tuple(a), tuple(b), Style(stroke=PALETTE["opening"], width=WALL_THICKNESS_M * 1.25))
-        )
+        # Cut the opening through the wall mass on the far side of this room's edge, as far as the
+        # wall goes, which is how a wall break reads on a real plan.
+        cut = ShapelyPolygon([tuple(a), tuple(b), tuple(b - normal * OPENING_DEPTH_M), tuple(a - normal * OPENING_DEPTH_M)])
+        pieces = _polygons(cut.intersection(walls_only)) if walls_only is not None else [cut]
+        for piece in pieces:
+            drawing.add(Polygon([tuple(p) for p in piece.exterior.coords], Style(fill=PALETTE["opening"], stroke=None)))
+        depth = max((float(np.max((np.asarray(p.exterior.coords) - a) @ -normal)) for p in pieces), default=WALL_THICKNESS_M)
         if opening.type is OpeningType.WINDOW:
-            offset = normal * (WALL_THICKNESS_M * 0.22)
-            drawing.add(Line(tuple(a + offset), tuple(b + offset), Style(stroke=PALETTE["window"], width=0.022)))
-            drawing.add(Line(tuple(a - offset), tuple(b - offset), Style(stroke=PALETTE["window"], width=0.022)))
+            for f in (0.35, 0.65):
+                offset = -normal * depth * f
+                drawing.add(Line(tuple(a + offset), tuple(b + offset), Style(stroke=PALETTE["window"], width=0.022)))
         else:
-            drawing.add(Line(tuple(a), tuple(b), Style(stroke=PALETTE["wall"], width=0.018)))
             width = float(np.linalg.norm(b - a))
-            if width > 0.2:
-                # Swing arc into the room, which is the side the wall normal points at.
-                inward = np.array(room.polygon).mean(axis=0) - 0.5 * (a + b)
-                if inward @ normal < 0:
-                    normal = -normal
+            # A doorway joins two rooms and is attached to both; its leaf is drawn once. A pass-through
+            # has no leaf.
+            other = getattr(opening, "connects_to_room", None)
+            if opening.type is OpeningType.DOOR and width > 0.2 and not (other and other < room.room_id):
                 hinge = a
                 leaf_end = hinge + normal * width
                 drawing.add(Line(tuple(hinge), tuple(leaf_end), Style(stroke=PALETTE["door_swing"], width=0.012)))
                 start_deg = float(np.degrees(np.arctan2((b - hinge)[1], (b - hinge)[0])))
-                end_deg = float(np.degrees(np.arctan2(normal[1], normal[0])))
+                # The swing is the quarter turn from the closed leaf to the open one. Taken as the smaller
+                # and larger of the two angles, a pair either side of +-180 degrees drew nearly a full circle.
+                sweep = (float(np.degrees(np.arctan2(normal[1], normal[0]))) - start_deg + 180.0) % 360.0 - 180.0
+                if sweep < 0:
+                    start_deg, sweep = start_deg + sweep, -sweep
+                end_deg = start_deg + sweep
                 drawing.add(
                     Arc(tuple(hinge), width, start_deg, end_deg,
                         Style(stroke=PALETTE["door_swing"], width=0.010, dash=(0.06, 0.05)))
@@ -228,8 +267,11 @@ def _damage_anchor(room, surface, damage) -> np.ndarray:
 
 
 def _draw_adjacency(drawing: Drawing, plan: PropertyPlan) -> None:
+    """A dashed line only for rooms connected without a drawn opening; a doorway already shows it."""
     centres = {r.room_id: _label_anchor(np.array(r.polygon)) for r in plan.rooms}
     for link in plan.adjacency:
+        if link.opening_a and link.opening_b:
+            continue
         a, b = centres.get(link.room_a), centres.get(link.room_b)
         if a is None or b is None:
             continue

@@ -95,6 +95,12 @@ def run(
         help="Remove floor the scan says is not there: a stairwell, the far end of a room seen "
         "from its doorway, a walled space nobody saw into.",
     ),
+    layout: str = typer.Option(
+        "evidence",
+        "--layout",
+        help="How LiDAR rooms are found: 'evidence' (wall barriers, doorways and interior evidence) or "
+        "'cellcomplex' (the wall-line arrangement every plan before 15 Sep used).",
+    ),
     voxel_size: Optional[float] = typer.Option(
         None,
         "--voxel-size",
@@ -119,8 +125,11 @@ def run(
     # voxel size of 0.05 while the configuration said 0.02, so the same capture gave
     # different answers through the command line and through the library -- which makes
     # every reported number ambiguous about which path produced it.
+    if layout not in ("evidence", "cellcomplex"):
+        raise typer.BadParameter("--layout is 'evidence' or 'cellcomplex'")
     config = PipelineConfig(
-        drift_correction=drift_correction, snap_walls_to_frame=snap_walls, refine_rooms=refine_rooms
+        drift_correction=drift_correction, snap_walls_to_frame=snap_walls, refine_rooms=refine_rooms,
+        layout=layout,
     )
     if voxel_size is not None:
         config = config.with_overrides(voxel_m=voxel_size)
@@ -155,6 +164,14 @@ def run(
     svg_path.write_text(svg_content)
     save_plan_image(plan, result.artifacts, png_path)
     console.print(f"[bold green]Rendered 2D floor plan:[/bold green] {png_path}")
+    from cozmo.render.overlay import save_scan_overlay
+
+    if save_scan_overlay(plan, result.artifacts, out_dir / "plan_on_scan.png"):
+        console.print(f"[bold green]Plan over its scan:[/bold green] {out_dir / 'plan_on_scan.png'}")
+    from cozmo.bench.repeat import save_wall_evidence
+
+    # Small enough to keep with every plan, and all `cozmo repeat` needs to register two captures.
+    save_wall_evidence(result.artifacts, out_dir)
 
     # Display summary table
     table = Table(title=f"Property Plan Summary ({plan.capture_id})")
@@ -208,6 +225,26 @@ def fixloop(
     console.print(f"[bold green]Ablation runs written to {out_dir}[/bold green]")
     console.print("  - [cyan]before_run.json[/cyan] (snapping off)")
     console.print("  - [cyan]after_run.json[/cyan] (snapping on, the default)")
+
+
+@app.command()
+def repeat(
+    run_a: Path = typer.Option(..., "--a", help="Run directory of the first capture (holds plan.json)."),
+    run_b: Path = typer.Option(..., "--b", help="Run directory of the second capture of the same space."),
+    out_dir: Path = typer.Option(Path("reports/repeatability"), "--out", "-o", help="Where to write the comparison."),
+) -> None:
+    """Register two captures of one space on their walls and compare them room by room and wall by wall.
+
+    No room map or tape is needed: the brief's repeatability test is applied to rooms that overlap in the
+    registered frame. Writes repeatability.json and repeat_overlay.png.
+    """
+    from cozmo.bench.repeat import run_repeatability
+
+    gate = run_repeatability(run_a, run_b, out_dir)
+    console.print(format_table([gate]))
+    console.print(f"\n[bold green]Written to {out_dir}[/bold green]")
+    if gate.status is Status.FAIL:
+        raise typer.Exit(2)
 
 
 def parse_repeat_pairs(values: list[str]) -> list[list[str]]:
