@@ -267,7 +267,9 @@ walled space no scan saw into on the samples, and a never-walked room on the lon
 rounds 1 and 2, the corrections had already been tried on saved intermediates before the ranges
 were written. **Result: 29.13 m², +1.3%, PASS, every number inside its range.** The pass comes from
 removing that untaped room; no taped room changed. The removals also take 0.26–1.05 m² of floor
-that had been seen from each room they correct.
+that had been seen from each room they correct. Run on the photo and video tiers, which reach the
+same builder, the rules read monocular depth error as missing floor, cut the 1× hall from 35.12 to
+2.11 m² and gave the 0.5× set a room overlap; they now run on LiDAR only.
 
 ---
 
