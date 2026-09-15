@@ -116,18 +116,28 @@ def gate_wall_lengths(plan: PropertyPlan, truth: GroundTruth, capture_id: str) -
 
 def gate_ceiling_height(plan: PropertyPlan, truth: GroundTruth, capture_id: str) -> GateResult:
     errors: list[tuple[str, float]] = []
+    unmeasured: list[str] = []
     for room in plan.rooms:
         name = resolve_room(room, truth, capture_id)
         if name is None:
             continue
         actual = truth.scalar(capture_id, name, "ceiling_height")
-        if actual is None or room.ceiling_height is None or room.ceiling_height.value <= 0:
+        if actual is None:
+            continue
+        if room.ceiling_height is None or room.ceiling_height.value <= 0:
+            unmeasured.append(name)
             continue
         errors.append((name, abs(room.ceiling_height.value - actual)))
 
     if not errors:
+        # A room with ceiling truth whose plan abstained is not scored either way: abstaining is
+        # not a pass, and it is not the confident wrong number the gate exists to catch.
+        measured = (
+            f"ceiling unmeasured in {len(unmeasured)} room(s) that have ceiling ground truth"
+            if unmeasured else "no ceiling ground truth"
+        )
         return GateResult("ceiling_height", capture_id, plan.tier.value,
-                          "no ceiling ground truth", f"<= {CEILING_TOLERANCE_M * 100:.1f} cm",
+                          measured, f"<= {CEILING_TOLERANCE_M * 100:.1f} cm",
                           Status.SKIP)
 
     worst_room, worst = max(errors, key=lambda t: t[1])

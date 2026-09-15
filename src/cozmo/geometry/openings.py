@@ -260,7 +260,12 @@ def detect_openings(
     labels, n = ndimage.label(candidate, structure=np.ones((3, 3)))
     openings: list[DetectedOpening] = []
     for label in range(1, n + 1):
-        mask = labels == label
+        core = labels == label
+        # Material was dilated by one cell to close pinholes before the opening was found, and
+        # that same cell comes off every edge the opening is measured by: on the ray-traced room
+        # a 0.85 m door measured 0.80 m and a 1.10 m window 1.06 m. Growing the region back into
+        # neighbouring cells that hold no raw material returns what the dilation took.
+        mask = core | (ndimage.binary_dilation(core, np.ones((3, 3), bool)) & ~has_material)
         rows, cols = np.nonzero(mask)
         u_min = cols.min() * res + elevation.u_origin
         u_max = (cols.max() + 1) * res + elevation.u_origin

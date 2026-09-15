@@ -39,6 +39,8 @@ DEPTH_FOCAL = 183.0
 FRAME_COUNT = 16
 CAMERA_HEIGHT = 1.40
 MAX_RANGE_M = 5.0
+# Distance from the room to the shell a ray through the door or window lands on.
+OUTER_M = 1.2
 
 
 def _rotation(yaw: float, pitch: float) -> np.ndarray:
@@ -107,10 +109,26 @@ def render_depth(origin: np.ndarray, rotation: np.ndarray, drop_ceiling: bool):
     if drop_ceiling:
         valid &= ~((axis == 1) & (hit[..., 1] > CEILING_HEIGHT - 0.05))
 
+    # A ray through the door or window carries on to an outer shell OUTER_M beyond the room, its
+    # floor level with the room's, the way a real doorway shows the next room. With nothing there
+    # the ray returns no depth at all, which a real capture only does for glass, black or distant
+    # surfaces, and which the opening detector deliberately does not read as a hole.
     door_face = (axis == 2) & (hit[..., 2] < 0.05)
-    valid &= ~(door_face & _in_opening(DOOR, hit[..., 0], hit[..., 1]))
     window_face = (axis == 0) & (hit[..., 0] > ROOM_WIDTH - 0.05)
-    valid &= ~(window_face & _in_opening(WINDOW, hit[..., 2], hit[..., 1]))
+    through = (door_face & _in_opening(DOOR, hit[..., 0], hit[..., 1])) | (
+        window_face & _in_opening(WINDOW, hit[..., 2], hit[..., 1])
+    )
+    if through.any():
+        outer_lo = np.array([-OUTER_M, 0.0, -OUTER_M])
+        outer_hi = np.array([ROOM_WIDTH + OUTER_M, CEILING_HEIGHT + 0.5, ROOM_DEPTH + OUTER_M])
+        with np.errstate(divide="ignore", invalid="ignore"):
+            s_lo = (outer_lo - origin_room) / dirs
+            s_hi = (outer_hi - origin_room) / dirs
+            s_exit = np.where(dirs > 0, s_hi, s_lo)
+        s_exit = np.where(np.isfinite(s_exit) & (s_exit > 0), s_exit, np.inf)
+        t_outer = np.min(s_exit, axis=-1)
+        t = np.where(through, t_outer, t)
+        valid = np.where(through, np.isfinite(t_outer) & (t_outer < MAX_RANGE_M), valid)
 
     depth = np.where(valid, t, 0.0).astype(np.float32)
     return depth, valid

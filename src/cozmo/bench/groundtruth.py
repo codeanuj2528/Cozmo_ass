@@ -103,12 +103,20 @@ class GroundTruth:
         return float(np.ptp([r.value_m for r in found]))
 
 
-def load_ground_truth(path: Path | str, room_map_path: Path | str | None = None) -> GroundTruth:
-    """Read the recording sheet. Comment lines and blank rows are skipped."""
-    path = Path(path)
+def load_ground_truth(
+    path: Path | str | list[Path | str], room_map_path: Path | str | None = None
+) -> GroundTruth:
+    """Read one recording sheet or several. Comment lines and blank rows are skipped.
+
+    Several sheets keep sources apart: the operator's tape in one file, the exact dimensions of
+    the ray-traced fixtures in another, each row still naming its tool.
+    """
+    paths = [path] if isinstance(path, (str, Path)) else list(path)
     records: list[TruthRecord] = []
-    if path.exists():
-        with path.open() as handle:
+    for sheet in map(Path, paths):
+        if not sheet.exists():
+            continue
+        with sheet.open() as handle:
             rows = [line for line in handle if line.strip() and not line.lstrip().startswith("#")]
         for row in csv.DictReader(rows):
             if not row.get("quantity"):

@@ -235,6 +235,12 @@ def detect_levels(
                         + (0.5 * span * np.tan(tilt)) ** 2
                     )
                 )
+                # Both planes are fitted to voxel-averaged points, so neither offset is known
+                # better than the voxel's own quantisation, pitch / sqrt(12). Without that floor
+                # a noiseless ray-traced room reported a ceiling interval of 0.2 mm and missed its
+                # true height by 0.8 mm. On real captures the plane scatter is already larger.
+                quantisation = np.sqrt(2.0) * cloud.voxel_m / np.sqrt(12.0)
+                sigma_height = max(sigma_height, float(quantisation))
                 if footprint_area_m2 and footprint_area_m2 > 0:
                     coverage = float(np.clip(support / footprint_area_m2, 0.0, 1.0))
 

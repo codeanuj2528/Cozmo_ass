@@ -21,3 +21,5 @@ out/
 *.bin
 # links into raw captures, recreated by the commands in reports/verified/one_room/SELECTION.md
 reports/verified/one_room/inputs/
+# ray-traced captures, rebuilt by python -m tests.fixtures.raytrace_room
+tests/fixtures/captures/

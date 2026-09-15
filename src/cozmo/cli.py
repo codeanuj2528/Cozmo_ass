@@ -231,8 +231,12 @@ def benchmark(
     runs_dir: Path = typer.Option(
         ..., "--runs", "-r", help="Directory of run outputs, one subdirectory per capture."
     ),
-    ground_truth: Path = typer.Option(
-        ..., "--ground-truth", "-g", help="Ground truth CSV, tape or laser."
+    ground_truth: list[Path] = typer.Option(
+        ...,
+        "--ground-truth",
+        "-g",
+        help="Ground truth CSV: tape, laser, or the ray-traced fixtures' exact values. "
+        "Give the option again to add another sheet.",
     ),
     out_dir: Path = typer.Option(
         Path("reports/benchmark"), "--out", "-o", help="Where to write the gate table."

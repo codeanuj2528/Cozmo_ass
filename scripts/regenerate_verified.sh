@@ -18,6 +18,11 @@ run() {
   "$PY" -m cozmo.cli run --input "$1" --out "reports/verified/$2"
 }
 
+# The ray-traced box, whose every dimension is known exactly (capture/ground_truth_synthetic.csv).
+"$PY" -m tests.fixtures.raytrace_room > /dev/null
+run tests/fixtures/captures/synthetic_room synthetic_room
+run tests/fixtures/captures/synthetic_no_ceiling synthetic_no_ceiling
+
 run "$RAW/163f18d3ac" multiroom_long
 run "$DROP/01_multiroom_lidar/ae3edc814d" multiroom_home
 run "$DROP/07_repeat_room_lidar/5621ec5c54" bedroom_solo
@@ -39,7 +44,8 @@ run reports/verified/one_room/inputs/photos_bathroom one_room/photo
 # Exits 2 when any gate fails, which several do; that is the reported result, not an error here.
 status=0
 "$PY" -m cozmo.cli benchmark --runs reports/verified \
-  --ground-truth capture/ground_truth.csv --room-map capture/room_map.json \
+  --ground-truth capture/ground_truth.csv --ground-truth capture/ground_truth_synthetic.csv \
+  --room-map capture/room_map.json \
   --repeat multiroom_home,multiroom_long --repeat bedroom_solo,multiroom_long \
   --out reports/verified/gates || status=$?
 if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then

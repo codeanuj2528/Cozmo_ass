@@ -15,6 +15,12 @@
   "5621ec5c54": {
     "room_01": "bedroom"
   },
+  "synthetic_room": {
+    "room_01": "box"
+  },
+  "synthetic_no_ceiling": {
+    "room_01": "box"
+  },
   "_evidence": {
     "163f18d3ac": {
       "room_01": "frame 4184: sofa, TV unit, stool with a laptop. Frames 17905 2800 870 (sofa, curtained window, tray ceiling with downlights) also stand in this room",
@@ -30,6 +36,12 @@
       "room_02": "frames 2822 2677 3174: padded headboard, pillows, red bedspread, wardrobe",
       "room_03": "frames 3885 4067 4192 4131: WC, wall niches and shower seen from the bathroom doorway; frames 1738 1936 look along the passage. 0.86 m by 2.57 m",
       "room_04": "frames 2032 3442 2443: standing in the passage looking through the bedroom door"
+    },
+    "synthetic_room": {
+      "room_01": "the ray-traced fixture is one box by construction (tests/fixtures/raytrace_room.py)"
+    },
+    "synthetic_no_ceiling": {
+      "room_01": "the same box with no ceiling returns rendered"
     },
     "5621ec5c54": {
       "room_01": "frame 5240: ceiling fan under an LED cove",
