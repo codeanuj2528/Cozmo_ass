@@ -247,6 +247,34 @@ def repeat(
         raise typer.Exit(2)
 
 
+@app.command()
+def tiers(
+    run_dir: Path = typer.Option(..., "--run", help="Run directory of a photo- or video-tier plan (holds plan.json)."),
+    reference: Path = typer.Option(..., "--reference", help="reference.json written by scripts/make_tier_inputs.py."),
+    lidar_run: Optional[Path] = typer.Option(
+        None, "--lidar-run", help="The LiDAR run of the same walk (plan.json and scan_walls.npz); needed for a video plan."
+    ),
+    out_dir: Optional[Path] = typer.Option(None, "--out", "-o", help="Where to write tiers.json; defaults to --run."),
+) -> None:
+    """Score a photo- or video-tier plan against the LiDAR plan of the same walk.
+
+    The reference is a reconstruction, not tape: a PASS says the thinner tier agrees with LiDAR on the same
+    walk within the brief's tolerance for that tier. Writes tiers.json.
+    """
+    from cozmo.bench.tiers import score_run
+
+    score = score_run(run_dir, reference, lidar_run)
+    console.print(format_table(score.gates))
+    for note in score.notes:
+        console.print(f"  {note}")
+    target = out_dir or run_dir
+    target.mkdir(parents=True, exist_ok=True)
+    (target / "tiers.json").write_text(json.dumps(score.to_json(), indent=2, default=float))
+    console.print(f"\n[bold green]Written to {target / 'tiers.json'}[/bold green]")
+    if any(g.status is Status.FAIL for g in score.gates):
+        raise typer.Exit(2)
+
+
 def parse_repeat_pairs(values: list[str]) -> list[list[str]]:
     """Run-name pairs from `--repeat`, which may be given more than once.
 

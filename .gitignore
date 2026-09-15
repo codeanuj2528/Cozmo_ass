@@ -9,6 +9,8 @@ __pycache__/
 # Large binaries & temp runs
 data/captures/*
 !data/captures/.gitkeep
+# photo and video inputs rebuilt from the Stray exports by scripts/make_tier_inputs.py
+data/tier_inputs/
 weights/*
 !weights/.gitkeep
 reports/*
