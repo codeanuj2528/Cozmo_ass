@@ -69,10 +69,12 @@ def read_image(path: Path):
                 f"{path.name} is HEIC and pillow-heif is not installed. "
                 "Install it, or convert the photos to JPEG before running."
             )
-        from PIL import Image
+        from PIL import Image, ImageOps
 
+        # An iPhone stores a portrait still in sensor orientation with an EXIF orientation tag. OpenCV applies the
+        # tag when it reads a JPEG; Pillow does not, so a HEIC still is turned here or it arrives sideways.
         with Image.open(path) as image:
-            return np.asarray(image.convert("RGB"))
+            return np.asarray(ImageOps.exif_transpose(image).convert("RGB"))
 
     import cv2
 

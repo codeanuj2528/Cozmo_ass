@@ -77,6 +77,36 @@ def test_a_room_with_few_frames_keeps_them_all(tier_inputs):
     assert [c["frame"] for c in tier_inputs.choose_spread(candidates, 6)] == [3, 1]
 
 
+def test_the_video_is_tagged_with_the_turn_most_of_the_walk_was_held_at(tier_inputs):
+    from cozmo.util.orientation import camera_roll
+
+    upright = np.array([[1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
+    poses = np.stack([np.eye(4)] * 10)
+    for i in range(10):
+        poses[i, :3, :3] = upright @ camera_roll(1 if i < 7 else 0).T
+    assert tier_inputs.video_turns(poses) == (1, pytest.approx(0.7))
+
+
+@pytest.mark.skipif(__import__("shutil").which("ffmpeg") is None, reason="needs ffmpeg")
+def test_a_sideways_clip_decodes_upright_once_tagged(tier_inputs, tmp_path):
+    import cv2
+
+    clip = tmp_path / "clip.mp4"
+    writer = cv2.VideoWriter(str(clip), cv2.VideoWriter_fourcc(*"mp4v"), 10, (64, 48))
+    for _ in range(5):
+        frame = np.zeros((48, 64, 3), np.uint8)
+        frame[:, 52:] = 255
+        writer.write(frame)
+    writer.release()
+    note = tier_inputs.write_tagged_video(clip, tmp_path / "video" / "walkthrough.mp4", 1)
+    assert "display rotation -90" in note
+    capture = cv2.VideoCapture(str(tmp_path / "video" / "walkthrough.mp4"))
+    ok, frame = capture.read()
+    capture.release()
+    assert ok and frame.shape[:2] == (64, 48)
+    assert frame[54:].mean() > 200 and frame[:40].mean() < 40
+
+
 def test_depth_scale_is_the_median_ratio_and_the_shape_error_is_what_remains(depth_scale):
     lidar = np.full((192, 256), 2.0, np.float32)
     lidar[:, 128:] = 3.0

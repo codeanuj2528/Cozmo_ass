@@ -11,6 +11,8 @@ dependencies = [
     "scikit-learn>=1.4",
     "opencv-python>=4.9",
     "pillow>=10.0",
+    # HEIC is the iPhone camera's default still format; without this the photo tier cannot read one.
+    "pillow-heif>=0.16",
     "pydantic>=2.6",
     "typer>=0.12",
     "rich>=13.7",

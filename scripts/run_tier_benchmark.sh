@@ -21,7 +21,8 @@ PY="${PYTHON:-.venv/bin/python}"
 TIERS="${COZMO_TIERS:-photo video}"
 
 mkdir -p "$OUT"
-echo "capture,tier,seconds,exit_code" > "$OUT/timing.csv"
+# Rows for tiers not rerun are kept, so COZMO_TIERS=video can redo one tier without losing the other's timing.
+[ -f "$OUT/timing.csv" ] || echo "capture,tier,seconds,exit_code" > "$OUT/timing.csv"
 
 for pair in c00a170fe1:single_room 1a8384c3f6:single_scan_floor_only c7d28f72c6:single_scan_with_ceiling; do
   id="${pair%%:*}"
@@ -38,6 +39,7 @@ for pair in c00a170fe1:single_room 1a8384c3f6:single_scan_floor_only c7d28f72c6:
     "$PY" -m cozmo.cli run --input "$inputs/$tier" --out "$run" > "$OUT/${name}_$tier.log" 2>&1
     code=$?
     seconds=$(( $(date +%s) - start ))
+    grep -v "^$name,$tier," "$OUT/timing.csv" > "$OUT/timing.csv.tmp" && mv "$OUT/timing.csv.tmp" "$OUT/timing.csv"
     echo "$name,$tier,$seconds,$code" >> "$OUT/timing.csv"
     if [ "$code" -eq 0 ]; then
       "$PY" -m cozmo.cli tiers --run "$run" --reference "$inputs/reference.json" \

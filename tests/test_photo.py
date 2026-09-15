@@ -151,6 +151,61 @@ def test_device_model_from_no_exif_images(tmp_path: Path):
     assert result == "unknown"
 
 
+def test_a_portrait_jpeg_is_read_upright(tmp_path: Path):
+    """A portrait iPhone still is stored sideways with EXIF orientation 6; it must reach the pipeline upright."""
+    from PIL import Image
+
+    from cozmo.io.discover import read_image
+
+    sensor = np.zeros((48, 64, 3), np.uint8)
+    sensor[:, 52:] = 255
+    exif = Image.Exif()
+    exif[0x0112] = 6
+    Image.fromarray(sensor).save(tmp_path / "IMG_0001.jpg", exif=exif)
+    upright = read_image(tmp_path / "IMG_0001.jpg")
+    assert upright.shape[:2] == (64, 48)
+    assert upright[54:].mean() > 200
+
+
+def test_a_heic_still_is_decoded(tmp_path: Path):
+    pillow_heif = pytest.importorskip("pillow_heif")
+    from PIL import Image
+
+    from cozmo.io.discover import read_image
+
+    pillow_heif.register_heif_opener()
+    image = np.zeros((48, 64, 3), np.uint8)
+    image[:, 52:] = 255
+    try:
+        Image.fromarray(image).save(tmp_path / "IMG_0001.heic", quality=95)
+    except Exception as exc:  # a libheif built without an encoder can read HEIC but not write one
+        pytest.skip(f"cannot write HEIC here: {exc}")
+    decoded = read_image(tmp_path / "IMG_0001.heic")
+    assert decoded.shape == (48, 64, 3)
+    assert decoded[:, 56:].mean() > 180 and decoded[:, :40].mean() < 60
+
+
+def test_the_heic_reader_applies_the_exif_orientation(tmp_path: Path):
+    """libheif turns an iPhone HEIC by its own transform boxes; a still whose EXIF still says 6 is turned here.
+
+    pillow-heif drops the orientation tag when it writes a HEIC, so the branch is exercised with a JPEG named
+    .heic: Pillow opens a file by its content, and read_image picks its reader by extension.
+    """
+    pytest.importorskip("pillow_heif")
+    from PIL import Image
+
+    from cozmo.io.discover import read_image
+
+    sensor = np.zeros((48, 64, 3), np.uint8)
+    sensor[:, 52:] = 255
+    exif = Image.Exif()
+    exif[0x0112] = 6
+    Image.fromarray(sensor).save(tmp_path / "IMG_0002.heic", format="JPEG", exif=exif)
+    upright = read_image(tmp_path / "IMG_0002.heic")
+    assert upright.shape[:2] == (64, 48)
+    assert upright[54:].mean() > 180
+
+
 def test_device_model_from_empty_list():
     """An empty list should return 'unknown'."""
     result = device_model_from_exif([])

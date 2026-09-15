@@ -51,9 +51,12 @@ def sample_frames(capture_dir: Path, count: int) -> list[dict]:
         depth, confidence = loaded
         small = cv2.resize(rgb, (rgb.shape[1] // 2, rgb.shape[0] // 2), interpolation=cv2.INTER_AREA)
         grey = cv2.cvtColor(small, cv2.COLOR_RGB2GRAY)
+        k = source._rows[wanted[number]].get("k", source.k_rgb)
         frames.append({
             "frame": number,
             "rgb": small,
+            # ARKit's focal length for this frame, at the half resolution the model is given.
+            "fx": float(k[0, 0]) / 2.0,
             "depth": depth,
             "confidence": confidence,
             "turns": quarter_turns_upright(poses[wanted[number]][:3, :3]),
@@ -73,7 +76,7 @@ class HFDepth:
         self.processor = AutoImageProcessor.from_pretrained(str(model_dir))
         self.model = AutoModelForDepthEstimation.from_pretrained(str(model_dir)).to(self.device).eval()
 
-    def __call__(self, rgb: np.ndarray) -> np.ndarray:
+    def __call__(self, rgb: np.ndarray, fx: float | None = None) -> np.ndarray:
         torch = self.torch
         inputs = self.processor(images=rgb, return_tensors="pt").to(self.device)
         with torch.no_grad():
@@ -97,6 +100,48 @@ class HFDepth:
             self.torch.mps.empty_cache()
 
 
+class MoGeDepth:
+    """MoGe-2 (MIT), which takes the camera's horizontal field of view when it is known.
+
+    A metric monocular model infers distance from apparent size, and apparent size depends on the focal
+    length. Given the field of view, MoGe-2 does not have to guess it; `use_fov=False` makes it guess, to
+    measure what knowing it is worth.
+    """
+
+    def __init__(self, model_path: Path, use_fov: bool = True):
+        import torch
+        from moge.model.v2 import MoGeModel
+
+        self.torch = torch
+        self.device = "mps" if torch.backends.mps.is_available() else "cpu"
+        self.model = MoGeModel.from_pretrained(str(model_path)).to(self.device).eval()
+        self.use_fov = use_fov
+
+    def __call__(self, rgb: np.ndarray, fx: float | None = None) -> np.ndarray:
+        torch = self.torch
+        image = torch.from_numpy(rgb.astype(np.float32) / 255.0).permute(2, 0, 1).to(self.device)
+        fov_x = float(np.degrees(2.0 * np.arctan(rgb.shape[1] / 2.0 / fx))) if (self.use_fov and fx) else None
+        with torch.no_grad():
+            output = self.model.infer(image, fov_x=fov_x, use_fp16=False)
+        depth = output["depth"].float().cpu().numpy()
+        mask = output.get("mask")
+        if mask is not None:
+            depth = np.where(mask.cpu().numpy().astype(bool), depth, np.nan)
+        return depth.astype(np.float32)
+
+    close = HFDepth.close
+
+
+def load_model(spec: str):
+    """`name=path` for a transformers model, `name=moge:path` or `name=moge-nofov:path` for MoGe-2."""
+    name, target = spec.split("=", 1)
+    if target.startswith("moge:"):
+        return name, target, MoGeDepth(Path(target[len("moge:"):]), use_fov=True)
+    if target.startswith("moge-nofov:"):
+        return name, target, MoGeDepth(Path(target[len("moge-nofov:"):]), use_fov=False)
+    return name, target, HFDepth(Path(target))
+
+
 def compare(predicted: np.ndarray, frame: dict) -> dict | None:
     depth, confidence = frame["depth"], frame["confidence"]
     resized = cv2.resize(predicted, (depth.shape[1], depth.shape[0]), interpolation=cv2.INTER_AREA)
@@ -113,9 +158,9 @@ def measure(model, frames: list[dict], upright: bool) -> list[dict]:
     for frame in frames:
         rgb, turns = frame["rgb"], frame["turns"]
         if upright and turns:
-            predicted = rotate_quarter(model(rotate_quarter(rgb, turns)), -turns)
+            predicted = rotate_quarter(model(rotate_quarter(rgb, turns), fx=frame.get("fx")), -turns)
         else:
-            predicted = model(rgb)
+            predicted = model(rgb, fx=frame.get("fx"))
         row = compare(predicted, frame)
         if row is not None:
             rows.append(row | {"turns": turns})
@@ -135,7 +180,8 @@ def summarise(rows: list[dict]) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--capture", type=Path, action="append", required=True)
-    parser.add_argument("--model", action="append", required=True, help="name=path to a transformers depth model")
+    parser.add_argument("--model", action="append", required=True,
+                        help="name=path to a transformers depth model, or name=moge:path / name=moge-nofov:path")
     parser.add_argument("--frames", type=int, default=FRAMES_PER_CAPTURE)
     parser.add_argument("--upright", action="store_true", help="also measure with frames turned to gravity")
     parser.add_argument("--out", type=Path, required=True)
@@ -144,9 +190,8 @@ def main() -> None:
     frames = {capture.name: sample_frames(capture, args.frames) for capture in args.capture}
     report: dict = {"min_depth_m": MIN_DEPTH_M, "max_depth_m": MAX_DEPTH_M, "models": {}}
     for spec in args.model:
-        name, path = spec.split("=", 1)
         started = time.perf_counter()
-        model = HFDepth(Path(path))
+        name, path, model = load_model(spec)
         entry: dict = {"path": path}
         for variant in (["as_recorded", "upright"] if args.upright else ["as_recorded"]):
             per_capture = {}

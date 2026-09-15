@@ -5,7 +5,8 @@ The brief asks for the same rooms captured at all three tiers. A Stray Scanner e
 colour stream the LiDAR tier ignores: a 1920x1440 walkthrough clip from the phone's main camera. This
 script turns one export into
 
-  <out>/video/rgb.mp4        the clip itself, unchanged, as the video-tier capture
+  <out>/video/walkthrough.mp4  the clip itself, frames untouched, carrying the rotation tag the iPhone Camera
+                             app writes, as the video-tier capture
   <out>/photo/<room>/*.jpg   2-8 stills per room, taken from that clip where the camera stood inside the
                              room, turned upright and tagged with their focal length as an iPhone still is
   <out>/reference.json       the LiDAR plan's rooms, areas, walls and adjacency, which the photo and video
@@ -27,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -69,6 +71,36 @@ def save_still(path: Path, rgb: np.ndarray, equivalent_mm: int) -> None:
     exif[EXIF_ORIENTATION] = 1
     exif.get_ifd(EXIF_SUB_IFD)[EXIF_FOCAL_35MM] = int(equivalent_mm)
     Image.fromarray(rgb).save(path, quality=92, exif=exif)
+
+
+def video_turns(poses: np.ndarray) -> tuple[int, float]:
+    """The quarter turn most of a walk was held at, and the share of frames held that way."""
+    turns = [quarter_turns_upright(pose[:3, :3]) for pose in poses]
+    values, counts = np.unique(turns, return_counts=True)
+    return int(values[np.argmax(counts)]), float(counts.max() / max(len(turns), 1))
+
+
+def write_tagged_video(source: Path, target: Path, turns: int) -> str:
+    """The clip as the Camera app stores a video: the same frames, with a display rotation to show them upright.
+
+    Nothing is re-encoded. ffmpeg's display rotation is anticlockwise, so `turns` clockwise quarter turns is
+    -90 * turns degrees, and OpenCV applies the tag when it decodes, as a player does. Without ffmpeg the clip is
+    linked untagged and the plan's input is sideways, which the returned note says.
+    """
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if target.is_symlink() or target.exists():
+        target.unlink()
+    turns %= 4
+    if turns == 0:
+        target.symlink_to(Path(source).resolve())
+        return "untagged: stored upright"
+    if shutil.which("ffmpeg") is None:
+        target.symlink_to(Path(source).resolve())
+        return "untagged: ffmpeg not found, so the clip is sideways"
+    degrees = ((-90 * turns + 180) % 360) - 180
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-display_rotation", str(degrees), "-i", str(source), "-c", "copy",
+                    str(target)], check=True)
+    return f"display rotation {degrees} degrees, frames not re-encoded"
 
 
 def sharpness(bgr: np.ndarray) -> float:
@@ -122,6 +154,27 @@ def choose_spread(candidates: list[dict], count: int) -> list[dict]:
             break
         chosen.append(best)
     return sorted(chosen, key=lambda c: c["frame"])
+
+
+def write_video_capture(video: Path, poses: np.ndarray, video_dir: Path, name: str) -> dict:
+    video_dir.mkdir(parents=True, exist_ok=True)
+    for stale in video_dir.glob("*.mp4"):
+        stale.unlink()
+    turns, share = video_turns(poses)
+    note = write_tagged_video(video, video_dir / "walkthrough.mp4", turns)
+    (video_dir / "capture.json").write_text(json.dumps({"tier": "video", "capture_id": f"{name}_video"}, indent=2))
+    return {"file": "video/walkthrough.mp4", "rotation_turns": turns, "frames_held_that_way": share, "tag": note}
+
+
+def retag_video(out_dir: Path) -> dict:
+    """Rewrite only the video capture of an existing set, from the export its reference.json names."""
+    reference_path = out_dir / "reference.json"
+    reference = json.loads(reference_path.read_text())
+    source = load_capture(Path(reference["source"]))
+    reference["video"] = write_video_capture(Path(reference["source"]) / "rgb.mp4", source.poses(), out_dir / "video",
+                                             reference["capture"])
+    reference_path.write_text(json.dumps(reference, indent=2))
+    return reference
 
 
 def _git_commit() -> str:
@@ -223,13 +276,7 @@ def make_tier_inputs(capture_dir: Path, out_dir: Path, name: str, min_room_area_
     (photo_dir / "capture.json").write_text(json.dumps({"tier": "photo", "capture_id": f"{name}_photo"}, indent=2))
     contact_sheet(sheet_rows, out_dir / "stills.jpg")
 
-    video_dir = out_dir / "video"
-    video_dir.mkdir(parents=True, exist_ok=True)
-    link = video_dir / "rgb.mp4"
-    if link.is_symlink() or link.exists():
-        link.unlink()
-    link.symlink_to(video.resolve())
-    (video_dir / "capture.json").write_text(json.dumps({"tier": "video", "capture_id": f"{name}_video"}, indent=2))
+    video_entry = write_video_capture(video, poses, out_dir / "video", name)
 
     included = set(chosen)
     reference = {
@@ -241,6 +288,7 @@ def make_tier_inputs(capture_dir: Path, out_dir: Path, name: str, min_room_area_
         "photo_rooms_footprint_m2": float(sum(r.floor_area.value for r in plan.rooms if r.room_id in included)),
         "min_room_area_m2": min_room_area_m2,
         "focal_35mm": equivalent,
+        "video": video_entry,
         "rooms": [
             {
                 "room_id": room.room_id,
@@ -265,11 +313,17 @@ def make_tier_inputs(capture_dir: Path, out_dir: Path, name: str, min_room_area_
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("--capture", type=Path, required=True, help="Stray Scanner export")
+    parser.add_argument("--capture", type=Path, help="Stray Scanner export (not needed with --video-only)")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--name", default=None, help="capture name used in capture ids; defaults to the out folder name")
     parser.add_argument("--min-room-area", type=float, default=MIN_ROOM_AREA_M2)
+    parser.add_argument("--video-only", action="store_true", help="rewrite only the video capture of an existing set")
     args = parser.parse_args()
+    if args.video_only:
+        video = retag_video(args.out)["video"]
+        print(f"{args.out.name}: video held at {video['rotation_turns']} quarter turns for "
+              f"{video['frames_held_that_way']:.0%} of frames; {video['tag']}")
+        return
     reference = make_tier_inputs(args.capture, args.out, args.name or args.out.name, args.min_room_area)
     folders = [r for r in reference["rooms"] if r["photo_folder"]]
     print(f"{reference['capture']}: LiDAR {len(reference['rooms'])} rooms {reference['lidar_footprint_m2']:.2f} m2; "
