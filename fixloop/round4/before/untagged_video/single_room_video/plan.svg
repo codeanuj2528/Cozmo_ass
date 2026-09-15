@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1127" height="1552" viewBox="0 0 1127 1552">
+<rect width="1127" height="1552" fill="#ffffff"/>
+<g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<text x="28" y="38" font-size="22" font-weight="600" fill="#22222a">Floor Plan - Capture single_room_video</text>
+<text x="28" y="62" font-size="12" fill="#7a7a86">Tier: VIDEO | Total Floor Area: 327.87 m²</text>
+<line x1="28" y1="82" x2="1099" y2="82" stroke="#dedcd4" stroke-width="1"/>
+<polygon points="455.70,650.62 65.21,1092.85 65.21,161.21 467.56,161.21 467.56,619.26 872.01,161.21 1062.36,161.21 1062.36,1486.79 455.70,1486.79 455.70,650.62" stroke="none" fill="#22222a"/>
+<polygon points="461.63,675.68 473.53,621.46 874.69,167.14 1056.43,167.14 1056.43,1480.86 461.63,1480.86" stroke="none" fill="#f4f1ea"/>
+<polygon points="71.14,1077.17 71.14,167.14 461.63,167.14 461.63,634.94" stroke="none" fill="#eceadf"/>
+<text x="781.67" y="878.58" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 01</text>
+<text x="781.67" y="893.68" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">235.37 m2</text>
+<text x="781.67" y="908.78" font-size="9.0" fill="#7a7a86" text-anchor="middle" font-weight="normal">h 3.999 m  [1.600, 6.398]</text>
+<text x="478.11" y="650.89" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-77.63 478.11 650.89)">1.03 ±61.8cm</text>
+<text x="682.19" y="401.44" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-48.56 682.19 401.44)">11.24 ±674.3cm</text>
+<text x="965.56" y="177.93" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">3.37 ±202.2cm</text>
+<text x="1045.64" y="824.00" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(90.00 1045.64 824.00)">24.36 ±1461.6cm</text>
+<text x="759.03" y="1470.07" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">11.03 ±661.8cm</text>
+<text x="472.42" y="1078.27" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 472.42 1078.27)">14.93 ±895.8cm</text>
+<text x="245.50" y="507.25" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room 02</text>
+<text x="245.50" y="522.35" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">92.50 m2</text>
+<text x="245.50" y="537.45" font-size="9.0" fill="#7a7a86" text-anchor="middle" font-weight="normal">h 4.409 m  [1.764, 7.055]</text>
+<text x="81.93" y="622.15" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 81.93 622.15)">16.87 ±1012.5cm</text>
+<text x="266.39" y="177.93" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">7.24 ±434.4cm</text>
+<text x="450.84" y="401.04" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(90.00 450.84 401.04)">8.67 ±520.5cm</text>
+<text x="258.30" y="848.91" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-48.56 258.30 848.91)">10.94 ±656.4cm</text>
+<line x1="781.67" y1="894.76" x2="245.50" y2="523.43" stroke="#7a7a86" stroke-width="0.43" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="5.39,5.39" opacity="0.50"/>
+<g><line x1="28" y1="1532" x2="297.6" y2="1532" stroke="#22222a" stroke-width="2"/><line x1="28" y1="1528" x2="28" y2="1536" stroke="#22222a" stroke-width="2"/><line x1="297.6" y1="1528" x2="297.6" y2="1536" stroke="#22222a" stroke-width="2"/><text x="305.6" y="1536" font-size="11" fill="#7a7a86">5 m</text></g>
+</g></svg>

@@ -1,0 +1,744 @@
+[
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "frame": 85,
+    "wrong": false,
+    "shift_deg": 3.521954223652612
+  },
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "frame": 187,
+    "wrong": false,
+    "shift_deg": 12.402723602679194
+  },
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "frame": 291,
+    "wrong": false,
+    "shift_deg": 8.768065763561326
+  },
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "frame": 337,
+    "wrong": false,
+    "shift_deg": 7.144678628039084
+  },
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "frame": 431,
+    "wrong": false,
+    "shift_deg": 5.663930858164167
+  },
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "frame": 535,
+    "wrong": false,
+    "shift_deg": 11.631083207139605
+  },
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "frame": 650,
+    "wrong": false,
+    "shift_deg": 21.708744741862745
+  },
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "frame": 713,
+    "wrong": true,
+    "shift_deg": 13.346320308983453
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "frame": 1588,
+    "wrong": true,
+    "shift_deg": 37.419187897283265
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "frame": 1617,
+    "wrong": true,
+    "shift_deg": 35.75325669614248
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "frame": 1641,
+    "wrong": true,
+    "shift_deg": 31.07603240064942
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "frame": 1648,
+    "wrong": true,
+    "shift_deg": 10.295959602595977
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "frame": 1653,
+    "wrong": true,
+    "shift_deg": 64.40714385187715
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "frame": 1660,
+    "wrong": true,
+    "shift_deg": 55.57738910765142
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "frame": 1665,
+    "wrong": true,
+    "shift_deg": 15.530761890070936
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "frame": 1671,
+    "wrong": true,
+    "shift_deg": 50.137276194632605
+  },
+  {
+    "capture": "single_room",
+    "room": "room_03",
+    "frame": 1015,
+    "wrong": false,
+    "shift_deg": 4.762608457474627
+  },
+  {
+    "capture": "single_room",
+    "room": "room_03",
+    "frame": 1074,
+    "wrong": false,
+    "shift_deg": 8.335440291573228
+  },
+  {
+    "capture": "single_room",
+    "room": "room_03",
+    "frame": 1131,
+    "wrong": false,
+    "shift_deg": 4.542562790156272
+  },
+  {
+    "capture": "single_room",
+    "room": "room_03",
+    "frame": 1178,
+    "wrong": false,
+    "shift_deg": 5.2895100542623315
+  },
+  {
+    "capture": "single_room",
+    "room": "room_03",
+    "frame": 1212,
+    "wrong": false,
+    "shift_deg": 11.726505203390957
+  },
+  {
+    "capture": "single_room",
+    "room": "room_03",
+    "frame": 1436,
+    "wrong": false,
+    "shift_deg": 9.069253669076732
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "frame": 1461,
+    "wrong": false,
+    "shift_deg": 63.83294142112703
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "frame": 2298,
+    "wrong": false,
+    "shift_deg": 61.40649124549394
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "frame": 3053,
+    "wrong": false,
+    "shift_deg": 33.674289046238194
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "frame": 3766,
+    "wrong": false,
+    "shift_deg": 126.85083033298761
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "frame": 3900,
+    "wrong": true,
+    "shift_deg": 9.615600618163676
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "frame": 4137,
+    "wrong": false,
+    "shift_deg": 87.90060567051873
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "frame": 4507,
+    "wrong": true,
+    "shift_deg": 30.226990384010247
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "frame": 4726,
+    "wrong": true,
+    "shift_deg": 61.732895575557116
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "frame": 1641,
+    "wrong": false,
+    "shift_deg": 2.0476942397168116
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "frame": 1710,
+    "wrong": false,
+    "shift_deg": 1.0123362500181214
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "frame": 1900,
+    "wrong": false,
+    "shift_deg": 1.1557170698538293
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "frame": 1991,
+    "wrong": false,
+    "shift_deg": 2.276447903874224
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "frame": 2014,
+    "wrong": false,
+    "shift_deg": 1.2970493171117832
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "frame": 2068,
+    "wrong": false,
+    "shift_deg": 0.9960936595662238
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "frame": 2143,
+    "wrong": false,
+    "shift_deg": 1.0166492588553202
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "frame": 2268,
+    "wrong": false,
+    "shift_deg": 2.426341913114342
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "frame": 3185,
+    "wrong": false,
+    "shift_deg": 1.0383682889214556
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "frame": 3352,
+    "wrong": false,
+    "shift_deg": 3.0205018792346268
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "frame": 3392,
+    "wrong": false,
+    "shift_deg": 1.722406470096693
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "frame": 3440,
+    "wrong": false,
+    "shift_deg": 1.1036694590261724
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "frame": 3465,
+    "wrong": false,
+    "shift_deg": 3.226773448800506
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "frame": 3503,
+    "wrong": false,
+    "shift_deg": 1.406711855049068
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "frame": 3572,
+    "wrong": false,
+    "shift_deg": 1.256067292871059
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "frame": 3617,
+    "wrong": false,
+    "shift_deg": 2.680164054558353
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "frame": 144,
+    "wrong": false,
+    "shift_deg": 1.9626335401712658
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "frame": 183,
+    "wrong": false,
+    "shift_deg": 1.4996921949755488
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "frame": 252,
+    "wrong": false,
+    "shift_deg": 2.822015566903176
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "frame": 392,
+    "wrong": false,
+    "shift_deg": 3.1719549087029923
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "frame": 514,
+    "wrong": false,
+    "shift_deg": 2.6983179689838024
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "frame": 4971,
+    "wrong": false,
+    "shift_deg": 0.4932829502772784
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "frame": 5081,
+    "wrong": false,
+    "shift_deg": 1.757925270093392
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "frame": 5166,
+    "wrong": false,
+    "shift_deg": 2.4527631417784415
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_05",
+    "frame": 731,
+    "wrong": false,
+    "shift_deg": 0.9992812827699963
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_05",
+    "frame": 848,
+    "wrong": false,
+    "shift_deg": 2.1138180471672583
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_05",
+    "frame": 924,
+    "wrong": false,
+    "shift_deg": 13.760907385830704
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_05",
+    "frame": 1010,
+    "wrong": false,
+    "shift_deg": 8.67232094823694
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_05",
+    "frame": 1110,
+    "wrong": false,
+    "shift_deg": 8.685337934518987
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_05",
+    "frame": 1206,
+    "wrong": false,
+    "shift_deg": 3.293491454361201
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_06",
+    "frame": 2636,
+    "wrong": false,
+    "shift_deg": 3.8988202982581255
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_06",
+    "frame": 2740,
+    "wrong": false,
+    "shift_deg": 35.60871943500321
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_06",
+    "frame": 2822,
+    "wrong": false,
+    "shift_deg": 4.813777545424149
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_06",
+    "frame": 2998,
+    "wrong": false,
+    "shift_deg": 6.222976735589115
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "frame": 725,
+    "wrong": false,
+    "shift_deg": 1.5420583101811032
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "frame": 807,
+    "wrong": false,
+    "shift_deg": 1.2764702878462817
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "frame": 1083,
+    "wrong": false,
+    "shift_deg": 5.094035712484023
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "frame": 1440,
+    "wrong": false,
+    "shift_deg": 5.478691399546821
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "frame": 3304,
+    "wrong": true,
+    "shift_deg": 15.405329017687661
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "frame": 3446,
+    "wrong": true,
+    "shift_deg": 8.381422451975386
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "frame": 6180,
+    "wrong": false,
+    "shift_deg": 7.327233738130487
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "frame": 8833,
+    "wrong": true,
+    "shift_deg": 101.63586948202374
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "frame": 1796,
+    "wrong": false,
+    "shift_deg": 2.026758877624824
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "frame": 1857,
+    "wrong": false,
+    "shift_deg": 1.936281768642527
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "frame": 2101,
+    "wrong": false,
+    "shift_deg": 6.402206713797381
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "frame": 2228,
+    "wrong": false,
+    "shift_deg": 6.186029449919177
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "frame": 2399,
+    "wrong": false,
+    "shift_deg": 3.7730633918304246
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "frame": 6614,
+    "wrong": false,
+    "shift_deg": 3.12919942912721
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "frame": 7025,
+    "wrong": false,
+    "shift_deg": 15.888197438286255
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "frame": 7122,
+    "wrong": false,
+    "shift_deg": 3.778938385213702
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "frame": 84,
+    "wrong": false,
+    "shift_deg": 3.651947750205724
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "frame": 208,
+    "wrong": false,
+    "shift_deg": 3.5686590124277164
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "frame": 407,
+    "wrong": false,
+    "shift_deg": 0.7614025259541479
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "frame": 4891,
+    "wrong": false,
+    "shift_deg": 1.4397891262542803
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "frame": 4967,
+    "wrong": false,
+    "shift_deg": 0.8651519286115131
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "frame": 5065,
+    "wrong": false,
+    "shift_deg": 2.981526395902405
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "frame": 5361,
+    "wrong": false,
+    "shift_deg": 0.6523337451654515
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "frame": 5493,
+    "wrong": false,
+    "shift_deg": 1.9613007092051715
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_04",
+    "frame": 2642,
+    "wrong": false,
+    "shift_deg": 2.4078901225776144
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_04",
+    "frame": 2761,
+    "wrong": false,
+    "shift_deg": 5.051595769134885
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_04",
+    "frame": 2851,
+    "wrong": false,
+    "shift_deg": 14.772343749963909
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_04",
+    "frame": 2945,
+    "wrong": true,
+    "shift_deg": 119.43556078843686
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_04",
+    "frame": 3013,
+    "wrong": false,
+    "shift_deg": 3.1630995092669387
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_04",
+    "frame": 7799,
+    "wrong": true,
+    "shift_deg": 4.2158036680821835
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_05",
+    "frame": 3771,
+    "wrong": false,
+    "shift_deg": 1.678363891840988
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_05",
+    "frame": 3876,
+    "wrong": false,
+    "shift_deg": 1.1981596997595492
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_05",
+    "frame": 3971,
+    "wrong": false,
+    "shift_deg": 1.6404487569086492
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_05",
+    "frame": 8276,
+    "wrong": false,
+    "shift_deg": 17.58716947126069
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_05",
+    "frame": 8563,
+    "wrong": false,
+    "shift_deg": 1.1875011944206062
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_05",
+    "frame": 8640,
+    "wrong": false,
+    "shift_deg": 1.3398483695875134
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_06",
+    "frame": 4392,
+    "wrong": false,
+    "shift_deg": 0.4240057487971391
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_06",
+    "frame": 4471,
+    "wrong": false,
+    "shift_deg": 0.3194757535399142
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_06",
+    "frame": 4604,
+    "wrong": false,
+    "shift_deg": 1.0119128919648572
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_06",
+    "frame": 4671,
+    "wrong": false,
+    "shift_deg": 0.8183006563764118
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_06",
+    "frame": 4713,
+    "wrong": false,
+    "shift_deg": 0.32182282254210964
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_06",
+    "frame": 9134,
+    "wrong": false,
+    "shift_deg": 1.1647525307366802
+  }
+]

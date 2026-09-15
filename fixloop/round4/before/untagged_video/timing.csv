@@ -1,0 +1,7 @@
+capture,tier,seconds,exit_code
+single_room,photo,195,0
+single_room,video,80,0
+single_scan_floor_only,photo,344,0
+single_scan_floor_only,video,148,0
+single_scan_with_ceiling,photo,242,0
+single_scan_with_ceiling,video,207,0

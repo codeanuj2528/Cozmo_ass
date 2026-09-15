@@ -1,0 +1,272 @@
+[
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "pairs": 125891,
+    "depth_ratio_scale": 2.0799176692962646,
+    "vggt": {
+      "scale": 2.3028988045663863,
+      "median_residual_cm": 9.470910049455645,
+      "p75_residual_cm": 15.553901481951138,
+      "inlier_fraction": 0.7866408242050663
+    },
+    "exif": {
+      "scale": 2.265109550786098,
+      "median_residual_cm": 12.094490548247768,
+      "p75_residual_cm": 19.86008890626241,
+      "inlier_fraction": 0.7971260852642366
+    }
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "pairs": 117250,
+    "depth_ratio_scale": 1.1535239219665527,
+    "vggt": {
+      "scale": 1.0501319787680081,
+      "median_residual_cm": 49.888734393317726,
+      "p75_residual_cm": 62.32293526041427,
+      "inlier_fraction": 0.9998294243070363
+    },
+    "exif": {
+      "scale": 1.0034336911453132,
+      "median_residual_cm": 48.95853495149406,
+      "p75_residual_cm": 62.29131729740827,
+      "inlier_fraction": 0.9998123667377399
+    }
+  },
+  {
+    "capture": "single_room",
+    "room": "room_03",
+    "pairs": 93243,
+    "depth_ratio_scale": 1.9579216241836548,
+    "vggt": {
+      "scale": 2.0016331930512443,
+      "median_residual_cm": 4.633265225532944,
+      "p75_residual_cm": 6.374029582648117,
+      "inlier_fraction": 0.8904797142949069
+    },
+    "exif": {
+      "scale": 1.9906108185749685,
+      "median_residual_cm": 4.546609629296188,
+      "p75_residual_cm": 6.415936151249454,
+      "inlier_fraction": 0.8723550293319606
+    }
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "pairs": 115891,
+    "depth_ratio_scale": 3.482809066772461,
+    "vggt": {
+      "scale": 1.8628898520715562,
+      "median_residual_cm": 157.13379557686213,
+      "p75_residual_cm": 209.02058204167534,
+      "inlier_fraction": 0.9995340449215211
+    },
+    "exif": {
+      "scale": 1.8422577542355159,
+      "median_residual_cm": 157.03393276693686,
+      "p75_residual_cm": 209.2089865421051,
+      "inlier_fraction": 0.9994736433372738
+    }
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "pairs": 126256,
+    "depth_ratio_scale": 2.79862642288208,
+    "vggt": {
+      "scale": 2.8958597648209414,
+      "median_residual_cm": 7.183734918625895,
+      "p75_residual_cm": 12.526108639512612,
+      "inlier_fraction": 0.826637941959194
+    },
+    "exif": {
+      "scale": 2.869813748474087,
+      "median_residual_cm": 7.86188002078797,
+      "p75_residual_cm": 13.896656566967946,
+      "inlier_fraction": 0.824895450513243
+    }
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "pairs": 117363,
+    "depth_ratio_scale": 2.2098617553710938,
+    "vggt": {
+      "scale": 2.373076483842337,
+      "median_residual_cm": 20.060936613728366,
+      "p75_residual_cm": 31.97312932590588,
+      "inlier_fraction": 0.9978868979150158
+    },
+    "exif": {
+      "scale": 2.3320060214006224,
+      "median_residual_cm": 19.15955229044137,
+      "p75_residual_cm": 29.029520405517374,
+      "inlier_fraction": 0.9975375544251596
+    }
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "pairs": 125725,
+    "depth_ratio_scale": 1.9050301313400269,
+    "vggt": {
+      "scale": 1.7125337326367718,
+      "median_residual_cm": 27.531932812125383,
+      "p75_residual_cm": 35.346267610546676,
+      "inlier_fraction": 1.0
+    },
+    "exif": {
+      "scale": 1.700105141140415,
+      "median_residual_cm": 25.646612631558437,
+      "p75_residual_cm": 32.45869254329348,
+      "inlier_fraction": 1.0
+    }
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_05",
+    "pairs": 93333,
+    "depth_ratio_scale": 1.9821604490280151,
+    "vggt": {
+      "scale": 2.05910998553255,
+      "median_residual_cm": 10.61867229554123,
+      "p75_residual_cm": 14.655286444589374,
+      "inlier_fraction": 0.9938499780356358
+    },
+    "exif": {
+      "scale": 2.0397660458079443,
+      "median_residual_cm": 10.949519689563147,
+      "p75_residual_cm": 14.374525881959135,
+      "inlier_fraction": 0.994160693431048
+    }
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_06",
+    "pairs": 62961,
+    "depth_ratio_scale": 1.5674643516540527,
+    "vggt": {
+      "scale": 1.7418026924880563,
+      "median_residual_cm": 14.575011764030982,
+      "p75_residual_cm": 18.622815767977123,
+      "inlier_fraction": 1.0
+    },
+    "exif": {
+      "scale": 1.7247785624980676,
+      "median_residual_cm": 15.608351478715715,
+      "p75_residual_cm": 19.235904361644806,
+      "inlier_fraction": 0.9999682343037753
+    }
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "pairs": 120220,
+    "depth_ratio_scale": 3.527869701385498,
+    "vggt": {
+      "scale": 3.8661415627687554,
+      "median_residual_cm": 28.104471341962434,
+      "p75_residual_cm": 132.39220715816762,
+      "inlier_fraction": 0.6723007818998503
+    },
+    "exif": {
+      "scale": 3.8080707501054585,
+      "median_residual_cm": 28.461501606164752,
+      "p75_residual_cm": 133.76108400942303,
+      "inlier_fraction": 0.672192646814174
+    }
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_02",
+    "pairs": 126269,
+    "depth_ratio_scale": 1.97450852394104,
+    "vggt": {
+      "scale": 2.240174132652637,
+      "median_residual_cm": 13.215247677886557,
+      "p75_residual_cm": 24.584863642070935,
+      "inlier_fraction": 0.8630384338198608
+    },
+    "exif": {
+      "scale": 2.1591964818168643,
+      "median_residual_cm": 17.663688260394178,
+      "p75_residual_cm": 33.14371260600883,
+      "inlier_fraction": 0.9988041403669943
+    }
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_03",
+    "pairs": 118911,
+    "depth_ratio_scale": 2.43096923828125,
+    "vggt": {
+      "scale": 2.4031912273482092,
+      "median_residual_cm": 27.42117512687654,
+      "p75_residual_cm": 33.4938445034505,
+      "inlier_fraction": 0.9657390821706991
+    },
+    "exif": {
+      "scale": 2.3723686290381365,
+      "median_residual_cm": 26.31340274368806,
+      "p75_residual_cm": 31.83039631585548,
+      "inlier_fraction": 0.9659829620472454
+    }
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_04",
+    "pairs": 93585,
+    "depth_ratio_scale": 2.07417893409729,
+    "vggt": {
+      "scale": 2.1062545317477266,
+      "median_residual_cm": 16.862720640609233,
+      "p75_residual_cm": 98.1671355056129,
+      "inlier_fraction": 0.6126836565688946
+    },
+    "exif": {
+      "scale": 2.08778153097812,
+      "median_residual_cm": 17.507425773797355,
+      "p75_residual_cm": 94.01816387028032,
+      "inlier_fraction": 0.6618154618795747
+    }
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_05",
+    "pairs": 97884,
+    "depth_ratio_scale": 3.5270676612854004,
+    "vggt": {
+      "scale": 3.394862757610361,
+      "median_residual_cm": 20.206397404416048,
+      "p75_residual_cm": 27.277939143828174,
+      "inlier_fraction": 0.9832761227575497
+    },
+    "exif": {
+      "scale": 3.3894170118177,
+      "median_residual_cm": 20.433089185809678,
+      "p75_residual_cm": 27.633139056524413,
+      "inlier_fraction": 0.9841547137427976
+    }
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_06",
+    "pairs": 94585,
+    "depth_ratio_scale": 1.4429067373275757,
+    "vggt": {
+      "scale": 1.661853216509893,
+      "median_residual_cm": 10.981241807612028,
+      "p75_residual_cm": 13.561966659561966,
+      "inlier_fraction": 0.9996088174657716
+    },
+    "exif": {
+      "scale": 1.6439715615565176,
+      "median_residual_cm": 12.12977902872866,
+      "p75_residual_cm": 14.145190716013442,
+      "inlier_fraction": 0.9996088174657716
+    }
+  }
+]

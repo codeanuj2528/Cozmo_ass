@@ -1,0 +1,48 @@
+Loading capture: data/tier_inputs/single_scan_with_ceiling/photo
+Detected Tier: PHOTO (42 frames/images)
+Running 3D reconstruction and semantic extraction...
+Loading weights:   0%|          | 0/287 [00:00<?, ?it/s]Loading weights: 100%|██████████| 287/287 [00:00<00:00, 11428.84it/s]
+Saved plan JSON: fixloop/round4/before/single_scan_with_ceiling_photo/plan.json
+Saved run manifest: 
+fixloop/round4/before/single_scan_with_ceiling_photo/run_manifest.json
+Rendered 2D floor plan: 
+fixloop/round4/before/single_scan_with_ceiling_photo/plan.png
+         Property Plan Summary (single_scan_with_ceiling_photo)         
+┏━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┓
+┃ Property Area ┃ Rooms ┃ Damage Regions ┃ Scope Line Items ┃ Runtime  ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━┩
+│ 82.30 m²      │ 5     │ 0              │ 0                │ 240.05 s │
+└───────────────┴───────┴────────────────┴──────────────────┴──────────┘
+GATE                        SCOPE                           TIER   MEASURED     
+THRESHOLD                                 STATUS
+--------------------------  ------------------------------  -----  
+-----------------------------------------------------------------  
+----------------------------------------  ------
+footprint vs LiDAR          single_scan_with_ceiling photo  photo  82.30 m2 vs 
+44.53 m2 (+84.8%)                                      within +-8%              
+FAIL  
+rooms reconstructed         single_scan_with_ceiling photo  photo  5/6 folders 
+give a room                                            every folder             
+FAIL  
+wall_lengths vs LiDAR       single_scan_with_ceiling photo  photo  4/23 within 
+(17%), median error 27.7%                              <= 8% on >= 85%          
+FAIL  
+room_overlap                single_scan_with_ceiling photo  photo  largest 
+overlap 0.749 m2 (12.4% of smallest room), total 0.966 m2  no overlap above 2% 
+of the smallest room  FAIL  
+adjacency vs LiDAR          single_scan_with_ceiling photo  photo  no connection
+among the scored rooms                               every connection found, 
+none invented     SKIP  
+interval_coverage vs LiDAR  single_scan_with_ceiling photo  photo  3/6 intervals
+contain the LiDAR value (50%)                        >= 90%                     
+FAIL  
+--------------------------  ------------------------------  -----  
+-----------------------------------------------------------------  
+----------------------------------------  ------
+0 pass, 5 fail, 1 not evaluated
+
+A gate is SKIP only when the ground truth needed to judge it does not exist. It 
+is
+never reported as passed on that basis, and it costs its marks either way.
+
+Written to fixloop/round4/before/single_scan_with_ceiling_photo/tiers.json

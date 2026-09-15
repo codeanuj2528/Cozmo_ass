@@ -1,0 +1,40 @@
+Loading capture: data/tier_inputs/single_scan_floor_only/video
+Detected Tier: VIDEO (5251 frames/images)
+Running 3D reconstruction and semantic extraction...
+Loading weights:   0%|          | 0/287 [00:00<?, ?it/s]Loading weights: 100%|██████████| 287/287 [00:00<00:00, 12523.96it/s]
+Saved plan JSON: fixloop/round4/before/single_scan_floor_only_video/plan.json
+Saved run manifest: 
+fixloop/round4/before/single_scan_floor_only_video/run_manifest.json
+Rendered 2D floor plan: 
+fixloop/round4/before/single_scan_floor_only_video/plan.png
+Plan over its scan: 
+fixloop/round4/before/single_scan_floor_only_video/plan_on_scan.png
+         Property Plan Summary (single_scan_floor_only_video)          
+┏━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+┃ Property Area ┃ Rooms ┃ Damage Regions ┃ Scope Line Items ┃ Runtime ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+│ 173.63 m²     │ 1     │ 0              │ 0                │ 79.21 s │
+└───────────────┴───────┴────────────────┴──────────────────┴─────────┘
+GATE                        SCOPE                         TIER   MEASURED       
+THRESHOLD        STATUS
+--------------------------  ----------------------------  -----  
+---------------------------------------------------  ---------------  ------
+footprint vs LiDAR          single_scan_floor_only video  video  173.63 m2 vs 
+50.82 m2 (+241.6%)                      within +-5%      FAIL  
+wall_lengths vs LiDAR       single_scan_floor_only video  video  registration 
+failed: 39% of wall cells within 10 cm  <= 3% on >= 85%  SKIP  
+room_overlap                single_scan_floor_only video  video  single room    
+no overlap       SKIP  
+interval_coverage vs LiDAR  single_scan_floor_only video  video  0/1 intervals 
+contain the LiDAR value (0%)           >= 90%           FAIL  
+--------------------------  ----------------------------  -----  
+---------------------------------------------------  ---------------  ------
+0 pass, 2 fail, 2 not evaluated
+
+A gate is SKIP only when the ground truth needed to judge it does not exist. It 
+is
+never reported as passed on that basis, and it costs its marks either way.
+  registered on walls: 39% of video wall cells within 10 cm of LiDAR, 27% within
+5 cm
+
+Written to fixloop/round4/before/single_scan_floor_only_video/tiers.json

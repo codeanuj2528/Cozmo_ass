@@ -1,0 +1,82 @@
+[
+  {
+    "capture": "single_room",
+    "room": "room_01",
+    "wrong_stills": 1,
+    "exif": -0.036730160261274625,
+    "vggt": 0.13820850028897658,
+    "none": -0.08766166902906936
+  },
+  {
+    "capture": "single_room",
+    "room": "room_02",
+    "wrong_stills": 8,
+    "exif": 0.021433589490716498,
+    "vggt": 0.2053280503437689,
+    "none": -0.011339680760322546
+  },
+  {
+    "capture": "single_room",
+    "room": "room_03",
+    "wrong_stills": 0,
+    "exif": -0.023679152549861082,
+    "vggt": -0.017545199581587956,
+    "none": -0.056393568380651016
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_01",
+    "wrong_stills": 3,
+    "exif": -0.06609704426572394,
+    "vggt": 0.040879239323540206,
+    "none": -0.0869574195656303
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_02",
+    "wrong_stills": 0,
+    "exif": -0.052175194628415134,
+    "vggt": -0.008715978661595791,
+    "none": -0.06045314052685691
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_03",
+    "wrong_stills": 0,
+    "exif": -0.056079311645840346,
+    "vggt": 0.06419272145503085,
+    "none": -0.08185189016745575
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_04",
+    "wrong_stills": 0,
+    "exif": -0.07767358595562701,
+    "vggt": 0.013120729656928232,
+    "none": -0.10733905541319466
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_05",
+    "wrong_stills": 0,
+    "exif": -0.03909053500103965,
+    "vggt": 0.02531636967997164,
+    "none": -0.05778931377939789
+  },
+  {
+    "capture": "single_scan_floor_only",
+    "room": "room_06",
+    "wrong_stills": 0,
+    "exif": 0.017880415995063403,
+    "vggt": 0.07233035091182982,
+    "none": 0.021214085479763334
+  },
+  {
+    "capture": "single_scan_with_ceiling",
+    "room": "room_01",
+    "wrong_stills": 3,
+    "exif": -0.04877130944905528,
+    "vggt": 0.061913134958370364,
+    "none": -0.07616844915386356
+  }
+]

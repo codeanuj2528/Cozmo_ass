@@ -1,0 +1,50 @@
+{
+  "pipeline_version": "0.1.0",
+  "schema_version": "1.0",
+  "capture_id": "single_room_photo",
+  "tier": "photo",
+  "generated_at": "2026-09-15T09:33:58.473834+00:00",
+  "git_commit": "f7d043f",
+  "runtime_seconds": 190.957,
+  "timings": {
+    "total_s": 190.9574
+  },
+  "keyframes_used": 0,
+  "frames_available": 22,
+  "points_fused": 0,
+  "rooms_found": 3,
+  "total_floor_area_m2": 50.523,
+  "warnings": [
+    "room_01: no photograph in this room showed enough floor to recover scale; the depth model's own metric output is used and intervals widen",
+    "room_02: no photograph in this room showed enough floor to recover scale; using property consensus scale 1.296 from other rooms",
+    "room_03: room scale 1.296 from 2 of 6 photographs that showed enough floor; applied to all",
+    "3 room(s) have no connecting opening detected and cannot be stitched by doorway: room_01, room_02, room_03",
+    "room_02 joined to room_03 from folder names only; the doorway itself was not measured",
+    "room_01 joined to room_02 from folder names only; the doorway itself was not measured"
+  ],
+  "input_hash": "1f2c90db2966474e",
+  "config": {
+    "voxel_m": 0.02,
+    "grid_resolution_m": 0.03,
+    "min_depth_confidence": 1,
+    "max_depth_range_m": 5.0,
+    "max_keyframes": 600,
+    "keyframe_translation_m": 0.08,
+    "keyframe_rotation_deg": 6.0,
+    "canonical_rotation": true,
+    "drift_correction": true,
+    "snap_walls_to_frame": true,
+    "snap_tolerance_deg": 6.0,
+    "detect_damage": true,
+    "build_scope": true,
+    "max_wall_lines": 44,
+    "min_room_area_m2": 1.5,
+    "min_inscribed_radius_m": 0.33,
+    "refine_rooms": true,
+    "layout": "evidence",
+    "calibration_path": "calibration/intervals.json",
+    "weights_dir": "weights",
+    "seed": 0,
+    "labels": {}
+  }
+}

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1456" height="447" viewBox="0 0 1456 447">
+<rect width="1456" height="447" fill="#ffffff"/>
+<g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<text x="28" y="38" font-size="22" font-weight="600" fill="#22222a">Floor Plan - Capture single_scan_with_ceiling_photo</text>
+<text x="28" y="62" font-size="12" fill="#7a7a86">Tier: PHOTO | Total Floor Area: 82.30 m²</text>
+<line x1="28" y1="82" x2="1428" y2="82" stroke="#dedcd4" stroke-width="1"/>
+<polygon points="551.21,244.78 551.21,226.94 780.04,226.94 780.04,190.60 972.20,160.32 1086.91,160.32 1086.91,213.49 1391.68,213.49 1391.68,383.14 1075.33,383.14 780.04,383.14 551.21,383.14 419.62,383.14 64.32,383.14 64.32,179.36 431.20,179.36 431.20,244.78 551.21,244.78" stroke="none" fill="#22222a"/>
+<polygon points="1081.12,219.28 1385.89,219.28 1385.89,377.35 1081.12,377.35" stroke="none" fill="#f4f1ea"/>
+<polygon points="785.83,377.35 785.83,195.54 972.65,166.11 1081.12,166.11 1081.12,377.35" stroke="none" fill="#eceadf"/>
+<polygon points="425.41,377.35 425.41,250.57 539.99,250.57 575.28,377.35" stroke="none" fill="#f4f1ea"/>
+<polygon points="70.11,185.15 425.41,185.15 425.41,377.35 70.11,377.35" stroke="none" fill="#eceadf"/>
+<polygon points="557.00,232.73 800.19,232.73 800.19,377.35 557.00,377.35" stroke="none" fill="#f4f1ea"/>
+<text x="1233.51" y="282.52" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room_02</text>
+<text x="1233.51" y="297.26" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">17.39 m2</text>
+<text x="1233.51" y="312.00" font-size="9.0" fill="#7a7a86" text-anchor="middle" font-weight="normal">h 2.987 m  [1.195, 4.779]</text>
+<text x="1233.51" y="229.81" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">5.79 ±347.4cm</text>
+<text x="1375.36" y="298.31" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(90.00 1375.36 298.31)">3.00 ±180.2cm</text>
+<text x="1233.51" y="366.82" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">5.79 ±347.4cm</text>
+<text x="1091.65" y="298.31" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 1091.65 298.31)">3.00 ±180.2cm</text>
+<text x="937.41" y="260.36" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room_03</text>
+<text x="937.41" y="275.09" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">21.52 m2</text>
+<text x="937.41" y="289.83" font-size="9.0" fill="#7a7a86" text-anchor="middle" font-weight="normal">h 3.197 m  [1.279, 5.115]</text>
+<text x="796.35" y="286.45" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 796.35 286.45)">3.45 ±207.2cm</text>
+<text x="880.88" y="191.23" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-8.95 880.88 191.23)">3.59 ±215.6cm</text>
+<text x="1026.89" y="176.64" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">2.06 ±123.6cm</text>
+<text x="1070.59" y="271.73" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(90.00 1070.59 271.73)">4.01 ±240.8cm</text>
+<text x="933.47" y="366.82" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">5.61 ±336.6cm</text>
+<text x="491.91" y="300.99" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room_04</text>
+<text x="491.91" y="315.73" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">6.05 m2</text>
+<text x="491.91" y="330.47" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="435.94" y="313.96" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 435.94 313.96)">2.41 ±144.5cm</text>
+<text x="482.70" y="261.10" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">2.18 ±130.6cm</text>
+<text x="547.49" y="316.78" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(74.44 547.49 316.78)">2.50 ±150.0cm</text>
+<text x="500.34" y="366.82" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">2.85 ±170.8cm</text>
+<text x="247.76" y="265.46" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room_05</text>
+<text x="247.76" y="280.20" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">24.65 m2</text>
+<text x="247.76" y="294.93" font-size="9.0" fill="#7a7a86" text-anchor="middle" font-weight="normal">h 3.338 m  [1.335, 5.340]</text>
+<text x="247.76" y="195.68" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">6.75 ±405.0cm</text>
+<text x="414.88" y="281.25" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(90.00 414.88 281.25)">3.65 ±219.1cm</text>
+<text x="247.76" y="366.82" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">6.75 ±405.0cm</text>
+<text x="80.64" y="281.25" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 80.64 281.25)">3.65 ±219.1cm</text>
+<text x="678.59" y="289.25" font-size="13.0" fill="#1b1b1f" text-anchor="middle" font-weight="bold">Room_06</text>
+<text x="678.59" y="303.99" font-size="11.0" fill="#1b1b1f" text-anchor="middle" font-weight="normal">12.69 m2</text>
+<text x="678.59" y="318.72" font-size="9.0" fill="#d98324" text-anchor="middle" font-weight="normal">ceiling unmeasured</text>
+<text x="678.59" y="243.26" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">4.62 ±277.2cm</text>
+<text x="789.66" y="305.04" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(90.00 789.66 305.04)">2.75 ±164.8cm</text>
+<text x="678.59" y="366.82" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal">4.62 ±277.2cm</text>
+<text x="567.53" y="305.04" font-size="8.5" fill="#7a7a86" text-anchor="middle" font-weight="normal" transform="rotate(-270.00 567.53 305.04)">2.75 ±164.8cm</text>
+<line x1="247.76" y1="281.25" x2="491.91" y2="316.78" stroke="#7a7a86" stroke-width="0.42" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="5.26,5.26" opacity="0.50"/>
+<line x1="247.76" y1="281.25" x2="678.59" y2="305.04" stroke="#7a7a86" stroke-width="0.42" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="5.26,5.26" opacity="0.50"/>
+<line x1="491.91" y1="316.78" x2="937.41" y2="276.15" stroke="#7a7a86" stroke-width="0.42" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="5.26,5.26" opacity="0.50"/>
+<line x1="937.41" y1="276.15" x2="1233.51" y2="298.31" stroke="#7a7a86" stroke-width="0.42" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke-dasharray="5.26,5.26" opacity="0.50"/>
+<g><line x1="28" y1="427" x2="291.2" y2="427" stroke="#22222a" stroke-width="2"/><line x1="28" y1="423" x2="28" y2="431" stroke="#22222a" stroke-width="2"/><line x1="291.2" y1="423" x2="291.2" y2="431" stroke="#22222a" stroke-width="2"/><text x="299.2" y="431" font-size="11" fill="#7a7a86">5 m</text></g>
+</g></svg>

@@ -1,0 +1,893 @@
+[
+  {
+    "room": "room_01",
+    "area_m2": 9.115216605902074,
+    "stills": 8,
+    "vggt_seconds": 16.801848957999027,
+    "vggt_memory_gb": 12.367659008,
+    "room_scale": 2.122368812561035,
+    "depth_absrel": 0.04641610383987427,
+    "frame_scale_spread": 0.06049070838705645,
+    "rotation_error_median_deg": 11.530385331621142,
+    "rotation_error_max_deg": 63.85607769567304,
+    "baseline_scale_error": 0.14187657061639847,
+    "camera_height_scale_error": 0.22784429914055537,
+    "stills_diagnostics": [
+      {
+        "frame": 85,
+        "down_axis_disagreement_deg": 35.636905670166016,
+        "arkit_rotation_error_median_deg": 5.8218055594869496,
+        "vggt_confidence_median": 2.3476343154907227
+      },
+      {
+        "frame": 187,
+        "down_axis_disagreement_deg": 33.928466796875,
+        "arkit_rotation_error_median_deg": 5.607142143447161,
+        "vggt_confidence_median": 2.0831527709960938
+      },
+      {
+        "frame": 291,
+        "down_axis_disagreement_deg": 27.08363151550293,
+        "arkit_rotation_error_median_deg": 8.659595441731504,
+        "vggt_confidence_median": 1.9353439807891846
+      },
+      {
+        "frame": 337,
+        "down_axis_disagreement_deg": 22.02142906188965,
+        "arkit_rotation_error_median_deg": 7.847913161286121,
+        "vggt_confidence_median": 1.9227681159973145
+      },
+      {
+        "frame": 431,
+        "down_axis_disagreement_deg": 23.101696014404297,
+        "arkit_rotation_error_median_deg": 11.961849315031293,
+        "vggt_confidence_median": 2.070761203765869
+      },
+      {
+        "frame": 535,
+        "down_axis_disagreement_deg": 30.913206100463867,
+        "arkit_rotation_error_median_deg": 7.854883575559108,
+        "vggt_confidence_median": 2.0162694454193115
+      },
+      {
+        "frame": 650,
+        "down_axis_disagreement_deg": 31.160947799682617,
+        "arkit_rotation_error_median_deg": 18.57951858216296,
+        "vggt_confidence_median": 1.8976848125457764
+      },
+      {
+        "frame": 713,
+        "down_axis_disagreement_deg": 29.09200668334961,
+        "arkit_rotation_error_median_deg": 53.56510663800521,
+        "vggt_confidence_median": 2.0053036212921143
+      }
+    ],
+    "capture": "single_room"
+  },
+  {
+    "room": "room_02",
+    "area_m2": 7.020284248130296,
+    "stills": 8,
+    "vggt_seconds": 20.301855625002645,
+    "vggt_memory_gb": 12.367659008,
+    "room_scale": 1.1559897661209106,
+    "depth_absrel": 0.05327871814370155,
+    "frame_scale_spread": 0.05697354818068106,
+    "rotation_error_median_deg": 75.41571591786644,
+    "rotation_error_max_deg": 170.8086978617834,
+    "baseline_scale_error": 0.5524027862502281,
+    "camera_height_scale_error": 0.9940914670563918,
+    "stills_diagnostics": [
+      {
+        "frame": 1588,
+        "down_axis_disagreement_deg": 10.337878227233887,
+        "arkit_rotation_error_median_deg": 96.45397502819715,
+        "vggt_confidence_median": 1.8439977169036865
+      },
+      {
+        "frame": 1617,
+        "down_axis_disagreement_deg": 16.836257934570312,
+        "arkit_rotation_error_median_deg": 95.63804920786251,
+        "vggt_confidence_median": 1.977959394454956
+      },
+      {
+        "frame": 1641,
+        "down_axis_disagreement_deg": 28.488290786743164,
+        "arkit_rotation_error_median_deg": 67.60237874485492,
+        "vggt_confidence_median": 1.5448639392852783
+      },
+      {
+        "frame": 1648,
+        "down_axis_disagreement_deg": 14.428451538085938,
+        "arkit_rotation_error_median_deg": 74.24073354506841,
+        "vggt_confidence_median": 1.7533785104751587
+      },
+      {
+        "frame": 1653,
+        "down_axis_disagreement_deg": 37.4850959777832,
+        "arkit_rotation_error_median_deg": 93.56660367823044,
+        "vggt_confidence_median": 1.4759635925292969
+      },
+      {
+        "frame": 1660,
+        "down_axis_disagreement_deg": 20.935718536376953,
+        "arkit_rotation_error_median_deg": 74.24073353444406,
+        "vggt_confidence_median": 1.2709827423095703
+      },
+      {
+        "frame": 1665,
+        "down_axis_disagreement_deg": 13.64533519744873,
+        "arkit_rotation_error_median_deg": 67.60237936960317,
+        "vggt_confidence_median": 1.1807661056518555
+      },
+      {
+        "frame": 1671,
+        "down_axis_disagreement_deg": 5.1805830001831055,
+        "arkit_rotation_error_median_deg": 61.33579323887721,
+        "vggt_confidence_median": 1.1893248558044434
+      }
+    ],
+    "capture": "single_room"
+  },
+  {
+    "room": "room_03",
+    "area_m2": 4.199921782640044,
+    "stills": 6,
+    "vggt_seconds": 14.741865624993807,
+    "vggt_memory_gb": 10.936352768,
+    "room_scale": 1.9868677854537964,
+    "depth_absrel": 0.019121604040265083,
+    "frame_scale_spread": 0.03789922341931765,
+    "rotation_error_median_deg": 2.396208044772001,
+    "rotation_error_max_deg": 26.05940916775885,
+    "baseline_scale_error": 0.011416366647913678,
+    "camera_height_scale_error": -0.13279327817350084,
+    "stills_diagnostics": [
+      {
+        "frame": 1015,
+        "down_axis_disagreement_deg": 12.071595191955566,
+        "arkit_rotation_error_median_deg": 2.396208044772001,
+        "vggt_confidence_median": 3.0171008110046387
+      },
+      {
+        "frame": 1074,
+        "down_axis_disagreement_deg": 18.1348876953125,
+        "arkit_rotation_error_median_deg": 1.9994875864606536,
+        "vggt_confidence_median": 3.0209243297576904
+      },
+      {
+        "frame": 1131,
+        "down_axis_disagreement_deg": 23.418804168701172,
+        "arkit_rotation_error_median_deg": 1.9994876821138685,
+        "vggt_confidence_median": 3.2966256141662598
+      },
+      {
+        "frame": 1178,
+        "down_axis_disagreement_deg": 15.810884475708008,
+        "arkit_rotation_error_median_deg": 1.8294500703796923,
+        "vggt_confidence_median": 2.8789420127868652
+      },
+      {
+        "frame": 1212,
+        "down_axis_disagreement_deg": 33.48613357543945,
+        "arkit_rotation_error_median_deg": 2.4868462746693694,
+        "vggt_confidence_median": 3.0203046798706055
+      },
+      {
+        "frame": 1436,
+        "down_axis_disagreement_deg": 54.5802001953125,
+        "arkit_rotation_error_median_deg": 24.216467645918108,
+        "vggt_confidence_median": 2.0316948890686035
+      }
+    ],
+    "capture": "single_room"
+  },
+  {
+    "room": "room_01",
+    "area_m2": 14.765441511037306,
+    "stills": 8,
+    "vggt_seconds": 20.828265834003105,
+    "vggt_memory_gb": 12.368707584,
+    "room_scale": 3.4348487854003906,
+    "depth_absrel": 0.030046507716178894,
+    "frame_scale_spread": 0.04851602995678286,
+    "rotation_error_median_deg": 114.09036012681287,
+    "rotation_error_max_deg": 176.99693889743733,
+    "baseline_scale_error": -0.09708025790836472,
+    "camera_height_scale_error": -0.3369120014359567,
+    "stills_diagnostics": [
+      {
+        "frame": 1461,
+        "down_axis_disagreement_deg": 27.173931121826172,
+        "arkit_rotation_error_median_deg": 17.369662972226234,
+        "vggt_confidence_median": 1.4691636562347412
+      },
+      {
+        "frame": 2298,
+        "down_axis_disagreement_deg": 6.886465549468994,
+        "arkit_rotation_error_median_deg": 12.034761697041066,
+        "vggt_confidence_median": 1.1563079357147217
+      },
+      {
+        "frame": 3053,
+        "down_axis_disagreement_deg": 21.85968780517578,
+        "arkit_rotation_error_median_deg": 14.386258704935724,
+        "vggt_confidence_median": 1.327181339263916
+      },
+      {
+        "frame": 3766,
+        "down_axis_disagreement_deg": 36.07968521118164,
+        "arkit_rotation_error_median_deg": 14.793188917355344,
+        "vggt_confidence_median": 1.136845350265503
+      },
+      {
+        "frame": 3900,
+        "down_axis_disagreement_deg": 22.943145751953125,
+        "arkit_rotation_error_median_deg": 162.6617927853656,
+        "vggt_confidence_median": 1.1777265071868896
+      },
+      {
+        "frame": 4137,
+        "down_axis_disagreement_deg": 10.922252655029297,
+        "arkit_rotation_error_median_deg": 17.36966297222619,
+        "vggt_confidence_median": 1.5922266244888306
+      },
+      {
+        "frame": 4507,
+        "down_axis_disagreement_deg": 13.20075511932373,
+        "arkit_rotation_error_median_deg": 155.60150058889135,
+        "vggt_confidence_median": 1.680649757385254
+      },
+      {
+        "frame": 4726,
+        "down_axis_disagreement_deg": 29.86113166809082,
+        "arkit_rotation_error_median_deg": 115.22815142844641,
+        "vggt_confidence_median": 1.6449917554855347
+      }
+    ],
+    "capture": "single_scan_floor_only"
+  },
+  {
+    "room": "room_02",
+    "area_m2": 10.552884989929222,
+    "stills": 8,
+    "vggt_seconds": 21.97478950000368,
+    "vggt_memory_gb": 12.368707584,
+    "room_scale": 2.8236279487609863,
+    "depth_absrel": 0.042473360896110535,
+    "frame_scale_spread": 0.04077968287325992,
+    "rotation_error_median_deg": 1.8586811459954884,
+    "rotation_error_max_deg": 3.374118466962978,
+    "baseline_scale_error": -0.030521523432891384,
+    "camera_height_scale_error": -0.11481171388791134,
+    "stills_diagnostics": [
+      {
+        "frame": 1641,
+        "down_axis_disagreement_deg": 31.82649040222168,
+        "arkit_rotation_error_median_deg": 2.320982147128002,
+        "vggt_confidence_median": 1.0210645198822021
+      },
+      {
+        "frame": 1710,
+        "down_axis_disagreement_deg": 33.061893463134766,
+        "arkit_rotation_error_median_deg": 1.9542526745337472,
+        "vggt_confidence_median": 1.137681245803833
+      },
+      {
+        "frame": 1900,
+        "down_axis_disagreement_deg": 18.470277786254883,
+        "arkit_rotation_error_median_deg": 1.788478108726662,
+        "vggt_confidence_median": 1.0289802551269531
+      },
+      {
+        "frame": 1991,
+        "down_axis_disagreement_deg": 14.76961898803711,
+        "arkit_rotation_error_median_deg": 1.788436983606969,
+        "vggt_confidence_median": 1.00014328956604
+      },
+      {
+        "frame": 2014,
+        "down_axis_disagreement_deg": 13.684380531311035,
+        "arkit_rotation_error_median_deg": 2.3191265335443463,
+        "vggt_confidence_median": 1.000003457069397
+      },
+      {
+        "frame": 2068,
+        "down_axis_disagreement_deg": 21.295589447021484,
+        "arkit_rotation_error_median_deg": 1.546871426165217,
+        "vggt_confidence_median": 1.0
+      },
+      {
+        "frame": 2143,
+        "down_axis_disagreement_deg": 16.261220932006836,
+        "arkit_rotation_error_median_deg": 2.166877588233503,
+        "vggt_confidence_median": 1.0024086236953735
+      },
+      {
+        "frame": 2268,
+        "down_axis_disagreement_deg": 15.260815620422363,
+        "arkit_rotation_error_median_deg": 1.6382646883605652,
+        "vggt_confidence_median": 1.0000349283218384
+      }
+    ],
+    "capture": "single_scan_floor_only"
+  },
+  {
+    "room": "room_03",
+    "area_m2": 9.020581023789115,
+    "stills": 8,
+    "vggt_seconds": 20.190666334005073,
+    "vggt_memory_gb": 12.368707584,
+    "room_scale": 2.196249485015869,
+    "depth_absrel": 0.06922072917222977,
+    "frame_scale_spread": 0.08127406549765678,
+    "rotation_error_median_deg": 3.0441726175087127,
+    "rotation_error_max_deg": 6.568238170126302,
+    "baseline_scale_error": 0.09183798769670037,
+    "camera_height_scale_error": 0.18432031349390554,
+    "stills_diagnostics": [
+      {
+        "frame": 3185,
+        "down_axis_disagreement_deg": 30.039024353027344,
+        "arkit_rotation_error_median_deg": 2.4470867682982163,
+        "vggt_confidence_median": 1.252298355102539
+      },
+      {
+        "frame": 3352,
+        "down_axis_disagreement_deg": 24.29282569885254,
+        "arkit_rotation_error_median_deg": 4.565670539625784,
+        "vggt_confidence_median": 1.3381659984588623
+      },
+      {
+        "frame": 3392,
+        "down_axis_disagreement_deg": 20.684114456176758,
+        "arkit_rotation_error_median_deg": 2.6627707704049106,
+        "vggt_confidence_median": 1.1746330261230469
+      },
+      {
+        "frame": 3440,
+        "down_axis_disagreement_deg": 3.3266077041625977,
+        "arkit_rotation_error_median_deg": 2.992913864016045,
+        "vggt_confidence_median": 1.093444585800171
+      },
+      {
+        "frame": 3465,
+        "down_axis_disagreement_deg": 10.986626625061035,
+        "arkit_rotation_error_median_deg": 2.9726107615302646,
+        "vggt_confidence_median": 1.2063947916030884
+      },
+      {
+        "frame": 3503,
+        "down_axis_disagreement_deg": 19.95366668701172,
+        "arkit_rotation_error_median_deg": 3.0348707063043756,
+        "vggt_confidence_median": 1.108153223991394
+      },
+      {
+        "frame": 3572,
+        "down_axis_disagreement_deg": 20.788745880126953,
+        "arkit_rotation_error_median_deg": 3.272309706645248,
+        "vggt_confidence_median": 1.0716954469680786
+      },
+      {
+        "frame": 3617,
+        "down_axis_disagreement_deg": 14.460365295410156,
+        "arkit_rotation_error_median_deg": 3.2286780286279195,
+        "vggt_confidence_median": 1.2975342273712158
+      }
+    ],
+    "capture": "single_scan_floor_only"
+  },
+  {
+    "room": "room_04",
+    "area_m2": 7.364379390328832,
+    "stills": 8,
+    "vggt_seconds": 20.1483633750031,
+    "vggt_memory_gb": 12.368707584,
+    "room_scale": 1.9623202085494995,
+    "depth_absrel": 0.04462491348385811,
+    "frame_scale_spread": 0.05641042861077543,
+    "rotation_error_median_deg": 3.8869619889544578,
+    "rotation_error_max_deg": 8.81919489853511,
+    "baseline_scale_error": -0.08068863085329292,
+    "camera_height_scale_error": 0.010793802696293042,
+    "stills_diagnostics": [
+      {
+        "frame": 144,
+        "down_axis_disagreement_deg": 19.919654846191406,
+        "arkit_rotation_error_median_deg": 3.880671257779088,
+        "vggt_confidence_median": 2.6971964836120605
+      },
+      {
+        "frame": 183,
+        "down_axis_disagreement_deg": 23.368484497070312,
+        "arkit_rotation_error_median_deg": 5.277792678993687,
+        "vggt_confidence_median": 2.3658876419067383
+      },
+      {
+        "frame": 252,
+        "down_axis_disagreement_deg": 32.81196975708008,
+        "arkit_rotation_error_median_deg": 3.6188380533408644,
+        "vggt_confidence_median": 2.5344948768615723
+      },
+      {
+        "frame": 392,
+        "down_axis_disagreement_deg": 26.723167419433594,
+        "arkit_rotation_error_median_deg": 3.893253052865021,
+        "vggt_confidence_median": 2.767794132232666
+      },
+      {
+        "frame": 514,
+        "down_axis_disagreement_deg": 52.044395446777344,
+        "arkit_rotation_error_median_deg": 3.1064306635632533,
+        "vggt_confidence_median": 2.375133514404297
+      },
+      {
+        "frame": 4971,
+        "down_axis_disagreement_deg": 19.910289764404297,
+        "arkit_rotation_error_median_deg": 3.880671257779088,
+        "vggt_confidence_median": 2.311403274536133
+      },
+      {
+        "frame": 5081,
+        "down_axis_disagreement_deg": 26.389102935791016,
+        "arkit_rotation_error_median_deg": 4.403840221268858,
+        "vggt_confidence_median": 2.6320221424102783
+      },
+      {
+        "frame": 5166,
+        "down_axis_disagreement_deg": 38.68407440185547,
+        "arkit_rotation_error_median_deg": 4.728059222804993,
+        "vggt_confidence_median": 2.5085091590881348
+      }
+    ],
+    "capture": "single_scan_floor_only"
+  },
+  {
+    "room": "room_05",
+    "area_m2": 5.677892102998813,
+    "stills": 6,
+    "vggt_seconds": 14.840228999993997,
+    "vggt_memory_gb": 10.936352768,
+    "room_scale": 2.0102427005767822,
+    "depth_absrel": 0.020394960418343544,
+    "frame_scale_spread": 0.020664039660624196,
+    "rotation_error_median_deg": 2.099430434118605,
+    "rotation_error_max_deg": 11.310740966070282,
+    "baseline_scale_error": 0.0034209802354898677,
+    "camera_height_scale_error": -0.04481425014194873,
+    "stills_diagnostics": [
+      {
+        "frame": 731,
+        "down_axis_disagreement_deg": 33.07313919067383,
+        "arkit_rotation_error_median_deg": 1.697627511773776,
+        "vggt_confidence_median": 2.9129133224487305
+      },
+      {
+        "frame": 848,
+        "down_axis_disagreement_deg": 35.23146057128906,
+        "arkit_rotation_error_median_deg": 1.6613771020754446,
+        "vggt_confidence_median": 3.6416773796081543
+      },
+      {
+        "frame": 924,
+        "down_axis_disagreement_deg": 28.666332244873047,
+        "arkit_rotation_error_median_deg": 1.9583965546604785,
+        "vggt_confidence_median": 2.670074224472046
+      },
+      {
+        "frame": 1010,
+        "down_axis_disagreement_deg": 29.404563903808594,
+        "arkit_rotation_error_median_deg": 2.112391889445188,
+        "vggt_confidence_median": 2.610929012298584
+      },
+      {
+        "frame": 1110,
+        "down_axis_disagreement_deg": 29.749088287353516,
+        "arkit_rotation_error_median_deg": 1.6614364182365284,
+        "vggt_confidence_median": 2.750213146209717
+      },
+      {
+        "frame": 1206,
+        "down_axis_disagreement_deg": 40.92891311645508,
+        "arkit_rotation_error_median_deg": 10.199367510116327,
+        "vggt_confidence_median": 1.9762531518936157
+      }
+    ],
+    "capture": "single_scan_floor_only"
+  },
+  {
+    "room": "room_06",
+    "area_m2": 3.442172015443914,
+    "stills": 4,
+    "vggt_seconds": 7.743216082992149,
+    "vggt_memory_gb": 8.730148864,
+    "room_scale": 1.598204493522644,
+    "depth_absrel": 0.03239598497748375,
+    "frame_scale_spread": 0.04520392568584899,
+    "rotation_error_median_deg": 2.7535621911017345,
+    "rotation_error_max_deg": 3.848399876939877,
+    "baseline_scale_error": 0.16893686848722034,
+    "camera_height_scale_error": 0.016221755818075945,
+    "stills_diagnostics": [
+      {
+        "frame": 2636,
+        "down_axis_disagreement_deg": 25.296554565429688,
+        "arkit_rotation_error_median_deg": 1.8722934746569337,
+        "vggt_confidence_median": 2.4248790740966797
+      },
+      {
+        "frame": 2740,
+        "down_axis_disagreement_deg": 17.25851821899414,
+        "arkit_rotation_error_median_deg": 2.4331207851125827,
+        "vggt_confidence_median": 1.6289681196212769
+      },
+      {
+        "frame": 2822,
+        "down_axis_disagreement_deg": 18.898042678833008,
+        "arkit_rotation_error_median_deg": 2.4330893553762967,
+        "vggt_confidence_median": 2.373021364212036
+      },
+      {
+        "frame": 2998,
+        "down_axis_disagreement_deg": 27.028207778930664,
+        "arkit_rotation_error_median_deg": 3.7741736399848738,
+        "vggt_confidence_median": 1.7966783046722412
+      }
+    ],
+    "capture": "single_scan_floor_only"
+  },
+  {
+    "room": "room_01",
+    "area_m2": 12.364252550976374,
+    "stills": 8,
+    "vggt_seconds": 18.78148620799766,
+    "vggt_memory_gb": 12.72102912,
+    "room_scale": 3.559779405593872,
+    "depth_absrel": 0.022167671471834183,
+    "frame_scale_spread": 0.03630925622341586,
+    "rotation_error_median_deg": 75.66819054914632,
+    "rotation_error_max_deg": 156.443090604447,
+    "baseline_scale_error": -0.05207262035049942,
+    "camera_height_scale_error": -0.04021434864880169,
+    "stills_diagnostics": [
+      {
+        "frame": 725,
+        "down_axis_disagreement_deg": 13.817020416259766,
+        "arkit_rotation_error_median_deg": 7.061546098910201,
+        "vggt_confidence_median": 1.9510977268218994
+      },
+      {
+        "frame": 807,
+        "down_axis_disagreement_deg": 18.53687858581543,
+        "arkit_rotation_error_median_deg": 5.545327398874007,
+        "vggt_confidence_median": 1.942375898361206
+      },
+      {
+        "frame": 1083,
+        "down_axis_disagreement_deg": 17.490663528442383,
+        "arkit_rotation_error_median_deg": 10.165555814492915,
+        "vggt_confidence_median": 1.5965324640274048
+      },
+      {
+        "frame": 1440,
+        "down_axis_disagreement_deg": 24.35443687438965,
+        "arkit_rotation_error_median_deg": 10.165556301190072,
+        "vggt_confidence_median": 2.1278469562530518
+      },
+      {
+        "frame": 3304,
+        "down_axis_disagreement_deg": 18.536394119262695,
+        "arkit_rotation_error_median_deg": 151.2119876495175,
+        "vggt_confidence_median": 1.883823037147522
+      },
+      {
+        "frame": 3446,
+        "down_axis_disagreement_deg": 34.70431900024414,
+        "arkit_rotation_error_median_deg": 90.80196541883225,
+        "vggt_confidence_median": 1.9481115341186523
+      },
+      {
+        "frame": 6180,
+        "down_axis_disagreement_deg": 6.5251007080078125,
+        "arkit_rotation_error_median_deg": 8.160269873629423,
+        "vggt_confidence_median": 1.8775744438171387
+      },
+      {
+        "frame": 8833,
+        "down_axis_disagreement_deg": 18.23524284362793,
+        "arkit_rotation_error_median_deg": 75.72076358826057,
+        "vggt_confidence_median": 1.7793514728546143
+      }
+    ],
+    "capture": "single_scan_with_ceiling"
+  },
+  {
+    "room": "room_02",
+    "area_m2": 10.158745873507543,
+    "stills": 8,
+    "vggt_seconds": 23.093063541004085,
+    "vggt_memory_gb": 12.368707584,
+    "room_scale": 2.0209758281707764,
+    "depth_absrel": 0.039616018533706665,
+    "frame_scale_spread": 0.07586792403125532,
+    "rotation_error_median_deg": 4.058775475857839,
+    "rotation_error_max_deg": 8.130954111281834,
+    "baseline_scale_error": 0.020189809191556662,
+    "camera_height_scale_error": -0.016688818505931402,
+    "stills_diagnostics": [
+      {
+        "frame": 1796,
+        "down_axis_disagreement_deg": 24.95246124267578,
+        "arkit_rotation_error_median_deg": 3.7187662563464605,
+        "vggt_confidence_median": 2.4697470664978027
+      },
+      {
+        "frame": 1857,
+        "down_axis_disagreement_deg": 28.450851440429688,
+        "arkit_rotation_error_median_deg": 3.0993933418787902,
+        "vggt_confidence_median": 2.62549090385437
+      },
+      {
+        "frame": 2101,
+        "down_axis_disagreement_deg": 19.40614891052246,
+        "arkit_rotation_error_median_deg": 3.7187662563462647,
+        "vggt_confidence_median": 2.0507307052612305
+      },
+      {
+        "frame": 2228,
+        "down_axis_disagreement_deg": 27.6334228515625,
+        "arkit_rotation_error_median_deg": 2.828962105051221,
+        "vggt_confidence_median": 2.4901123046875
+      },
+      {
+        "frame": 2399,
+        "down_axis_disagreement_deg": 30.03650665283203,
+        "arkit_rotation_error_median_deg": 6.731407753144346,
+        "vggt_confidence_median": 2.1373448371887207
+      },
+      {
+        "frame": 6614,
+        "down_axis_disagreement_deg": 14.525402069091797,
+        "arkit_rotation_error_median_deg": 3.6521191905414576,
+        "vggt_confidence_median": 1.7354131937026978
+      },
+      {
+        "frame": 7025,
+        "down_axis_disagreement_deg": 25.292360305786133,
+        "arkit_rotation_error_median_deg": 5.42428014674796,
+        "vggt_confidence_median": 1.8715518712997437
+      },
+      {
+        "frame": 7122,
+        "down_axis_disagreement_deg": 18.15292739868164,
+        "arkit_rotation_error_median_deg": 3.6521209393072303,
+        "vggt_confidence_median": 1.9441829919815063
+      }
+    ],
+    "capture": "single_scan_with_ceiling"
+  },
+  {
+    "room": "room_03",
+    "area_m2": 8.328106519587145,
+    "stills": 8,
+    "vggt_seconds": 22.39327908300038,
+    "vggt_memory_gb": 12.72102912,
+    "room_scale": 2.4640889167785645,
+    "depth_absrel": 0.06171216070652008,
+    "frame_scale_spread": 0.08291967928734592,
+    "rotation_error_median_deg": 4.443639516642939,
+    "rotation_error_max_deg": 12.125082869471631,
+    "baseline_scale_error": -0.09313992308378904,
+    "camera_height_scale_error": -0.058542946634905335,
+    "stills_diagnostics": [
+      {
+        "frame": 84,
+        "down_axis_disagreement_deg": 11.655702590942383,
+        "arkit_rotation_error_median_deg": 3.4469598810980253,
+        "vggt_confidence_median": 1.0173735618591309
+      },
+      {
+        "frame": 208,
+        "down_axis_disagreement_deg": 25.26255989074707,
+        "arkit_rotation_error_median_deg": 5.811033665277851,
+        "vggt_confidence_median": 1.4639601707458496
+      },
+      {
+        "frame": 407,
+        "down_axis_disagreement_deg": 19.635950088500977,
+        "arkit_rotation_error_median_deg": 3.2609779888407533,
+        "vggt_confidence_median": 1.6164082288742065
+      },
+      {
+        "frame": 4891,
+        "down_axis_disagreement_deg": 20.521944046020508,
+        "arkit_rotation_error_median_deg": 3.4469598810982367,
+        "vggt_confidence_median": 1.3111062049865723
+      },
+      {
+        "frame": 4967,
+        "down_axis_disagreement_deg": 25.32259750366211,
+        "arkit_rotation_error_median_deg": 4.959950695275685,
+        "vggt_confidence_median": 1.4754908084869385
+      },
+      {
+        "frame": 5065,
+        "down_axis_disagreement_deg": 16.020715713500977,
+        "arkit_rotation_error_median_deg": 7.448686441696738,
+        "vggt_confidence_median": 1.6380541324615479
+      },
+      {
+        "frame": 5361,
+        "down_axis_disagreement_deg": 2.8510797023773193,
+        "arkit_rotation_error_median_deg": 3.0881942440500305,
+        "vggt_confidence_median": 1.3131705522537231
+      },
+      {
+        "frame": 5493,
+        "down_axis_disagreement_deg": 4.338108062744141,
+        "arkit_rotation_error_median_deg": 3.37628734655998,
+        "vggt_confidence_median": 1.4801040887832642
+      }
+    ],
+    "capture": "single_scan_with_ceiling"
+  },
+  {
+    "room": "room_04",
+    "area_m2": 5.189315520126155,
+    "stills": 6,
+    "vggt_seconds": 18.95595787500497,
+    "vggt_memory_gb": 10.936352768,
+    "room_scale": 2.122253894805908,
+    "depth_absrel": 0.02541874721646309,
+    "frame_scale_spread": 0.030018803289986205,
+    "rotation_error_median_deg": 48.264352708201834,
+    "rotation_error_max_deg": 87.26098026610687,
+    "baseline_scale_error": -0.032685119017139996,
+    "camera_height_scale_error": -0.04819242954013614,
+    "stills_diagnostics": [
+      {
+        "frame": 2642,
+        "down_axis_disagreement_deg": 21.347030639648438,
+        "arkit_rotation_error_median_deg": 1.800656364708671,
+        "vggt_confidence_median": 2.1192569732666016
+      },
+      {
+        "frame": 2761,
+        "down_axis_disagreement_deg": 20.2863826751709,
+        "arkit_rotation_error_median_deg": 1.540873990457334,
+        "vggt_confidence_median": 2.643125534057617
+      },
+      {
+        "frame": 2851,
+        "down_axis_disagreement_deg": 23.482236862182617,
+        "arkit_rotation_error_median_deg": 1.800656364708671,
+        "vggt_confidence_median": 2.8867764472961426
+      },
+      {
+        "frame": 2945,
+        "down_axis_disagreement_deg": 31.242677688598633,
+        "arkit_rotation_error_median_deg": 85.85160884466745,
+        "vggt_confidence_median": 2.1390295028686523
+      },
+      {
+        "frame": 3013,
+        "down_axis_disagreement_deg": 19.53769302368164,
+        "arkit_rotation_error_median_deg": 1.4951248928082128,
+        "vggt_confidence_median": 1.7848422527313232
+      },
+      {
+        "frame": 7799,
+        "down_axis_disagreement_deg": 15.595763206481934,
+        "arkit_rotation_error_median_deg": 48.45640289708426,
+        "vggt_confidence_median": 1.3346211910247803
+      }
+    ],
+    "capture": "single_scan_with_ceiling"
+  },
+  {
+    "room": "room_05",
+    "area_m2": 4.848631707367108,
+    "stills": 6,
+    "vggt_seconds": 14.550374750004266,
+    "vggt_memory_gb": 10.936352768,
+    "room_scale": 3.3538994789123535,
+    "depth_absrel": 0.06546245515346527,
+    "frame_scale_spread": 0.07500797037988852,
+    "rotation_error_median_deg": 2.12998155396797,
+    "rotation_error_max_deg": 17.967206765579387,
+    "baseline_scale_error": 0.20710829049198654,
+    "camera_height_scale_error": -0.14261399252396945,
+    "stills_diagnostics": [
+      {
+        "frame": 3771,
+        "down_axis_disagreement_deg": 24.74702262878418,
+        "arkit_rotation_error_median_deg": 1.4857596677747107,
+        "vggt_confidence_median": 1.000001072883606
+      },
+      {
+        "frame": 3876,
+        "down_axis_disagreement_deg": 21.554113388061523,
+        "arkit_rotation_error_median_deg": 2.651213714034006,
+        "vggt_confidence_median": 1.000000238418579
+      },
+      {
+        "frame": 3971,
+        "down_axis_disagreement_deg": 25.80789566040039,
+        "arkit_rotation_error_median_deg": 1.629632126748944,
+        "vggt_confidence_median": 1.0
+      },
+      {
+        "frame": 8276,
+        "down_axis_disagreement_deg": 15.841438293457031,
+        "arkit_rotation_error_median_deg": 16.11487278938954,
+        "vggt_confidence_median": 1.0
+      },
+      {
+        "frame": 8563,
+        "down_axis_disagreement_deg": 21.505510330200195,
+        "arkit_rotation_error_median_deg": 1.48575966777422,
+        "vggt_confidence_median": 1.0
+      },
+      {
+        "frame": 8640,
+        "down_axis_disagreement_deg": 18.26988410949707,
+        "arkit_rotation_error_median_deg": 1.6296635824099726,
+        "vggt_confidence_median": 1.0009956359863281
+      }
+    ],
+    "capture": "single_scan_with_ceiling"
+  },
+  {
+    "room": "room_06",
+    "area_m2": 3.644892657946965,
+    "stills": 6,
+    "vggt_seconds": 13.509969500009902,
+    "vggt_memory_gb": 10.936352768,
+    "room_scale": 1.454810619354248,
+    "depth_absrel": 0.0343521386384964,
+    "frame_scale_spread": 0.04154789652809415,
+    "rotation_error_median_deg": 3.0384847189986,
+    "rotation_error_max_deg": 5.659871104289677,
+    "baseline_scale_error": 0.5978557188242233,
+    "camera_height_scale_error": 0.02331233105483732,
+    "stills_diagnostics": [
+      {
+        "frame": 4392,
+        "down_axis_disagreement_deg": 31.862905502319336,
+        "arkit_rotation_error_median_deg": 3.8633821880749473,
+        "vggt_confidence_median": 5.173883438110352
+      },
+      {
+        "frame": 4471,
+        "down_axis_disagreement_deg": 31.616209030151367,
+        "arkit_rotation_error_median_deg": 2.116732387370296,
+        "vggt_confidence_median": 4.403108596801758
+      },
+      {
+        "frame": 4604,
+        "down_axis_disagreement_deg": 20.823205947875977,
+        "arkit_rotation_error_median_deg": 2.5606817130480763,
+        "vggt_confidence_median": 4.1972270011901855
+      },
+      {
+        "frame": 4671,
+        "down_axis_disagreement_deg": 22.711206436157227,
+        "arkit_rotation_error_median_deg": 2.5060367600101827,
+        "vggt_confidence_median": 3.1777524948120117
+      },
+      {
+        "frame": 4713,
+        "down_axis_disagreement_deg": 25.7795467376709,
+        "arkit_rotation_error_median_deg": 2.5606817130477917,
+        "vggt_confidence_median": 1.9783929586410522
+      },
+      {
+        "frame": 9134,
+        "down_axis_disagreement_deg": 18.201818466186523,
+        "arkit_rotation_error_median_deg": 3.4814411641586833,
+        "vggt_confidence_median": 3.018709421157837
+      }
+    ],
+    "capture": "single_scan_with_ceiling"
+  }
+]
