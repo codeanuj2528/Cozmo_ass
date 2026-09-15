@@ -1,16 +1,19 @@
 """A walkthrough clip reconstructed as overlapping runs of keyframes, joined by the frames they share.
 
-A multi-view model holds a limited number of images at once: on a 16 GB machine about a dozen at 518 px. A walk
-through a flat is a hundred keyframes and more, and frames sampled across the whole of it do not overlap enough
-for the model to pose them (on the assignment's single-room walk, 16 frames spread over 37 s came back with
-rotations 110 degrees wrong). Consecutive keyframes do overlap, so the walk is cut into runs of `chunk` keyframes
-that share `overlap` keyframes with the run before.
+A multi-view model holds a limited number of images at once: on a 16 GB machine eight at 518 px. A walk through a
+flat is a hundred keyframes and more, and frames sampled across the whole of it do not overlap enough for the model
+to pose them (on the assignment's single-room walk, 16 frames spread over 37 s came back with rotations 110 degrees
+wrong). Consecutive keyframes do overlap, so the walk is cut into runs of `chunk` keyframes that share `overlap`
+keyframes with the run before.
 
-Two runs that reconstruct the same image give two depth maps of it on the same pixel grid, so every confident
-pixel is a pair of corresponding points, one in each run's frame. A similarity transform fitted to those pairs
-(Umeyama 1991) carries the later run into the earlier one's frame, scale included, and the runs are chained back
-to the first. What the chain accumulates is left to the reconstruction core's pose graph and loop closures, as at
-the LiDAR tier.
+Each run comes back in the model's own frame and units, and the units change from one call to the next. Every run
+is put in metres on its own, by MoGe-2 on the run's own keyframes, before the runs are joined. Two runs that
+reconstruct the same image then give two metric depth maps of it on the same pixel grid, so every confident pixel
+is a pair of corresponding points, and a rigid transform fitted to those pairs carries the later run into the
+earlier one's frame. Joined by similarities instead, as in fix loop round 4, each link's scale error multiplied into
+every run after it; the similarity's scale is still computed, and kept as a check on how well two runs agree. What
+the chain accumulates in rotation and position is left to the reconstruction core's pose graph and loop closures,
+as at the LiDAR tier.
 """
 
 from __future__ import annotations
@@ -34,7 +37,7 @@ MAX_KEYFRAMES = 150
 KEYFRAME_LONG_SIDE = 960
 RUN_LENGTH = 8
 RUN_OVERLAP = 3
-# MoGe-2 is run on every third keyframe: the scale is a median over the walk, not a per-frame quantity.
+# MoGe-2 runs on every third keyframe. A run of eight holds two or three of them, and its scale is their median.
 METRIC_EVERY = 3
 
 
@@ -56,8 +59,12 @@ def chunk_ranges(count: int, chunk: int, overlap: int) -> list[list[int]]:
         start += step
 
 
-def umeyama(source: np.ndarray, target: np.ndarray, weights: np.ndarray | None = None) -> tuple[float, np.ndarray, np.ndarray]:
-    """Scale s, rotation R and translation t minimising sum w |s R x + t - y|^2 (Umeyama 1991)."""
+def umeyama(source: np.ndarray, target: np.ndarray, weights: np.ndarray | None = None,
+            with_scale: bool = True) -> tuple[float, np.ndarray, np.ndarray]:
+    """Scale s, rotation R and translation t minimising sum w |s R x + t - y|^2 (Umeyama 1991).
+
+    With `with_scale` off, s is held at 1 and the fit is rigid (Kabsch).
+    """
     w = np.ones(len(source)) if weights is None else np.asarray(weights, float)
     w = w / w.sum()
     mu_x, mu_y = w @ source, w @ target
@@ -68,6 +75,8 @@ def umeyama(source: np.ndarray, target: np.ndarray, weights: np.ndarray | None =
     if np.linalg.det(u) * np.linalg.det(vt) < 0:
         d[2, 2] = -1.0
     rotation = u @ d @ vt
+    if not with_scale:
+        return 1.0, rotation, mu_y - rotation @ mu_x
     variance = float(w @ (x ** 2).sum(axis=1))
     scale = float(np.trace(np.diag(singular) @ d) / max(variance, 1e-12))
     return scale, rotation, mu_y - scale * rotation @ mu_x
@@ -112,9 +121,16 @@ class ChainedRun:
     link_scales: list[float]
     link_pairs: list[int]
     breaks: list[int] = field(default_factory=list)
+    link_rigid: list[bool] = field(default_factory=list)
 
 
-def _link(previous: dict[int, ViewGeometry], current: dict[int, ViewGeometry]) -> tuple[float, np.ndarray, np.ndarray, int]:
+def _link(previous: dict[int, ViewGeometry], current: dict[int, ViewGeometry],
+          rigid: bool = False) -> tuple[float, np.ndarray, np.ndarray, float, int]:
+    """The transform taking `current`'s frame onto `previous`'s, fitted to every image both runs hold.
+
+    Returns the applied scale, rotation and translation, the scale a similarity fitted to the same pairs would use,
+    and the number of pairs. When `rigid`, the applied scale is 1 and the similarity's scale is only a check.
+    """
     shared = sorted(set(previous) & set(current))
     if not shared:
         raise ValueError("the two runs share no keyframe")
@@ -130,16 +146,23 @@ def _link(previous: dict[int, ViewGeometry], current: dict[int, ViewGeometry]) -
     source, target = np.vstack(sources), np.vstack(targets)
     if len(source) < MIN_PAIRS:
         raise ValueError(f"the two runs share only {len(source)} confident pixels")
-    return (*umeyama(source, target), len(source))
+    similarity_scale, rotation, translation = umeyama(source, target)
+    if rigid:
+        _, rotation, translation = umeyama(source, target, with_scale=False)
+        return 1.0, rotation, translation, similarity_scale, len(source)
+    return similarity_scale, rotation, translation, similarity_scale, len(source)
 
 
-def chain_runs(runs: list[list[ViewGeometry]], ranges: list[list[int]]) -> ChainedRun:
+def chain_runs(runs: list[list[ViewGeometry]], ranges: list[list[int]], metric: list[bool] | None = None) -> ChainedRun:
     """Every keyframe's view in the first run's frame. A keyframe in two runs keeps its view from the earlier one.
 
-    Each link is fitted on every image the two runs share, pooled. `link_scales` records the scale of each link,
-    which is how much the model's units drift along the walk. Where a link cannot be fitted the walk is broken
-    there, and the longest unbroken stretch is kept; `breaks` names the runs that started a new stretch.
+    Each link is fitted on every image the two runs share, pooled. `metric` says which runs are already in metres:
+    a link between two of them is rigid, any other a similarity. `link_scales` records, for every link, the scale a
+    similarity would use: between metric runs a check on how well they agree, otherwise how much the model's units
+    change along the walk. Where a link cannot be fitted the walk is broken there, and the longest unbroken stretch
+    is kept; `breaks` names the runs that started a new stretch.
     """
+    metric = list(metric) if metric is not None else [False] * len(runs)
     segments: list[ChainedRun] = []
     current = ChainedRun({i: v for i, v in zip(ranges[0], runs[0])}, [], [])
     to_first = (1.0, np.eye(3), np.zeros(3))
@@ -147,8 +170,9 @@ def chain_runs(runs: list[list[ViewGeometry]], ranges: list[list[int]]) -> Chain
     for k in range(1, len(runs)):
         previous = {i: v for i, v in zip(ranges[k - 1], runs[k - 1])}
         this = {i: v for i, v in zip(ranges[k], runs[k])}
+        rigid = bool(metric[k - 1] and metric[k])
         try:
-            s, r, t, pairs = _link(previous, this)
+            s, r, t, check, pairs = _link(previous, this, rigid)
         except ValueError:
             segments.append(current)
             breaks.append(k)
@@ -157,8 +181,9 @@ def chain_runs(runs: list[list[ViewGeometry]], ranges: list[list[int]]) -> Chain
             continue
         s0, r0, t0 = to_first
         to_first = (s0 * s, r0 @ r, s0 * r0 @ t + t0)
-        current.link_scales.append(s)
+        current.link_scales.append(check)
         current.link_pairs.append(pairs)
+        current.link_rigid.append(rigid)
         for index, view in this.items():
             if index not in current.views:
                 current.views[index] = transform_view(view, *to_first)
@@ -225,18 +250,27 @@ def sample_keyframes(video_path: Path, interval_s: float = KEYFRAME_INTERVAL_S, 
 class SequenceReconstruction:
     frames: list
     images: dict[int, np.ndarray]
+    # What the joined walk still lacked to be metric, read once more from every metric keyframe: near 1 when every
+    # run was scaled on its own.
     scale: object
     up: np.ndarray
     keyframes_used: list[int]
     link_scales: list[float]
     notes: list[str]
     seconds: float
+    # Metres per model unit for each run, NaN for a run MoGe-2 gave too few valid pixels to scale.
+    run_scales: list[float] = field(default_factory=list)
 
 
 def reconstruct_sequence(images: list[np.ndarray], backbone, metric_model, fov_x_deg: float | None = None,
                          run_length: int = RUN_LENGTH, overlap: int = RUN_OVERLAP, metric_every: int = METRIC_EVERY,
                          tolerance_deg: float = DOWN_AXIS_TOLERANCE_DEG) -> tuple[SequenceReconstruction | None, list[str]]:
-    """Keyframes of one walk to metric, gravity-aligned frames in one frame, or None and the reason."""
+    """Keyframes of one walk to metric, gravity-aligned frames in one frame, or None and the reason.
+
+    Each run is scaled to metres by MoGe-2 on its own keyframes before the runs are joined, rigidly where both runs
+    have a scale. A run whose keyframes give MoGe-2 too few valid pixels keeps the model's units and is joined by a
+    similarity. What scale the joined walk still lacks is read once more from every metric keyframe.
+    """
     from cozmo.recon.metric_scale import horizontal_fov_deg, scale_from_metric_depth
 
     started = time.perf_counter()
@@ -245,14 +279,47 @@ def reconstruct_sequence(images: list[np.ndarray], backbone, metric_model, fov_x
         return None, ["fewer than two keyframes"]
     ranges = chunk_ranges(len(images), run_length, overlap)
     runs = [backbone.reconstruct([images[i] for i in indices]).views for indices in ranges]
-    chained = chain_runs(runs, ranges)
+    name = getattr(backbone, "name", "the multi-view model")
+    source = ("moge-2-vitl given the clip's field of view" if fov_x_deg is not None
+              else f"moge-2-vitl given the field of view {name} estimated")
+
+    step = max(metric_every, 1)
+    metric_depth: dict[int, np.ndarray] = {}
+    for indices, views in zip(ranges, runs):
+        for i, view in zip(indices, views):
+            if i % step == 0 and i not in metric_depth:
+                fov = fov_x_deg if fov_x_deg is not None else horizontal_fov_deg(view.intrinsics, view.depth.shape[1])
+                metric_depth[i] = metric_model.estimate(images[i], fov)
+
+    run_scales: list[float] = []
+    metric_runs: list[list[ViewGeometry]] = []
+    for indices, views in zip(ranges, runs):
+        pairs = [(view, metric_depth[i]) for i, view in zip(indices, views) if i in metric_depth]
+        run_scale = scale_from_metric_depth([v for v, _ in pairs], [m for _, m in pairs], source) if pairs else None
+        if run_scale is None:
+            run_scales.append(float("nan"))
+            metric_runs.append(list(views))
+        else:
+            run_scales.append(run_scale.factor)
+            metric_runs.append([transform_view(view, run_scale.factor, np.eye(3), np.zeros(3)) for view in views])
+    scaled = [bool(np.isfinite(s)) for s in run_scales]
+    if not any(scaled):
+        return None, ["the metric depth model gave too few valid pixels to scale any run of the walk"]
+    finite = [s for s in run_scales if np.isfinite(s)]
+    notes.append(f"{sum(scaled)} of {len(runs)} runs put in metres on their own: metres per model unit "
+                 f"{min(finite):.3f}-{max(finite):.3f}, median {np.median(finite):.3f}")
+
+    chained = chain_runs(metric_runs, ranges, scaled)
     if chained.breaks:
         notes.append(f"the walk broke into {len(chained.breaks) + 1} stretches where runs shared too little; "
                      f"the longest, {len(chained.views)} of {len(images)} keyframes, is reconstructed")
-    if chained.link_scales:
-        drift = np.cumprod(chained.link_scales)
-        notes.append(f"model units drifted by a factor of {drift.min():.3f}-{drift.max():.3f} along the walk "
-                     f"over {len(chained.link_scales)} links")
+    checks = [s for s, rigid in zip(chained.link_scales, chained.link_rigid) if rigid]
+    if checks:
+        notes.append(f"consecutive metric runs agree in scale to {min(checks):.3f}-{max(checks):.3f} over "
+                     f"{len(checks)} rigid links (a check, not applied)")
+    if len(checks) < len(chained.link_scales):
+        notes.append(f"{len(chained.link_scales) - len(checks)} link(s) to a run without a metric scale joined by a similarity")
+
     order = sorted(chained.views)
     views = [chained.views[i] for i in order]
     up, outliers = down_axis_outliers(views, tolerance_deg)
@@ -262,16 +329,10 @@ def reconstruct_sequence(images: list[np.ndarray], backbone, metric_model, fov_x
     if len(kept) < 2:
         return None, notes + ["fewer than two keyframes agree on which way is down"]
 
-    sampled = kept[::max(metric_every, 1)]
-    metric = []
-    for i in sampled:
-        view = chained.views[i]
-        fov = fov_x_deg if fov_x_deg is not None else horizontal_fov_deg(view.intrinsics, view.depth.shape[1])
-        metric.append(metric_model.estimate(images[i], fov))
-    source = "moge-2-vitl given the clip's field of view" if fov_x_deg is not None else f"moge-2-vitl given the field of view {getattr(backbone, 'name', 'the multi-view model')} estimated"
-    scale = scale_from_metric_depth([chained.views[i] for i in sampled], metric, source)
+    sampled = [i for i in kept if i in metric_depth]
+    scale = scale_from_metric_depth([chained.views[i] for i in sampled], [metric_depth[i] for i in sampled], source)
     if scale is None:
         return None, notes + ["the metric depth model gave too few valid pixels to scale the walk"]
     frames, colours = views_to_frames([chained.views[i] for i in kept], scale.factor, up, 0, [images[i] for i in kept])
     return SequenceReconstruction(frames, colours, scale, up, kept, chained.link_scales, notes,
-                                  time.perf_counter() - started), notes
+                                  time.perf_counter() - started, run_scales), notes

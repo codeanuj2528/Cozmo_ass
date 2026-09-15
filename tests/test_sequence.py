@@ -65,6 +65,19 @@ def test_umeyama_recovers_a_similarity():
     assert np.allclose(r, rotation) and np.allclose(t, shift)
 
 
+def test_a_rigid_fit_recovers_rotation_and_translation_and_reports_the_scale_it_did_not_apply():
+    rng = np.random.default_rng(3)
+    points = rng.normal(size=(400, 3))
+    _, rotation, shift = _similarity(1.0, -20.0, (1.0, 0.5, -2.0))
+    s, r, t = umeyama(points, points @ rotation.T + shift, with_scale=False)
+    assert s == 1.0
+    assert np.allclose(r, rotation) and np.allclose(t, shift)
+    # Scaled targets: the rigid fit keeps its scale at 1, and the translation still takes the centroid across.
+    s, r, t = umeyama(points, 1.1 * points @ rotation.T + shift, with_scale=False)
+    assert s == 1.0 and np.allclose(r, rotation, atol=1e-6)
+    assert np.allclose(points.mean(axis=0) @ r.T + t, (1.1 * points @ rotation.T + shift).mean(axis=0))
+
+
 def test_one_image_reconstructed_twice_gives_the_transform_between_the_two_frames():
     view = _box_view(_rotation(20.0, -10.0), np.array([0.5, 0.2, -1.0]))
     scale, rotation, shift = _similarity(0.6, -50.0, (1.0, 0.0, 2.0))
@@ -164,8 +177,10 @@ def test_a_walk_reconstructed_in_runs_comes_back_metric_and_in_one_frame():
     backbone = _Reframing(truth)
     result, notes = reconstruct_sequence(images, backbone, _Metric(), run_length=8, overlap=3)
     assert len(result.frames) == 20
-    # Metres per unit of the first run's frame, whatever scale the model gave that run.
-    assert result.scale.factor == pytest.approx(1.6 / backbone.scales[0], rel=1e-3)
+    # Each run is put in metres on its own: metres per unit of that run's frame, whatever scale the model gave it.
+    assert result.run_scales == pytest.approx([1.6 / s for s in backbone.scales], rel=1e-3)
+    # Once every run is metric, the similarity between consecutive runs is a check, and here it is exact.
+    assert result.link_scales == pytest.approx([1.0] * 3, rel=1e-3)
     centres = np.array([frame.pose[:3, 3] for frame in result.frames])
     walked = np.linalg.norm(centres - centres[0], axis=1)
     truth_walked = np.linalg.norm(np.array([view.centre for view in truth]) - truth[0].centre, axis=1)

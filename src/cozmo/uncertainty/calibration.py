@@ -160,6 +160,13 @@ class IntervalBook:
         # Truncating at zero leaves the interval asymmetric about the point estimate, which
         # is correct for a quantity bounded below: the information that a length cannot be
         # negative is real information and the interval should carry it.
+        #
+        # The same holds for the value. A length computed a hair below zero, a sill a centimetre under the
+        # floor it was read from, is zero; left negative it lies below its own interval, the output contract
+        # refuses it, and the whole plan is lost: the video tier's core stopped on a walk at -0.01 m (fix loop
+        # round 5). A value further below zero than its own half-width is a defect, and still fails.
+        if np.isfinite(value) and -half <= value < 0.0:
+            value = 0.0
         lo = max(0.0, float(value) - half)
         return Measure(
             value=float(value),

@@ -149,11 +149,12 @@ def _build_video_plan_multiview(
     for frame, keyframe in zip(reconstruction.frames, reconstruction.keyframes_used):
         frame.timestamp = numbers[keyframe] / fps
     scale = reconstruction.scale
+    scaled_runs = [s for s in reconstruction.run_scales if np.isfinite(s)]
     warnings.append(
         f"video: {len(reconstruction.frames)} of {len(images)} keyframes reconstructed by {backbone.name} in runs "
-        f"of {RUN_LENGTH} sharing {RUN_OVERLAP}; metric scale {scale.factor:.3f} "
-        f"+-{100 * scale.relative_uncertainty:.1f}% from {scale.source} over {scale.views_used} keyframes, "
-        f"given the field of view {backbone.name} estimated"
+        f"of {RUN_LENGTH} sharing {RUN_OVERLAP}; {len(scaled_runs)} of {len(reconstruction.run_scales)} runs scaled "
+        f"to metres on their own by {scale.source}, then a remaining factor of {scale.factor:.3f} "
+        f"+-{100 * scale.relative_uncertainty:.1f}% over {scale.views_used} keyframes"
     )
 
     posed = PosedFrameSource(
